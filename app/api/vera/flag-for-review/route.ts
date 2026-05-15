@@ -3,6 +3,7 @@ import {
   FlagForReviewInputSchema,
   type FlagForReviewOutput,
 } from "@/types/vera";
+import { dealStore } from "@/lib/deals";
 
 export async function POST(req: NextRequest) {
   const body = await req.json().catch(() => ({}));
@@ -14,7 +15,21 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  // TODO(day-4): set Deal.status → REVIEWING, notify human reviewer queue
+  if (parsed.data.deal_id) {
+    const deal = await dealStore.get(parsed.data.deal_id);
+    if (deal) {
+      await dealStore.update(deal.id, {
+        status: "REVIEWING",
+        terms: {
+          ...deal.terms,
+          notes: deal.terms.notes
+            ? `${deal.terms.notes}; flag: ${parsed.data.reason}`
+            : `flag: ${parsed.data.reason}`,
+        },
+      });
+    }
+  }
+
   const response: FlagForReviewOutput = {
     success: true,
     reviewer_will_contact_by: new Date(

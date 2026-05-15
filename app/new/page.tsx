@@ -46,7 +46,14 @@ const QUESTIONS: Question[] = [
   },
 ];
 
+type Stage = "preflight" | "questions" | "recitation" | "committed" | "error";
+
 export default function NewDealPage() {
+  const [stage, setStage] = useState<Stage>("preflight");
+  const [buyerName, setBuyerName] = useState("");
+  const [buyerEmail, setBuyerEmail] = useState("");
+  const [dealId, setDealId] = useState<string | null>(null);
+  const [reference, setReference] = useState<string | null>(null);
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState<Record<QuestionId, string>>({
     item: "",
@@ -56,16 +63,103 @@ export default function NewDealPage() {
     extras: "",
   });
   const [draft, setDraft] = useState("");
-  const [recording, setRecording] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [contractText, setContractText] = useState<string | null>(null);
 
   const current = QUESTIONS[step];
   const isLast = step === QUESTIONS.length - 1;
 
-  function commitAnswer() {
-    if (!draft.trim()) return;
-    setAnswers((prev) => ({ ...prev, [current.id]: draft.trim() }));
-    setDraft("");
-    if (!isLast) setStep(step + 1);
+  async function startDeal() {
+    if (!buyerName.trim()) return;
+    setBusy(true);
+    setError(null);
+    try {
+      const res = await fetch("/api/deals", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          buyer: {
+            firstName: buyerName.trim(),
+            email: buyerEmail.trim() || undefined,
+          },
+        }),
+      });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.message ?? json.error ?? "create_failed");
+      setDealId(json.id);
+      setReference(json.reference);
+      setStage("questions");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "unknown error");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function submitAnswer() {
+    if (!draft.trim() || !dealId) return;
+    setBusy(true);
+    setError(null);
+    try {
+      const res = await fetch("/api/vera/extract-terms", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ deal_id: dealId, user_input: draft.trim() }),
+      });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.message ?? json.error ?? "extract_failed");
+      setAnswers((prev) => ({ ...prev, [current.id]: draft.trim() }));
+      setDraft("");
+      if (!isLast) {
+        setStep(step + 1);
+      } else {
+        await hearContract();
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "unknown error");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function hearContract() {
+    if (!dealId) return;
+    setBusy(true);
+    try {
+      const res = await fetch("/api/vera/read-contract-back", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ deal_id: dealId }),
+      });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.message ?? json.error ?? "recitation_failed");
+      setContractText(json.spoken_text);
+      setStage("recitation");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "unknown error");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function confirm() {
+    if (!dealId) return;
+    setBusy(true);
+    try {
+      const res = await fetch("/api/vera/commit-buyer-side", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ deal_id: dealId }),
+      });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.message ?? json.error ?? "commit_failed");
+      setStage("committed");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "unknown error");
+    } finally {
+      setBusy(false);
+    }
   }
 
   function previous() {
@@ -79,115 +173,217 @@ export default function NewDealPage() {
       <div className="mx-auto flex w-full max-w-2xl flex-col gap-10">
         <header className="flex items-center justify-between">
           <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-[#5a5548]">
-            Vouch · New deal
+            Vouch · New deal {reference ? `· ${reference}` : ""}
           </p>
           <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-[#8a8478]">
-            Step {step + 1} of {QUESTIONS.length}
+            {stage === "questions"
+              ? `Question ${step + 1} of ${QUESTIONS.length}`
+              : stage === "preflight"
+                ? "Pre-flight"
+                : stage === "recitation"
+                  ? "Read-back"
+                  : "Committed"}
           </p>
         </header>
 
-        <ol className="flex gap-2">
-          {QUESTIONS.map((q, i) => (
-            <li
-              key={q.id}
-              className={`h-1 flex-1 rounded-full transition-colors ${
-                i < step
-                  ? "bg-[#5266eb]"
-                  : i === step
-                    ? "bg-[#7a6ce8]"
-                    : "bg-[rgba(50,30,5,0.12)]"
-              }`}
-              aria-current={i === step ? "step" : undefined}
-              aria-label={q.prompt}
-            />
-          ))}
-        </ol>
-
-        <section className="rounded-2xl border border-[rgba(50,30,5,0.10)] bg-white p-8 shadow-[0_4px_16px_rgba(40,20,5,0.04)]">
-          <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-[#5266eb]">
-            Vera · question {step + 1}
-          </p>
-          <h2 className="mt-3 font-display text-2xl font-semibold leading-tight text-[#2a2924]">
-            {current.veraLine}
-          </h2>
-
-          <div className="mt-8 flex flex-col gap-3">
-            <textarea
-              value={draft}
-              onChange={(e) => setDraft(e.target.value)}
-              placeholder={current.placeholder}
-              rows={3}
-              className="w-full resize-none rounded-md border border-[rgba(50,30,5,0.18)] bg-[#fbfaf6] px-4 py-3 text-[15px] outline-none focus:border-[#5266eb] focus:ring-2 focus:ring-[#5266eb]/30"
-            />
-            <div className="flex items-center justify-between">
+        {stage === "preflight" && (
+          <section className="rounded-2xl border border-[rgba(50,30,5,0.10)] bg-white p-8 shadow-[0_4px_16px_rgba(40,20,5,0.04)]">
+            <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-[#5266eb]">
+              Before Vera joins
+            </p>
+            <h1 className="mt-3 font-display text-3xl font-semibold leading-tight">
+              What&rsquo;s your <span className="italic text-[#5266eb]">first name?</span>
+            </h1>
+            <p className="mt-3 text-sm text-[#5a5548]">
+              Vera will greet you by name and read terms back as you go. Email is optional and used to send the signoff link.
+            </p>
+            <div className="mt-6 flex flex-col gap-3">
+              <input
+                type="text"
+                value={buyerName}
+                onChange={(e) => setBuyerName(e.target.value)}
+                placeholder="Sarah"
+                className="rounded-md border border-[rgba(50,30,5,0.18)] bg-[#fbfaf6] px-4 py-3 text-[15px] outline-none focus:border-[#5266eb] focus:ring-2 focus:ring-[#5266eb]/30"
+              />
+              <input
+                type="email"
+                value={buyerEmail}
+                onChange={(e) => setBuyerEmail(e.target.value)}
+                placeholder="sarah@example.com (optional)"
+                className="rounded-md border border-[rgba(50,30,5,0.18)] bg-[#fbfaf6] px-4 py-3 text-[15px] outline-none focus:border-[#5266eb] focus:ring-2 focus:ring-[#5266eb]/30"
+              />
               <button
                 type="button"
-                onClick={() => setRecording((r) => !r)}
-                className={`flex items-center gap-2 rounded-md border px-4 py-2 text-sm font-medium transition-colors ${
-                  recording
-                    ? "border-[#b54a3a] bg-[rgba(181,74,58,0.08)] text-[#b54a3a]"
-                    : "border-[rgba(50,30,5,0.18)] bg-white text-[#2a2924] hover:bg-[#fbfaf6]"
-                }`}
-                aria-pressed={recording}
+                onClick={startDeal}
+                disabled={busy || !buyerName.trim()}
+                className="rounded-md bg-[#635bff] px-5 py-3 text-sm font-medium text-white transition-colors hover:bg-[#5048e5] disabled:opacity-40"
               >
-                <span
-                  className={`inline-block h-2 w-2 rounded-full ${
-                    recording ? "animate-pulse bg-[#b54a3a]" : "bg-[#8a8478]"
-                  }`}
-                />
-                {recording ? "Recording…" : "Push to talk"}
+                {busy ? "Starting…" : "Start with Vera →"}
               </button>
-              <div className="flex gap-2">
-                <button
-                  type="button"
-                  onClick={previous}
-                  disabled={step === 0}
-                  className="rounded-md border border-[rgba(50,30,5,0.18)] bg-white px-4 py-2 text-sm font-medium text-[#2a2924] transition-colors hover:bg-[#fbfaf6] disabled:opacity-40"
-                >
-                  ← Back
-                </button>
-                <button
-                  type="button"
-                  onClick={commitAnswer}
-                  disabled={!draft.trim()}
-                  className="rounded-md bg-[#635bff] px-5 py-2 text-sm font-medium text-white transition-colors hover:bg-[#5048e5] disabled:opacity-40"
-                >
-                  {isLast ? "Review terms →" : "Next →"}
-                </button>
-              </div>
+              {error && (
+                <p className="font-mono text-xs text-[#b54a3a]">{error}</p>
+              )}
             </div>
-          </div>
-        </section>
+          </section>
+        )}
 
-        <section>
-          <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-[#5a5548]">
-            Captured so far
-          </p>
-          <dl className="mt-3 divide-y divide-[rgba(50,30,5,0.10)] rounded-xl border border-[rgba(50,30,5,0.10)] bg-white">
-            {QUESTIONS.map((q) => (
-              <div
-                key={q.id}
-                className="grid grid-cols-[140px_1fr] gap-4 px-5 py-3 text-sm"
-              >
-                <dt className="font-mono text-[11px] uppercase tracking-[0.12em] text-[#5a5548]">
-                  {q.prompt}
-                </dt>
-                <dd
-                  className={
-                    answers[q.id] ? "text-[#2a2924]" : "text-[#8a8478]"
-                  }
-                >
-                  {answers[q.id] || "—"}
-                </dd>
+        {stage === "questions" && (
+          <>
+            <ol className="flex gap-2">
+              {QUESTIONS.map((q, i) => (
+                <li
+                  key={q.id}
+                  className={`h-1 flex-1 rounded-full transition-colors ${
+                    i < step
+                      ? "bg-[#5266eb]"
+                      : i === step
+                        ? "bg-[#7a6ce8]"
+                        : "bg-[rgba(50,30,5,0.12)]"
+                  }`}
+                  aria-current={i === step ? "step" : undefined}
+                />
+              ))}
+            </ol>
+
+            <section className="rounded-2xl border border-[rgba(50,30,5,0.10)] bg-white p-8 shadow-[0_4px_16px_rgba(40,20,5,0.04)]">
+              <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-[#5266eb]">
+                Vera · question {step + 1}
+              </p>
+              <h2 className="mt-3 font-display text-2xl font-semibold leading-tight">
+                {current.veraLine}
+              </h2>
+
+              <div className="mt-8 flex flex-col gap-3">
+                <textarea
+                  value={draft}
+                  onChange={(e) => setDraft(e.target.value)}
+                  placeholder={current.placeholder}
+                  rows={3}
+                  className="w-full resize-none rounded-md border border-[rgba(50,30,5,0.18)] bg-[#fbfaf6] px-4 py-3 text-[15px] outline-none focus:border-[#5266eb] focus:ring-2 focus:ring-[#5266eb]/30"
+                />
+                <div className="flex items-center justify-between">
+                  <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-[#8a8478]">
+                    Push-to-talk wires in once Vera ConvAI agent is provisioned
+                  </p>
+                  <div className="flex gap-2">
+                    <button
+                      type="button"
+                      onClick={previous}
+                      disabled={step === 0 || busy}
+                      className="rounded-md border border-[rgba(50,30,5,0.18)] bg-white px-4 py-2 text-sm font-medium text-[#2a2924] transition-colors hover:bg-[#fbfaf6] disabled:opacity-40"
+                    >
+                      ← Back
+                    </button>
+                    <button
+                      type="button"
+                      onClick={submitAnswer}
+                      disabled={!draft.trim() || busy}
+                      className="rounded-md bg-[#635bff] px-5 py-2 text-sm font-medium text-white transition-colors hover:bg-[#5048e5] disabled:opacity-40"
+                    >
+                      {busy ? "…" : isLast ? "Hear contract →" : "Next →"}
+                    </button>
+                  </div>
+                </div>
+                {error && (
+                  <p className="font-mono text-xs text-[#b54a3a]">{error}</p>
+                )}
               </div>
-            ))}
-          </dl>
-        </section>
+            </section>
 
-        <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-[#8a8478]">
-          Day 2 scaffold · push-to-talk + ConvAI wiring lands once the Vera agent is provisioned.
-        </p>
+            <CapturedSummary answers={answers} questions={QUESTIONS} />
+          </>
+        )}
+
+        {stage === "recitation" && contractText && (
+          <section className="rounded-2xl border border-[#5266eb]/40 bg-white p-8 shadow-[0_4px_16px_rgba(40,20,5,0.04)]">
+            <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-[#5266eb]">
+              Vera reads back · contract voice
+            </p>
+            <p className="mt-5 font-display text-xl font-medium leading-relaxed text-[#2a2924]">
+              &ldquo;{contractText}&rdquo;
+            </p>
+            <div className="mt-8 flex gap-3">
+              <button
+                type="button"
+                onClick={() => setStage("questions")}
+                disabled={busy}
+                className="rounded-md border border-[rgba(50,30,5,0.18)] bg-white px-4 py-2 text-sm font-medium transition-colors hover:bg-[#fbfaf6] disabled:opacity-40"
+              >
+                ← Edit terms
+              </button>
+              <button
+                type="button"
+                onClick={confirm}
+                disabled={busy}
+                className="rounded-md bg-[#635bff] px-5 py-2 text-sm font-medium text-white transition-colors hover:bg-[#5048e5] disabled:opacity-40"
+              >
+                {busy ? "Committing…" : "I confirm — send to other party →"}
+              </button>
+            </div>
+            {error && (
+              <p className="mt-3 font-mono text-xs text-[#b54a3a]">{error}</p>
+            )}
+          </section>
+        )}
+
+        {stage === "committed" && reference && (
+          <section className="rounded-2xl border border-[#2f7d57]/40 bg-white p-8 shadow-[0_4px_16px_rgba(40,20,5,0.04)]">
+            <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-[#2f7d57]">
+              Locked in · AWAITING_SELLER
+            </p>
+            <h2 className="mt-3 font-display text-2xl font-semibold leading-tight">
+              Now <span className="italic text-[#5266eb]">share this link</span> with the other party.
+            </h2>
+            <p className="mt-2 text-sm text-[#5a5548]">
+              The seller listens to your terms, then agrees, counters, or asks to clarify. When they agree, both of you do a quick joint sign-off.
+            </p>
+            <div className="mt-6 flex flex-col gap-3">
+              <a
+                href={`/deal/${reference}/seller`}
+                className="block rounded-md border border-[rgba(50,30,5,0.18)] bg-[#fbfaf6] px-4 py-3 font-mono text-sm text-[#5266eb] hover:bg-white"
+              >
+                {typeof window !== "undefined"
+                  ? `${window.location.origin}/deal/${reference}/seller`
+                  : `/deal/${reference}/seller`}
+              </a>
+              <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-[#8a8478]">
+                Day 2 demo · email/SMS notification stub wires in once messaging provider is picked
+              </p>
+            </div>
+          </section>
+        )}
       </div>
     </main>
+  );
+}
+
+function CapturedSummary({
+  answers,
+  questions,
+}: {
+  answers: Record<QuestionId, string>;
+  questions: Question[];
+}) {
+  return (
+    <section>
+      <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-[#5a5548]">
+        Captured so far
+      </p>
+      <dl className="mt-3 divide-y divide-[rgba(50,30,5,0.10)] rounded-xl border border-[rgba(50,30,5,0.10)] bg-white">
+        {questions.map((q) => (
+          <div
+            key={q.id}
+            className="grid grid-cols-[140px_1fr] gap-4 px-5 py-3 text-sm"
+          >
+            <dt className="font-mono text-[11px] uppercase tracking-[0.12em] text-[#5a5548]">
+              {q.prompt}
+            </dt>
+            <dd className={answers[q.id] ? "text-[#2a2924]" : "text-[#8a8478]"}>
+              {answers[q.id] || "—"}
+            </dd>
+          </div>
+        ))}
+      </dl>
+    </section>
   );
 }

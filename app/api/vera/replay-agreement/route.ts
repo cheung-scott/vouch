@@ -3,6 +3,8 @@ import {
   ReplayAgreementInputSchema,
   type ReplayAgreementOutput,
 } from "@/types/vera";
+import { dealStore } from "@/lib/deals";
+import { composeAgreementReplay } from "@/lib/vera-contract";
 
 export async function POST(req: NextRequest) {
   const body = await req.json().catch(() => ({}));
@@ -14,10 +16,17 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  // TODO(day-4): fetch locked contract for deal_id and recite verbatim
+  if (!parsed.data.deal_id) {
+    return NextResponse.json({ error: "missing_deal_id" }, { status: 400 });
+  }
+
+  const deal = await dealStore.get(parsed.data.deal_id);
+  if (!deal) {
+    return NextResponse.json({ error: "deal_not_found" }, { status: 404 });
+  }
+
   const response: ReplayAgreementOutput = {
-    spoken_text:
-      "The originally agreed contract will be recited here once the deal is hydrated.",
+    spoken_text: composeAgreementReplay(deal),
   };
   return NextResponse.json(response);
 }

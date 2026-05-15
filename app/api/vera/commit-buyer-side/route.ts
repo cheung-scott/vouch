@@ -3,6 +3,7 @@ import {
   CommitBuyerSideInputSchema,
   type CommitBuyerSideOutput,
 } from "@/types/vera";
+import { dealStore } from "@/lib/deals";
 
 export async function POST(req: NextRequest) {
   const body = await req.json().catch(() => ({}));
@@ -14,10 +15,24 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  // TODO(day-2): persist buyer commitment, advance Deal.status → AWAITING_SELLER
+  if (!parsed.data.deal_id) {
+    return NextResponse.json({ error: "missing_deal_id" }, { status: 400 });
+  }
+
+  const deal = await dealStore.get(parsed.data.deal_id);
+  if (!deal) {
+    return NextResponse.json({ error: "deal_not_found" }, { status: 404 });
+  }
+
+  const committedAt = new Date().toISOString();
+  const updated = await dealStore.update(deal.id, {
+    buyer: { ...deal.buyer, committedAt },
+    status: "AWAITING_SELLER",
+  });
+
   const response: CommitBuyerSideOutput = {
     success: true,
-    deal_id: parsed.data.deal_id ?? "stub_deal",
+    deal_id: updated.id,
   };
   return NextResponse.json(response);
 }

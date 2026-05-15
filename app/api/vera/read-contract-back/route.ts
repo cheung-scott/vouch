@@ -3,6 +3,8 @@ import {
   ReadContractBackInputSchema,
   type ReadContractBackOutput,
 } from "@/types/vera";
+import { dealStore } from "@/lib/deals";
+import { composeContractRecitation } from "@/lib/vera-contract";
 
 export async function POST(req: NextRequest) {
   const body = await req.json().catch(() => ({}));
@@ -14,10 +16,20 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  // TODO(day-2): hydrate Deal by deal_id and render the contract recitation
+  if (!parsed.data.deal_id) {
+    return NextResponse.json(
+      { error: "missing_deal_id" },
+      { status: 400 },
+    );
+  }
+
+  const deal = await dealStore.get(parsed.data.deal_id);
+  if (!deal) {
+    return NextResponse.json({ error: "deal_not_found" }, { status: 404 });
+  }
+
   const response: ReadContractBackOutput = {
-    spoken_text:
-      "Let me read this back. The full contract recitation will render here once the deal is hydrated.",
+    spoken_text: composeContractRecitation(deal),
   };
   return NextResponse.json(response);
 }
