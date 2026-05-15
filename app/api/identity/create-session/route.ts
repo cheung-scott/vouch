@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { createIdentityVerificationSession } from "@/lib/stripe";
+import {
+  createIdentityVerificationSession,
+  sanitizeStripeError,
+} from "@/lib/stripe";
 
 export const runtime = "nodejs";
 
@@ -37,9 +40,9 @@ export async function POST(req: NextRequest) {
       status: session.status,
     });
   } catch (err) {
-    const message = err instanceof Error ? err.message : "unknown_error";
+    console.error("[identity.create-session] stripe error", err);
     return NextResponse.json(
-      { error: "stripe_error", message },
+      { error: "stripe_error", ...sanitizeStripeError(err) },
       { status: 500 },
     );
   }

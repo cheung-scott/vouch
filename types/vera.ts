@@ -101,7 +101,9 @@ export const OpenDisputeOutputSchema = z.object({
 export const ReplayAgreementInputSchema = BaseToolInputSchema;
 export const ReplayAgreementOutputSchema = SpokenTextOutputSchema;
 
-export const GatherDisputeEvidenceInputSchema = BaseToolInputSchema.extend({
+export const GatherDisputeEvidenceInputSchema = z.object({
+  deal_id: z.string().min(1),
+  session_id: z.string().optional(),
   user_summary: z.string().min(1),
   dispute_id: z.string().optional(),
 });
@@ -109,7 +111,9 @@ export const GatherDisputeEvidenceOutputSchema = z.object({
   success: z.boolean(),
 });
 
-export const FlagForReviewInputSchema = BaseToolInputSchema.extend({
+export const FlagForReviewInputSchema = z.object({
+  deal_id: z.string().min(1),
+  session_id: z.string().optional(),
   reason: z.string().min(1),
 });
 export const FlagForReviewOutputSchema = z.object({

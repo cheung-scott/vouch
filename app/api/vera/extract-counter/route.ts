@@ -21,6 +21,12 @@ export async function POST(req: NextRequest) {
   if (parsed.data.deal_id) {
     const deal = await dealStore.get(parsed.data.deal_id);
     if (deal) {
+      if (deal.status !== "AWAITING_SELLER") {
+        return NextResponse.json(
+          { error: "invalid_state", current_status: deal.status },
+          { status: 409 },
+        );
+      }
       const counterTerms = { ...deal.terms };
       if (extracted.amount_minor)
         counterTerms.amountMinor = extracted.amount_minor;

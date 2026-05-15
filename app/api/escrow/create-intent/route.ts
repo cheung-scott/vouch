@@ -3,7 +3,9 @@ import { z } from "zod";
 import {
   createEscrowPaymentIntent,
   calculatePlatformFee,
+  sanitizeStripeError,
 } from "@/lib/stripe";
+import { dealStore } from "@/lib/deals";
 
 export const runtime = "nodejs";
 
@@ -28,6 +30,20 @@ export async function POST(req: NextRequest) {
     );
   }
 
+  const deal = await dealStore.get(parsed.data.deal_id);
+  if (!deal) {
+    return NextResponse.json({ error: "deal_not_found" }, { status: 404 });
+  }
+  if (
+    deal.seller.stripeAccountId &&
+    deal.seller.stripeAccountId !== parsed.data.seller_account_id
+  ) {
+    return NextResponse.json(
+      { error: "seller_account_mismatch" },
+      { status: 403 },
+    );
+  }
+
   try {
     const pi = await createEscrowPaymentIntent({
       amountMinor: parsed.data.amount_minor,
@@ -45,9 +61,9 @@ export async function POST(req: NextRequest) {
       currency: pi.currency,
     });
   } catch (err) {
-    const message = err instanceof Error ? err.message : "unknown_error";
+    console.error("[escrow.create-intent] stripe error", err);
     return NextResponse.json(
-      { error: "stripe_error", message },
+      { error: "stripe_error", ...sanitizeStripeError(err) },
       { status: 500 },
     );
   }

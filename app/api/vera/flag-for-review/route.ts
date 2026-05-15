@@ -15,20 +15,19 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  if (parsed.data.deal_id) {
-    const deal = await dealStore.get(parsed.data.deal_id);
-    if (deal) {
-      await dealStore.update(deal.id, {
-        status: "REVIEWING",
-        terms: {
-          ...deal.terms,
-          notes: deal.terms.notes
-            ? `${deal.terms.notes}; flag: ${parsed.data.reason}`
-            : `flag: ${parsed.data.reason}`,
-        },
-      });
-    }
+  const deal = await dealStore.get(parsed.data.deal_id);
+  if (!deal) {
+    return NextResponse.json({ error: "deal_not_found" }, { status: 404 });
   }
+  await dealStore.update(deal.id, {
+    status: "REVIEWING",
+    terms: {
+      ...deal.terms,
+      notes: deal.terms.notes
+        ? `${deal.terms.notes}; flag: ${parsed.data.reason}`
+        : `flag: ${parsed.data.reason}`,
+    },
+  });
 
   const response: FlagForReviewOutput = {
     success: true,

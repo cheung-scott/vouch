@@ -151,3 +151,21 @@ export function constructWebhookEvent(params: {
     params.secret,
   );
 }
+
+export function sanitizeStripeError(err: unknown): {
+  code: string;
+  type: string;
+} {
+  if (err && typeof err === "object") {
+    const code =
+      "code" in err && typeof (err as { code?: unknown }).code === "string"
+        ? (err as { code: string }).code
+        : "unknown";
+    const type =
+      "type" in err && typeof (err as { type?: unknown }).type === "string"
+        ? (err as { type: string }).type
+        : "unknown";
+    return { code, type };
+  }
+  return { code: "unknown", type: "unknown" };
+}

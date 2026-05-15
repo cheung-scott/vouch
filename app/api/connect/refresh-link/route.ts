@@ -1,15 +1,25 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createAccountOnboardingLink } from "@/lib/stripe";
+import {
+  createAccountOnboardingLink,
+  sanitizeStripeError,
+} from "@/lib/stripe";
+import { dealStore } from "@/lib/deals";
 
 export const runtime = "nodejs";
 
 export async function GET(req: NextRequest) {
   const accountId = req.nextUrl.searchParams.get("account");
-  if (!accountId) {
-    return NextResponse.json({ error: "missing_account" }, { status: 400 });
+  if (!accountId || !accountId.startsWith("acct_")) {
+    return NextResponse.json({ error: "invalid_account" }, { status: 400 });
   }
 
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
+  const deals = await dealStore.list();
+  const owned = deals.some((d) => d.seller.stripeAccountId === accountId);
+  if (!owned) {
+    return NextResponse.json({ error: "account_not_recognized" }, { status: 404 });
+  }
+
+  const appUrl = process.env.APP_URL ?? "http://localhost:3000";
 
   try {
     const link = await createAccountOnboardingLink({
@@ -19,9 +29,9 @@ export async function GET(req: NextRequest) {
     });
     return NextResponse.redirect(link.url);
   } catch (err) {
-    const message = err instanceof Error ? err.message : "unknown_error";
+    console.error("[connect.refresh-link] stripe error", err);
     return NextResponse.json(
-      { error: "stripe_error", message },
+      { error: "stripe_error", ...sanitizeStripeError(err) },
       { status: 500 },
     );
   }

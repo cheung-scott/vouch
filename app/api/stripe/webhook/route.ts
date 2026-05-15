@@ -21,11 +21,8 @@ export async function POST(req: NextRequest) {
   try {
     event = constructWebhookEvent({ payload, signature, secret });
   } catch (err) {
-    const message = err instanceof Error ? err.message : "unknown_error";
-    return NextResponse.json(
-      { error: "signature_verification_failed", message },
-      { status: 400 },
-    );
+    console.error("[webhook] signature verification failed", err);
+    return NextResponse.json({ error: "bad_request" }, { status: 400 });
   }
 
   // TODO(day-2): replace console logging with DB writes once Vercel KV is wired.

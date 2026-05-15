@@ -3,6 +3,7 @@ import { z } from "zod";
 import {
   createConnectExpressAccount,
   createAccountOnboardingLink,
+  sanitizeStripeError,
 } from "@/lib/stripe";
 
 export const runtime = "nodejs";
@@ -22,7 +23,7 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
+  const appUrl = process.env.APP_URL ?? "http://localhost:3000";
 
   try {
     const account = await createConnectExpressAccount({
@@ -42,9 +43,9 @@ export async function POST(req: NextRequest) {
       expires_at: link.expires_at,
     });
   } catch (err) {
-    const message = err instanceof Error ? err.message : "unknown_error";
+    console.error("[connect.create-account] stripe error", err);
     return NextResponse.json(
-      { error: "stripe_error", message },
+      { error: "stripe_error", ...sanitizeStripeError(err) },
       { status: 500 },
     );
   }

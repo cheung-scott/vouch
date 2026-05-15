@@ -56,6 +56,8 @@ export const DealSchema = z.object({
   seller: PartySchema,
   stripePaymentIntentId: z.string().optional(),
   stripeTransferId: z.string().optional(),
+  // SECURITY: never include this raw URL in public API responses (GDPR Art. 9 biometric data).
+  // Day 3+ implementation must generate signed URLs server-side per request after auth.
   voiceAgreementRecordingUrl: z.string().url().optional(),
   veraSessionIds: z.array(z.string()).default([]),
   createdAt: z.string().datetime(),

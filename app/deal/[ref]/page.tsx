@@ -7,8 +7,8 @@ type DealDetail = {
   id: string;
   reference: string;
   status: string;
-  buyer: { firstName: string; email?: string; committedAt?: string };
-  seller: { firstName: string; email?: string; committedAt?: string };
+  buyer: { firstName: string; committedAt?: string };
+  seller: { firstName: string; committedAt?: string };
   terms: {
     item: string;
     quantity: number;
@@ -17,8 +17,6 @@ type DealDetail = {
     deliveryMethod?: string;
     notes?: string;
   };
-  stripePaymentIntentId?: string;
-  stripeTransferId?: string;
   createdAt: string;
   updatedAt: string;
   lockedAt?: string;
@@ -204,27 +202,6 @@ export default function DealDetailPage({
           </ol>
         </section>
 
-        {(deal.stripePaymentIntentId || deal.stripeTransferId) && (
-          <section className="rounded-2xl border border-[rgba(50,30,5,0.10)] bg-white p-7">
-            <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-[#5a5548]">
-              Stripe references
-            </p>
-            <dl className="mt-4 grid grid-cols-1 gap-y-2 text-xs sm:grid-cols-[180px_1fr]">
-              {deal.stripePaymentIntentId && (
-                <>
-                  <dt className="font-mono uppercase tracking-[0.12em] text-[#5a5548]">PaymentIntent</dt>
-                  <dd className="font-mono">{deal.stripePaymentIntentId}</dd>
-                </>
-              )}
-              {deal.stripeTransferId && (
-                <>
-                  <dt className="font-mono uppercase tracking-[0.12em] text-[#5a5548]">Transfer</dt>
-                  <dd className="font-mono">{deal.stripeTransferId}</dd>
-                </>
-              )}
-            </dl>
-          </section>
-        )}
       </div>
     </main>
   );

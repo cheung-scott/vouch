@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { cancelEscrow } from "@/lib/stripe";
+import { cancelEscrow, sanitizeStripeError } from "@/lib/stripe";
+import { dealStore } from "@/lib/deals";
 
 export const runtime = "nodejs";
 
@@ -19,6 +20,23 @@ export async function POST(req: NextRequest) {
     );
   }
 
+  const deal = await dealStore.get(parsed.data.deal_id);
+  if (!deal) {
+    return NextResponse.json({ error: "deal_not_found" }, { status: 404 });
+  }
+  if (!["AGREED", "IN_ESCROW"].includes(deal.status)) {
+    return NextResponse.json(
+      { error: "invalid_state", current_status: deal.status },
+      { status: 409 },
+    );
+  }
+  if (deal.stripePaymentIntentId !== parsed.data.payment_intent_id) {
+    return NextResponse.json(
+      { error: "payment_intent_mismatch" },
+      { status: 403 },
+    );
+  }
+
   try {
     const pi = await cancelEscrow(parsed.data.payment_intent_id);
     return NextResponse.json({
@@ -27,9 +45,9 @@ export async function POST(req: NextRequest) {
       cancellation_reason: pi.cancellation_reason,
     });
   } catch (err) {
-    const message = err instanceof Error ? err.message : "unknown_error";
+    console.error("[escrow.cancel] stripe error", err);
     return NextResponse.json(
-      { error: "stripe_error", message },
+      { error: "stripe_error", ...sanitizeStripeError(err) },
       { status: 500 },
     );
   }

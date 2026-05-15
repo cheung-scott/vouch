@@ -15,18 +15,17 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  if (parsed.data.deal_id) {
-    const deal = await dealStore.get(parsed.data.deal_id);
-    if (deal) {
-      const note = `dispute evidence ${new Date().toISOString()}: ${parsed.data.user_summary}`;
-      await dealStore.update(deal.id, {
-        terms: {
-          ...deal.terms,
-          notes: deal.terms.notes ? `${deal.terms.notes}; ${note}` : note,
-        },
-      });
-    }
+  const deal = await dealStore.get(parsed.data.deal_id);
+  if (!deal) {
+    return NextResponse.json({ error: "deal_not_found" }, { status: 404 });
   }
+  const note = `dispute evidence ${new Date().toISOString()}: ${parsed.data.user_summary}`;
+  await dealStore.update(deal.id, {
+    terms: {
+      ...deal.terms,
+      notes: deal.terms.notes ? `${deal.terms.notes}; ${note}` : note,
+    },
+  });
 
   const response: GatherDisputeEvidenceOutput = { success: true };
   return NextResponse.json(response);

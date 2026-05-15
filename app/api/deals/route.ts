@@ -79,6 +79,14 @@ export async function POST(req: NextRequest) {
 }
 
 export async function GET(req: NextRequest) {
+  const ownerToken = process.env.OWNER_TOKEN;
+  if (ownerToken) {
+    const provided = req.headers.get("x-owner-token");
+    if (provided !== ownerToken) {
+      return NextResponse.json({ error: "unauthorized" }, { status: 401 });
+    }
+  }
+
   const statusParam = req.nextUrl.searchParams.get("status");
   const list = await dealStore.list(
     statusParam ? { status: statusParam as DealStatus } : undefined,
