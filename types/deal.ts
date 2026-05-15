@@ -3,6 +3,10 @@ import { z } from "zod";
 export const CurrencySchema = z.enum(["GBP", "USD", "EUR"]);
 export type Currency = z.infer<typeof CurrencySchema>;
 
+export function toStripeCurrency(c: Currency): "gbp" | "usd" | "eur" {
+  return c.toLowerCase() as "gbp" | "usd" | "eur";
+}
+
 export const DealStatusSchema = z.enum([
   "DRAFT",
   "AWAITING_SELLER",

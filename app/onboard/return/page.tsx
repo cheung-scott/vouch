@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { stripe } from "@/lib/stripe";
 
 type AccountStatus = {
   id: string;
@@ -11,14 +12,15 @@ type AccountStatus = {
 async function fetchStatus(
   accountId: string,
 ): Promise<AccountStatus | { error: string }> {
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
   try {
-    const res = await fetch(
-      `${appUrl}/api/connect/account-status?account=${accountId}`,
-      { cache: "no-store" },
-    );
-    if (!res.ok) return { error: await res.text() };
-    return (await res.json()) as AccountStatus;
+    const account = await stripe.accounts.retrieve(accountId);
+    return {
+      id: account.id,
+      details_submitted: account.details_submitted ?? false,
+      charges_enabled: account.charges_enabled ?? false,
+      payouts_enabled: account.payouts_enabled ?? false,
+      requirements_currently_due: account.requirements?.currently_due ?? [],
+    };
   } catch (err) {
     return { error: err instanceof Error ? err.message : "unknown" };
   }

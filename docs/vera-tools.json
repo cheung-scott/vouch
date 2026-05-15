@@ -1,0 +1,123 @@
+{
+  "_comment": "Paste these tool definitions into Vera's ConvAI agent at elevenlabs.io/app/conversational-ai. Each tool maps to a POST endpoint on the Vouch backend. Replace {BASE_URL} with your tunnel URL during dev (ngrok / Cloudflare tunnel) or https://vouch.app in prod.",
+  "_baseUrl": "{BASE_URL}",
+  "tools": [
+    {
+      "name": "extract_terms",
+      "description": "Capture structured terms from the user's latest answer to one of the 5 onboarding questions. Call after EVERY user answer in BUYER_ONBOARDING. Merges into the deal's current term set.",
+      "url": "{BASE_URL}/api/vera/extract-terms",
+      "method": "POST",
+      "parameters": {
+        "user_input": {
+          "type": "string",
+          "description": "The user's most recent spoken answer, verbatim."
+        },
+        "deal_id": { "type": "string", "description": "Current deal ID if known.", "required": false }
+      }
+    },
+    {
+      "name": "read_contract_back",
+      "description": "Recite the captured deal terms in the formal contract voice. Use after Q5 in BUYER_ONBOARDING and at the start of JOINT_SIGNOFF.",
+      "url": "{BASE_URL}/api/vera/read-contract-back",
+      "method": "POST",
+      "parameters": {
+        "deal_id": { "type": "string", "description": "Deal ID to recite." }
+      }
+    },
+    {
+      "name": "read_buyer_terms",
+      "description": "Recite the buyer-committed terms to the seller. Use ONCE at the start of SELLER_ONBOARDING.",
+      "url": "{BASE_URL}/api/vera/read-buyer-terms",
+      "method": "POST",
+      "parameters": {
+        "deal_id": { "type": "string", "description": "Deal ID to recite buyer terms for." }
+      }
+    },
+    {
+      "name": "commit_buyer_side",
+      "description": "Commit the buyer's terms after they say 'I confirm'. Advances the deal to AWAITING_SELLER.",
+      "url": "{BASE_URL}/api/vera/commit-buyer-side",
+      "method": "POST",
+      "parameters": {
+        "deal_id": { "type": "string", "description": "Deal ID being committed." }
+      }
+    },
+    {
+      "name": "commit_seller_side",
+      "description": "Commit the seller's agreement to the buyer's terms. Advances to AGREED, scheduling JOINT_SIGNOFF.",
+      "url": "{BASE_URL}/api/vera/commit-seller-side",
+      "method": "POST",
+      "parameters": {
+        "deal_id": { "type": "string", "description": "Deal ID being committed." }
+      }
+    },
+    {
+      "name": "extract_counter",
+      "description": "Capture seller's proposed changes to buyer's terms. Round-trips back to buyer for confirmation.",
+      "url": "{BASE_URL}/api/vera/extract-counter",
+      "method": "POST",
+      "parameters": {
+        "changes": { "type": "string", "description": "Seller's spoken description of what to change." },
+        "deal_id": { "type": "string", "description": "Deal ID." }
+      }
+    },
+    {
+      "name": "lock_escrow",
+      "description": "Lock the agreed amount in Stripe escrow. Call ONCE in JOINT_SIGNOFF after both parties say 'I agree'.",
+      "url": "{BASE_URL}/api/vera/lock-escrow",
+      "method": "POST",
+      "parameters": {
+        "deal_id": { "type": "string", "description": "Deal ID to lock." }
+      }
+    },
+    {
+      "name": "release_escrow",
+      "description": "Release escrowed money to the seller. Call in VOICE_RECEIPT when buyer confirms delivery is acceptable.",
+      "url": "{BASE_URL}/api/vera/release-escrow",
+      "method": "POST",
+      "parameters": {
+        "deal_id": { "type": "string", "description": "Deal ID to release." }
+      }
+    },
+    {
+      "name": "open_dispute",
+      "description": "Open a dispute on a deal. Freezes the money in escrow until resolved.",
+      "url": "{BASE_URL}/api/vera/open-dispute",
+      "method": "POST",
+      "parameters": {
+        "deal_id": { "type": "string", "description": "Deal ID." },
+        "reason": { "type": "string", "description": "User's stated reason for the dispute." }
+      }
+    },
+    {
+      "name": "replay_agreement",
+      "description": "Recite the original locked contract back to the disputing party in the formal contract voice.",
+      "url": "{BASE_URL}/api/vera/replay-agreement",
+      "method": "POST",
+      "parameters": {
+        "deal_id": { "type": "string", "description": "Deal ID to replay." }
+      }
+    },
+    {
+      "name": "gather_dispute_evidence",
+      "description": "Capture the disputing party's evidence summary and prompt for media upload.",
+      "url": "{BASE_URL}/api/vera/gather-dispute-evidence",
+      "method": "POST",
+      "parameters": {
+        "user_summary": { "type": "string", "description": "What the user said is different from the agreement." },
+        "deal_id": { "type": "string", "description": "Deal ID." },
+        "dispute_id": { "type": "string", "description": "Dispute ID if known.", "required": false }
+      }
+    },
+    {
+      "name": "flag_for_review",
+      "description": "Pause the deal and route to human review. Use for amounts outside the usual range, ambiguous declines, or repeated tool failures.",
+      "url": "{BASE_URL}/api/vera/flag-for-review",
+      "method": "POST",
+      "parameters": {
+        "reason": { "type": "string", "description": "Why this needs a human." },
+        "deal_id": { "type": "string", "description": "Deal ID.", "required": false }
+      }
+    }
+  ]
+}

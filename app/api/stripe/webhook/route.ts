@@ -62,6 +62,26 @@ export async function POST(req: NextRequest) {
       );
       break;
     }
+    case "payment_intent.requires_action": {
+      const pi = event.data.object;
+      console.log(
+        "[webhook] PI requires action (3DS/SCA)",
+        pi.id,
+        pi.metadata?.vouch_deal_id,
+        pi.next_action?.type,
+      );
+      break;
+    }
+    case "payment_intent.processing": {
+      const pi = event.data.object;
+      console.log(
+        "[webhook] PI processing (async payment method)",
+        pi.id,
+        pi.metadata?.vouch_deal_id,
+        pi.payment_method_types?.[0],
+      );
+      break;
+    }
     case "payment_intent.amount_capturable_updated": {
       const pi = event.data.object;
       console.log(

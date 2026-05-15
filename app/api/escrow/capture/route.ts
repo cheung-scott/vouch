@@ -28,6 +28,7 @@ export async function POST(req: NextRequest) {
       payment_intent_id: result.payment_intent.id,
       status: result.payment_intent.status,
       amount_captured: result.payment_intent.amount_received,
+      charge_id: result.charge_id,
       transfer_id: result.transfer_id,
     });
   } catch (err) {

@@ -10,7 +10,10 @@ export const runtime = "nodejs";
 const BodySchema = z.object({
   deal_id: z.string().min(1),
   amount_minor: z.number().int().positive(),
-  currency: z.enum(["gbp", "usd", "eur"]),
+  currency: z
+    .string()
+    .transform((s) => s.toLowerCase())
+    .pipe(z.enum(["gbp", "usd", "eur"])),
   seller_account_id: z.string().startsWith("acct_"),
   buyer_customer_id: z.string().optional(),
 });

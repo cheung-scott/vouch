@@ -26,6 +26,7 @@ export type StripeCurrency = "gbp" | "usd" | "eur";
 export async function createConnectExpressAccount(params: {
   email: string;
   country?: string;
+  businessType?: "individual" | "company";
   capabilities?: Array<"card_payments" | "transfers">;
 }) {
   return stripe.accounts.create({
@@ -36,7 +37,7 @@ export async function createConnectExpressAccount(params: {
       card_payments: { requested: true },
       transfers: { requested: true },
     },
-    business_type: "individual",
+    business_type: params.businessType ?? "individual",
     metadata: { vouch_account_kind: "seller" },
   });
 }
@@ -96,18 +97,42 @@ export async function createEscrowPaymentIntent(params: {
   });
 }
 
-export async function captureEscrow(paymentIntentId: string) {
-  return stripe.paymentIntents.capture(paymentIntentId);
+export async function captureEscrow(
+  paymentIntentId: string,
+  amountToCapture?: number,
+) {
+  return stripe.paymentIntents.capture(
+    paymentIntentId,
+    amountToCapture ? { amount_to_capture: amountToCapture } : undefined,
+  );
 }
 
 export async function releaseEscrow(params: {
   paymentIntentId: string;
   dealId: string;
+  amountToCapture?: number;
 }) {
-  const pi = await stripe.paymentIntents.capture(params.paymentIntentId);
+  const pi = await stripe.paymentIntents.capture(
+    params.paymentIntentId,
+    {
+      expand: ["latest_charge.transfer"],
+      ...(params.amountToCapture
+        ? { amount_to_capture: params.amountToCapture }
+        : {}),
+    },
+  );
+  const charge =
+    pi.latest_charge && typeof pi.latest_charge === "object"
+      ? (pi.latest_charge as Stripe.Charge)
+      : null;
+  const transfer =
+    charge?.transfer && typeof charge.transfer === "object"
+      ? (charge.transfer as Stripe.Transfer)
+      : null;
   return {
     payment_intent: pi,
-    transfer_id: typeof pi.latest_charge === "string" ? pi.latest_charge : null,
+    charge_id: charge?.id ?? null,
+    transfer_id: transfer?.id ?? null,
   };
 }
 
