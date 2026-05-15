@@ -59,10 +59,29 @@ export default function SignoffPage({
         if (cancelled) return;
         if (d.status === "IN_ESCROW") setStage("in_escrow");
         else if (d.status === "RELEASED") setStage("released");
-        else setStage("ready");
+        else if (d.status === "AGREED") setStage("ready");
+        else if (d.status === "AWAITING_SELLER") {
+          setError(
+            `${d.seller.firstName} hasn't agreed to the terms yet. Share the seller invitation link with them first — once they say "I agree", come back here for the joint sign-off.`,
+          );
+          setStage("error");
+        } else if (d.status === "DRAFT") {
+          setError(
+            "This deal isn't ready for sign-off yet. Finish capturing terms with Vera first.",
+          );
+          setStage("error");
+        } else {
+          setError(`Deal is ${d.status} — sign-off isn't available.`);
+          setStage("error");
+        }
       } catch (err) {
         if (cancelled) return;
-        setError(err instanceof Error ? err.message : "unknown");
+        const raw = err instanceof Error ? err.message : "unknown";
+        setError(
+          raw === "deal_not_found"
+            ? `We couldn't find deal ${ref}. Check the link.`
+            : `Couldn't load the deal: ${raw}`,
+        );
         setStage("error");
       }
     })();

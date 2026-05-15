@@ -23,6 +23,12 @@ export async function POST(req: NextRequest) {
   if (!deal) {
     return NextResponse.json({ error: "deal_not_found" }, { status: 404 });
   }
+  if (deal.status !== "DRAFT") {
+    return NextResponse.json(
+      { error: "invalid_state", current_status: deal.status },
+      { status: 409 },
+    );
+  }
 
   const committedAt = new Date().toISOString();
   const updated = await dealStore.update(deal.id, {

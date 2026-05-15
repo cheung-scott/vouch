@@ -34,9 +34,8 @@ export async function POST(req: NextRequest) {
   // Connect account are provisioned. For now we set state and return a stub PI id.
   const stubPaymentIntentId = `pi_stub_${deal.reference.toLowerCase()}`;
   const expiresAt = new Date(Date.now() + 1000 * 60 * 60 * 24 * 14).toISOString();
+  await dealStore.setStatus(deal.id, "IN_ESCROW");
   const updated = await dealStore.update(deal.id, {
-    status: "IN_ESCROW",
-    lockedAt: new Date().toISOString(),
     stripePaymentIntentId:
       deal.stripePaymentIntentId ?? stubPaymentIntentId,
   });

@@ -46,10 +46,26 @@ export default function SellerPage({
         if (cancelled) return;
         setDeal(json.deal);
         setSellerName(json.deal.seller.firstName ?? "");
-        setStage("preflight");
+        if (json.deal.status === "DRAFT") {
+          setError(
+            `${json.deal.buyer.firstName} hasn't finished capturing terms yet. Check back once they confirm.`,
+          );
+          setStage("error");
+        } else if (
+          ["AGREED", "IN_ESCROW", "RELEASED"].includes(json.deal.status)
+        ) {
+          setStage("committed");
+        } else {
+          setStage("preflight");
+        }
       } catch (err) {
         if (cancelled) return;
-        setError(err instanceof Error ? err.message : "unknown");
+        const raw = err instanceof Error ? err.message : "unknown";
+        setError(
+          raw === "deal_not_found"
+            ? `We couldn't find deal ${ref}. Check the link.`
+            : `Couldn't load the deal: ${raw}`,
+        );
         setStage("error");
       }
     })();

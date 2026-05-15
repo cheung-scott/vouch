@@ -34,18 +34,25 @@ export async function POST(req: NextRequest) {
         nextTerms.notes = nextTerms.notes
           ? `${nextTerms.notes}; ${extracted.notes}`
           : extracted.notes;
-      await dealStore.update(deal.id, { terms: nextTerms });
 
-      if (extracted.counterparty_name || extracted.counterparty_email || extracted.counterparty_phone) {
-        const updatedSeller = {
-          ...deal.seller,
-          firstName:
-            extracted.counterparty_name?.split(" ")[0] ?? deal.seller.firstName,
-          email: extracted.counterparty_email ?? deal.seller.email,
-          phone: extracted.counterparty_phone ?? deal.seller.phone,
-        };
-        await dealStore.update(deal.id, { seller: updatedSeller });
-      }
+      const sellerUpdate =
+        extracted.counterparty_name ||
+        extracted.counterparty_email ||
+        extracted.counterparty_phone
+          ? {
+              ...deal.seller,
+              firstName:
+                extracted.counterparty_name?.split(" ")[0] ??
+                deal.seller.firstName,
+              email: extracted.counterparty_email ?? deal.seller.email,
+              phone: extracted.counterparty_phone ?? deal.seller.phone,
+            }
+          : null;
+
+      await dealStore.update(deal.id, {
+        terms: nextTerms,
+        ...(sellerUpdate ? { seller: sellerUpdate } : {}),
+      });
     }
   }
 

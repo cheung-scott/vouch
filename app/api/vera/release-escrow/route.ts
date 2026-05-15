@@ -33,9 +33,8 @@ export async function POST(req: NextRequest) {
   // TODO(day-3): call releaseEscrow() against the real Stripe PI once keys present.
   const stubTransferId = `tr_stub_${deal.reference.toLowerCase()}`;
   const settlesBy = new Date(Date.now() + 1000 * 60 * 60 * 48).toISOString();
+  await dealStore.setStatus(deal.id, "RELEASED");
   const updated = await dealStore.update(deal.id, {
-    status: "RELEASED",
-    releasedAt: new Date().toISOString(),
     stripeTransferId: deal.stripeTransferId ?? stubTransferId,
   });
 

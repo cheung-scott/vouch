@@ -36,10 +36,10 @@ export const PartySchema = z.object({
 export type Party = z.infer<typeof PartySchema>;
 
 export const DealTermsSchema = z.object({
-  item: z.string().min(1),
+  item: z.string().default(""),
   quantity: z.number().int().positive().default(1),
   condition: z.string().optional(),
-  amountMinor: z.number().int().positive(),
+  amountMinor: z.number().int().nonnegative(),
   currency: CurrencySchema,
   deadline: z.string().datetime().optional(),
   deliveryMethod: z.string().optional(),

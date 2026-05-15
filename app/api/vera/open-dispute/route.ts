@@ -24,6 +24,12 @@ export async function POST(req: NextRequest) {
   if (!deal) {
     return NextResponse.json({ error: "deal_not_found" }, { status: 404 });
   }
+  if (!["AGREED", "IN_ESCROW"].includes(deal.status)) {
+    return NextResponse.json(
+      { error: "invalid_state", current_status: deal.status },
+      { status: 409 },
+    );
+  }
 
   await dealStore.setStatus(deal.id, "DISPUTED");
 
