@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { stripe } from "@/lib/stripe";
+import { Eyebrow } from "@/components/ui";
 
 type AccountStatus = {
   id: string;
@@ -53,9 +54,7 @@ export default async function OnboardReturnPage({
   return (
     <main className="flex min-h-screen flex-col items-center justify-center bg-[#f6f5f2] px-6 py-16 text-[#2a2924]">
       <div className="w-full max-w-md">
-        <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-[#5a5548]">
-          Vouch · Onboarding complete
-        </p>
+        <Eyebrow>Vouch · Onboarding complete</Eyebrow>
         <h1 className="mt-4 font-display text-4xl font-semibold leading-tight tracking-tight">
           You&rsquo;re <span className="italic text-[#5266eb]">back</span>.
         </h1>

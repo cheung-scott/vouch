@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Card, Eyebrow } from "@/components/ui";
 
 type QuestionId = "item" | "counterparty" | "amount" | "delivery" | "extras";
 
@@ -172,9 +173,9 @@ export default function NewDealPage() {
     <main className="min-h-screen bg-[#f6f5f2] px-6 py-12 text-[#2a2924]">
       <div className="mx-auto flex w-full max-w-2xl flex-col gap-10">
         <header className="flex items-center justify-between">
-          <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-[#5a5548]">
+          <Eyebrow>
             Vouch · New deal {reference ? `· ${reference}` : ""}
-          </p>
+          </Eyebrow>
           <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-[#8a8478]">
             {stage === "questions"
               ? `Question ${step + 1} of ${QUESTIONS.length}`
@@ -187,10 +188,8 @@ export default function NewDealPage() {
         </header>
 
         {stage === "preflight" && (
-          <section className="rounded-2xl border border-[rgba(50,30,5,0.10)] bg-white p-8 shadow-[0_4px_16px_rgba(40,20,5,0.04)]">
-            <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-[#5266eb]">
-              Before Vera joins
-            </p>
+          <Card padding="loose" shadow>
+            <Eyebrow tone="indigo">Before Vera joins</Eyebrow>
             <h1 className="mt-3 font-display text-3xl font-semibold leading-tight">
               What&rsquo;s your <span className="italic text-[#5266eb]">first name?</span>
             </h1>
@@ -224,7 +223,7 @@ export default function NewDealPage() {
                 <p className="font-mono text-xs text-[#b54a3a]">{error}</p>
               )}
             </div>
-          </section>
+          </Card>
         )}
 
         {stage === "questions" && (
@@ -245,10 +244,8 @@ export default function NewDealPage() {
               ))}
             </ol>
 
-            <section className="rounded-2xl border border-[rgba(50,30,5,0.10)] bg-white p-8 shadow-[0_4px_16px_rgba(40,20,5,0.04)]">
-              <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-[#5266eb]">
-                Vera · question {step + 1}
-              </p>
+            <Card padding="loose" shadow>
+              <Eyebrow tone="indigo">Vera · question {step + 1}</Eyebrow>
               <h2 className="mt-3 font-display text-2xl font-semibold leading-tight">
                 {current.veraLine}
               </h2>
@@ -288,17 +285,15 @@ export default function NewDealPage() {
                   <p className="font-mono text-xs text-[#b54a3a]">{error}</p>
                 )}
               </div>
-            </section>
+            </Card>
 
             <CapturedSummary answers={answers} questions={QUESTIONS} />
           </>
         )}
 
         {stage === "recitation" && contractText && (
-          <section className="rounded-2xl border border-[#5266eb]/40 bg-white p-8 shadow-[0_4px_16px_rgba(40,20,5,0.04)]">
-            <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-[#5266eb]">
-              Vera reads back · contract voice
-            </p>
+          <Card tone="indigo" padding="loose" shadow>
+            <Eyebrow tone="indigo">Vera reads back · contract voice</Eyebrow>
             <p className="mt-5 font-display text-xl font-medium leading-relaxed text-[#2a2924]">
               &ldquo;{contractText}&rdquo;
             </p>
@@ -323,14 +318,12 @@ export default function NewDealPage() {
             {error && (
               <p className="mt-3 font-mono text-xs text-[#b54a3a]">{error}</p>
             )}
-          </section>
+          </Card>
         )}
 
         {stage === "committed" && reference && (
-          <section className="rounded-2xl border border-[#2f7d57]/40 bg-white p-8 shadow-[0_4px_16px_rgba(40,20,5,0.04)]">
-            <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-[#2f7d57]">
-              Locked in · AWAITING_SELLER
-            </p>
+          <Card tone="success" padding="loose" shadow>
+            <Eyebrow tone="success">Locked in · AWAITING_SELLER</Eyebrow>
             <h2 className="mt-3 font-display text-2xl font-semibold leading-tight">
               Now <span className="italic text-[#5266eb]">share this link</span> with the other party.
             </h2>
@@ -350,7 +343,7 @@ export default function NewDealPage() {
                 Day 2 demo · email/SMS notification stub wires in once messaging provider is picked
               </p>
             </div>
-          </section>
+          </Card>
         )}
       </div>
     </main>
@@ -366,9 +359,7 @@ function CapturedSummary({
 }) {
   return (
     <section>
-      <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-[#5a5548]">
-        Captured so far
-      </p>
+      <Eyebrow>Captured so far</Eyebrow>
       <dl className="mt-3 divide-y divide-[rgba(50,30,5,0.10)] rounded-xl border border-[rgba(50,30,5,0.10)] bg-white">
         {questions.map((q) => (
           <div

@@ -1,6 +1,7 @@
 "use client";
 
 import { use, useEffect, useState } from "react";
+import { Card, Eyebrow, MoneyAmount } from "@/components/ui";
 
 type DealView = {
   id: string;
@@ -21,13 +22,6 @@ type Stage =
   | "in_escrow"
   | "released"
   | "error";
-
-function formatMoney(minor: number, currency: string): string {
-  return new Intl.NumberFormat("en-GB", {
-    style: "currency",
-    currency,
-  }).format(minor / 100);
-}
 
 export default function SignoffPage({
   params,
@@ -158,9 +152,7 @@ export default function SignoffPage({
     <main className="min-h-screen bg-[#f6f5f2] px-6 py-12 text-[#2a2924]">
       <div className="mx-auto flex w-full max-w-2xl flex-col gap-8">
         <header className="flex items-center justify-between">
-          <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-[#5a5548]">
-            Vouch · Joint sign-off · {ref}
-          </p>
+          <Eyebrow>Vouch · Joint sign-off · {ref}</Eyebrow>
           <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-[#8a8478]">
             {deal?.status ?? stage}
           </p>
@@ -177,15 +169,17 @@ export default function SignoffPage({
         )}
 
         {deal && (stage === "ready" || stage === "recitation") && (
-          <section className="rounded-2xl border border-[rgba(50,30,5,0.10)] bg-white p-8 shadow-[0_4px_16px_rgba(40,20,5,0.04)]">
-            <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-[#5266eb]">
-              Vera · final agreement
-            </p>
+          <Card padding="loose" shadow>
+            <Eyebrow tone="indigo">Vera · final agreement</Eyebrow>
             <h1 className="mt-3 font-display text-3xl font-semibold leading-tight">
               {deal.buyer.firstName} and {deal.seller.firstName}, here it is.
             </h1>
             <p className="mt-2 font-mono text-sm text-[#5a5548]">
-              {formatMoney(deal.terms.amountMinor, deal.terms.currency)} for {deal.terms.item}
+              <MoneyAmount
+                amountMinor={deal.terms.amountMinor}
+                currency={deal.terms.currency}
+              />{" "}
+              for {deal.terms.item}
             </p>
 
             {stage === "ready" && (
@@ -250,9 +244,18 @@ export default function SignoffPage({
                     disabled={busy || !buyerAgreed || !sellerAgreed}
                     className="rounded-md bg-[#635bff] px-5 py-3 text-sm font-medium text-white transition-colors hover:bg-[#5048e5] disabled:opacity-40"
                   >
-                    {busy
-                      ? "Locking escrow…"
-                      : "Lock " + formatMoney(deal.terms.amountMinor, deal.terms.currency) + " in escrow →"}
+                    {busy ? (
+                      "Locking escrow…"
+                    ) : (
+                      <>
+                        Lock{" "}
+                        <MoneyAmount
+                          amountMinor={deal.terms.amountMinor}
+                          currency={deal.terms.currency}
+                        />{" "}
+                        in escrow →
+                      </>
+                    )}
                   </button>
                 </div>
               </>
@@ -260,16 +263,17 @@ export default function SignoffPage({
             {error && (
               <p className="mt-3 font-mono text-xs text-[#b54a3a]">{error}</p>
             )}
-          </section>
+          </Card>
         )}
 
         {stage === "in_escrow" && deal && (
-          <section className="rounded-2xl border border-[#7a6ce8]/40 bg-white p-8">
-            <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-[#7a6ce8]">
-              IN_ESCROW · money is held
-            </p>
+          <Card tone="locked" padding="loose">
+            <Eyebrow tone="locked">IN_ESCROW · money is held</Eyebrow>
             <h1 className="mt-3 font-display text-3xl font-semibold leading-tight">
-              {formatMoney(deal.terms.amountMinor, deal.terms.currency)}{" "}
+              <MoneyAmount
+                amountMinor={deal.terms.amountMinor}
+                currency={deal.terms.currency}
+              />{" "}
               <span className="italic text-[#7a6ce8]">is locked</span>.
             </h1>
             <p className="mt-3 text-sm text-[#5a5548]">
@@ -289,22 +293,24 @@ export default function SignoffPage({
             {error && (
               <p className="mt-3 font-mono text-xs text-[#b54a3a]">{error}</p>
             )}
-          </section>
+          </Card>
         )}
 
         {stage === "released" && deal && (
-          <section className="rounded-2xl border border-[#2f7d57]/40 bg-white p-8">
-            <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-[#2f7d57]">
+          <Card tone="success" padding="loose">
+            <Eyebrow tone="success">
               RELEASED · {deal.seller.firstName} paid
-            </p>
+            </Eyebrow>
             <h1 className="mt-3 font-display text-3xl font-semibold leading-tight">
-              {formatMoney(deal.terms.amountMinor, deal.terms.currency)}{" "}
-              <span className="italic text-[#2f7d57]">released</span> to {deal.seller.firstName}.
+              <MoneyAmount
+                amountMinor={deal.terms.amountMinor}
+                currency={deal.terms.currency}
+              />{" "}
+              <span className="italic text-[#2f7d57]">released</span> to{" "}
+              {deal.seller.firstName}.
             </h1>
-            <p className="mt-3 text-sm text-[#5a5548]">
-              Thanks for using Vouch.
-            </p>
-          </section>
+            <p className="mt-3 text-sm text-[#5a5548]">Thanks for using Vouch.</p>
+          </Card>
         )}
       </div>
     </main>

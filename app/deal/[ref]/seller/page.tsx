@@ -1,6 +1,7 @@
 "use client";
 
 import { use, useEffect, useState } from "react";
+import { Card, Eyebrow } from "@/components/ui";
 
 type Stage =
   | "loading"
@@ -159,9 +160,7 @@ export default function SellerPage({
     <main className="min-h-screen bg-[#f6f5f2] px-6 py-12 text-[#2a2924]">
       <div className="mx-auto flex w-full max-w-2xl flex-col gap-8">
         <header className="flex items-center justify-between">
-          <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-[#5a5548]">
-            Vouch · Seller invitation · {ref}
-          </p>
+          <Eyebrow>Vouch · Seller invitation · {ref}</Eyebrow>
           <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-[#8a8478]">
             {deal?.status ?? stage}
           </p>
@@ -178,10 +177,8 @@ export default function SellerPage({
         )}
 
         {stage === "preflight" && deal && (
-          <section className="rounded-2xl border border-[rgba(50,30,5,0.10)] bg-white p-8 shadow-[0_4px_16px_rgba(40,20,5,0.04)]">
-            <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-[#5266eb]">
-              Vera · seller intake
-            </p>
+          <Card padding="loose" shadow>
+            <Eyebrow tone="indigo">Vera · seller intake</Eyebrow>
             <h1 className="mt-3 font-display text-3xl font-semibold leading-tight">
               Hi — {deal.buyer.firstName} set up a deal{" "}
               <span className="italic text-[#5266eb]">they&rsquo;d like to do with you</span>.
@@ -209,14 +206,14 @@ export default function SellerPage({
                 <p className="font-mono text-xs text-[#b54a3a]">{error}</p>
               )}
             </div>
-          </section>
+          </Card>
         )}
 
         {stage === "recitation" && recitation && deal && (
-          <section className="rounded-2xl border border-[#5266eb]/40 bg-white p-8 shadow-[0_4px_16px_rgba(40,20,5,0.04)]">
-            <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-[#5266eb]">
+          <Card tone="indigo" padding="loose" shadow>
+            <Eyebrow tone="indigo">
               Vera reads {deal.buyer.firstName}&rsquo;s terms
-            </p>
+            </Eyebrow>
             <p className="mt-5 font-display text-xl font-medium leading-relaxed">
               &ldquo;{recitation}&rdquo;
             </p>
@@ -249,14 +246,12 @@ export default function SellerPage({
             {error && (
               <p className="mt-3 font-mono text-xs text-[#b54a3a]">{error}</p>
             )}
-          </section>
+          </Card>
         )}
 
         {stage === "countering" && (
-          <section className="rounded-2xl border border-[rgba(50,30,5,0.10)] bg-white p-8 shadow-[0_4px_16px_rgba(40,20,5,0.04)]">
-            <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-[#5266eb]">
-              Vera · what would you change?
-            </p>
+          <Card padding="loose" shadow>
+            <Eyebrow tone="indigo">Vera · what would you change?</Eyebrow>
             <h2 className="mt-3 font-display text-2xl font-semibold leading-tight">
               What&rsquo;s different?
             </h2>
@@ -288,14 +283,12 @@ export default function SellerPage({
             {error && (
               <p className="mt-3 font-mono text-xs text-[#b54a3a]">{error}</p>
             )}
-          </section>
+          </Card>
         )}
 
         {stage === "committed" && deal && (
-          <section className="rounded-2xl border border-[#2f7d57]/40 bg-white p-8">
-            <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-[#2f7d57]">
-              AGREED · joint sign-off pending
-            </p>
+          <Card tone="success" padding="loose">
+            <Eyebrow tone="success">AGREED · joint sign-off pending</Eyebrow>
             <h2 className="mt-3 font-display text-2xl font-semibold leading-tight">
               Locked in. Both of you do the joint sign-off together.
             </h2>
@@ -305,29 +298,25 @@ export default function SellerPage({
             >
               Go to joint sign-off →
             </a>
-          </section>
+          </Card>
         )}
 
         {stage === "countered" && (
-          <section className="rounded-2xl border border-[#c98a42]/40 bg-white p-8">
-            <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-[#c98a42]">
-              Counter sent
-            </p>
+          <Card tone="warning" padding="loose">
+            <Eyebrow tone="warning">Counter sent</Eyebrow>
             <p className="mt-3 text-base text-[#2a2924]">
               I&rsquo;ll send the updated terms back to {deal?.buyer.firstName}. They&rsquo;ll confirm or come back to you.
             </p>
-          </section>
+          </Card>
         )}
 
         {stage === "declined" && (
-          <section className="rounded-2xl border border-[#b54a3a]/40 bg-white p-8">
-            <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-[#b54a3a]">
-              Declined
-            </p>
+          <Card tone="danger" padding="loose">
+            <Eyebrow tone="danger">Declined</Eyebrow>
             <p className="mt-3 text-base text-[#2a2924]">
               No money has been locked. You can both pick this back up when you&rsquo;re ready.
             </p>
-          </section>
+          </Card>
         )}
       </div>
     </main>

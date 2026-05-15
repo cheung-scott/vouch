@@ -2,6 +2,7 @@
 
 import { use, useEffect, useState } from "react";
 import Link from "next/link";
+import { Card, Eyebrow, MoneyAmount } from "@/components/ui";
 
 type DealDetail = {
   id: string;
@@ -22,14 +23,6 @@ type DealDetail = {
   lockedAt?: string;
   releasedAt?: string;
 };
-
-function fmtMoney(minor: number, currency: string): string {
-  if (!minor) return "—";
-  return new Intl.NumberFormat("en-GB", {
-    style: "currency",
-    currency: currency || "GBP",
-  }).format(minor / 100);
-}
 
 function fmtTimestamp(iso?: string): string {
   if (!iso) return "—";
@@ -71,8 +64,13 @@ export default function DealDetailPage({
     return (
       <main className="flex min-h-screen items-center justify-center bg-[#f6f5f2] px-6 text-[#2a2924]">
         <div className="text-center">
-          <p className="font-mono text-sm text-[#b54a3a]">Couldn&rsquo;t load deal {ref}: {error}</p>
-          <Link href="/deals" className="mt-4 inline-block text-sm text-[#5266eb] underline">
+          <p className="font-mono text-sm text-[#b54a3a]">
+            Couldn&rsquo;t load deal {ref}: {error}
+          </p>
+          <Link
+            href="/deals"
+            className="mt-4 inline-block text-sm text-[#5266eb] underline"
+          >
             ← All deals
           </Link>
         </div>
@@ -90,11 +88,7 @@ export default function DealDetailPage({
 
   const status = deal.status;
   const events: { label: string; at?: string; tone: "muted" | "active" }[] = [
-    {
-      label: "Deal drafted",
-      at: deal.createdAt,
-      tone: "active",
-    },
+    { label: "Deal drafted", at: deal.createdAt, tone: "active" },
     {
       label: `${deal.buyer.firstName} committed`,
       at: deal.buyer.committedAt,
@@ -133,7 +127,10 @@ export default function DealDetailPage({
             </h1>
             <p className="mt-1 text-sm text-[#5a5548]">
               {deal.buyer.firstName} → {deal.seller.firstName} ·{" "}
-              {fmtMoney(deal.terms.amountMinor, deal.terms.currency)}
+              <MoneyAmount
+                amountMinor={deal.terms.amountMinor}
+                currency={deal.terms.currency}
+              />
             </p>
           </div>
           <span className="font-mono text-[11px] uppercase tracking-[0.14em] text-[#8a8478]">
@@ -143,25 +140,37 @@ export default function DealDetailPage({
 
         <ActionPanel deal={deal} />
 
-        <section className="rounded-2xl border border-[rgba(50,30,5,0.10)] bg-white p-7">
-          <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-[#5a5548]">
-            Terms
-          </p>
+        <Card>
+          <Eyebrow>Terms</Eyebrow>
           <dl className="mt-4 grid grid-cols-1 gap-y-3 text-sm sm:grid-cols-[140px_1fr]">
-            <dt className="font-mono text-[11px] uppercase tracking-[0.12em] text-[#5a5548]">Item</dt>
+            <dt className="font-mono text-[11px] uppercase tracking-[0.12em] text-[#5a5548]">
+              Item
+            </dt>
             <dd>{deal.terms.item || <span className="text-[#8a8478]">—</span>}</dd>
 
-            <dt className="font-mono text-[11px] uppercase tracking-[0.12em] text-[#5a5548]">Quantity</dt>
+            <dt className="font-mono text-[11px] uppercase tracking-[0.12em] text-[#5a5548]">
+              Quantity
+            </dt>
             <dd>{deal.terms.quantity}</dd>
 
-            <dt className="font-mono text-[11px] uppercase tracking-[0.12em] text-[#5a5548]">Amount</dt>
-            <dd style={{ fontVariantNumeric: "tabular-nums" }} className="font-medium">
-              {fmtMoney(deal.terms.amountMinor, deal.terms.currency)}
+            <dt className="font-mono text-[11px] uppercase tracking-[0.12em] text-[#5a5548]">
+              Amount
+            </dt>
+            <dd>
+              <MoneyAmount
+                amountMinor={deal.terms.amountMinor}
+                currency={deal.terms.currency}
+                bold
+              />
             </dd>
 
-            <dt className="font-mono text-[11px] uppercase tracking-[0.12em] text-[#5a5548]">Delivery</dt>
+            <dt className="font-mono text-[11px] uppercase tracking-[0.12em] text-[#5a5548]">
+              Delivery
+            </dt>
             <dd>
-              {deal.terms.deliveryMethod || <span className="text-[#8a8478]">—</span>}
+              {deal.terms.deliveryMethod || (
+                <span className="text-[#8a8478]">—</span>
+              )}
             </dd>
 
             {deal.terms.notes && (
@@ -173,18 +182,18 @@ export default function DealDetailPage({
               </>
             )}
           </dl>
-        </section>
+        </Card>
 
-        <section className="rounded-2xl border border-[rgba(50,30,5,0.10)] bg-white p-7">
-          <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-[#5a5548]">
-            Timeline
-          </p>
+        <Card>
+          <Eyebrow>Timeline</Eyebrow>
           <ol className="mt-5 flex flex-col gap-4">
             {events.map((event, i) => (
               <li key={i} className="flex items-start gap-3 text-sm">
                 <span
                   className={`mt-1 inline-block h-2 w-2 rounded-full ${
-                    event.tone === "active" ? "bg-[#5266eb]" : "bg-[rgba(50,30,5,0.18)]"
+                    event.tone === "active"
+                      ? "bg-[#5266eb]"
+                      : "bg-[rgba(50,30,5,0.18)]"
                   }`}
                 />
                 <span
@@ -200,8 +209,7 @@ export default function DealDetailPage({
               </li>
             ))}
           </ol>
-        </section>
-
+        </Card>
       </div>
     </main>
   );
@@ -209,8 +217,7 @@ export default function DealDetailPage({
 
 function ActionPanel({ deal }: { deal: DealDetail }) {
   const { status, reference } = deal;
-  const counterReceived =
-    status === "DRAFT" && !!deal.buyer.committedAt;
+  const counterReceived = status === "DRAFT" && !!deal.buyer.committedAt;
 
   if (counterReceived) {
     return <CounterReconfirmPanel deal={deal} />;
@@ -218,10 +225,8 @@ function ActionPanel({ deal }: { deal: DealDetail }) {
 
   if (status === "DRAFT") {
     return (
-      <section className="rounded-2xl border border-[#c98a42]/40 bg-white p-7">
-        <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-[#c98a42]">
-          Deal in draft
-        </p>
+      <Card tone="warning">
+        <Eyebrow tone="warning">Deal in draft</Eyebrow>
         <h2 className="mt-2 font-display text-2xl font-semibold">
           Continue capturing terms with Vera.
         </h2>
@@ -231,16 +236,14 @@ function ActionPanel({ deal }: { deal: DealDetail }) {
         >
           Continue draft →
         </Link>
-      </section>
+      </Card>
     );
   }
 
   if (status === "AWAITING_SELLER") {
     return (
-      <section className="rounded-2xl border border-[#c98a42]/40 bg-white p-7">
-        <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-[#c98a42]">
-          Awaiting the other party
-        </p>
+      <Card tone="warning">
+        <Eyebrow tone="warning">Awaiting the other party</Eyebrow>
         <h2 className="mt-2 font-display text-2xl font-semibold">
           Share the seller invitation link.
         </h2>
@@ -252,16 +255,14 @@ function ActionPanel({ deal }: { deal: DealDetail }) {
             ? `${window.location.origin}/deal/${reference}/seller`
             : `/deal/${reference}/seller`}
         </a>
-      </section>
+      </Card>
     );
   }
 
   if (status === "AGREED") {
     return (
-      <section className="rounded-2xl border border-[#c98a42]/40 bg-white p-7">
-        <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-[#c98a42]">
-          Ready for joint sign-off
-        </p>
+      <Card tone="warning">
+        <Eyebrow tone="warning">Ready for joint sign-off</Eyebrow>
         <h2 className="mt-2 font-display text-2xl font-semibold">
           Both parties: do the final sign-off together.
         </h2>
@@ -271,16 +272,14 @@ function ActionPanel({ deal }: { deal: DealDetail }) {
         >
           Go to joint sign-off →
         </Link>
-      </section>
+      </Card>
     );
   }
 
   if (status === "IN_ESCROW") {
     return (
-      <section className="rounded-2xl border border-[#7a6ce8]/40 bg-white p-7">
-        <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-[#7a6ce8]">
-          Money is in escrow
-        </p>
+      <Card tone="locked">
+        <Eyebrow tone="locked">Money is in escrow</Eyebrow>
         <h2 className="mt-2 font-display text-2xl font-semibold">
           Confirm receipt to release — or open a dispute.
         </h2>
@@ -298,29 +297,27 @@ function ActionPanel({ deal }: { deal: DealDetail }) {
             Open a dispute
           </Link>
         </div>
-      </section>
+      </Card>
     );
   }
 
   if (status === "RELEASED") {
     return (
-      <section className="rounded-2xl border border-[#2f7d57]/40 bg-white p-7">
-        <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-[#2f7d57]">
-          Released
-        </p>
+      <Card tone="success">
+        <Eyebrow tone="success">Released</Eyebrow>
         <h2 className="mt-2 font-display text-2xl font-semibold">
           The seller has been paid.
         </h2>
-      </section>
+      </Card>
     );
   }
 
   if (status === "DISPUTED" || status === "REVIEWING") {
     return (
-      <section className="rounded-2xl border border-[#b54a3a]/40 bg-white p-7">
-        <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-[#b54a3a]">
+      <Card tone="danger">
+        <Eyebrow tone="danger">
           {status === "DISPUTED" ? "Dispute open" : "Under review"}
-        </p>
+        </Eyebrow>
         <h2 className="mt-2 font-display text-2xl font-semibold">
           Money stays in escrow until resolved.
         </h2>
@@ -330,7 +327,7 @@ function ActionPanel({ deal }: { deal: DealDetail }) {
         >
           View dispute →
         </Link>
-      </section>
+      </Card>
     );
   }
 
@@ -383,25 +380,21 @@ function CounterReconfirmPanel({ deal }: { deal: DealDetail }) {
 
   if (reconfirmed) {
     return (
-      <section className="rounded-2xl border border-[#2f7d57]/40 bg-white p-7">
-        <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-[#2f7d57]">
-          Re-confirmed · AWAITING_SELLER
-        </p>
+      <Card tone="success">
+        <Eyebrow tone="success">Re-confirmed · AWAITING_SELLER</Eyebrow>
         <h2 className="mt-2 font-display text-2xl font-semibold leading-tight">
           Sent back to {deal.seller.firstName} for final agreement.
         </h2>
         <p className="mt-3 text-sm text-[#5a5548]">
           Refresh this page to see the updated state.
         </p>
-      </section>
+      </Card>
     );
   }
 
   return (
-    <section className="rounded-2xl border border-[#c98a42]/40 bg-white p-7">
-      <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-[#c98a42]">
-        {deal.seller.firstName} proposed changes
-      </p>
+    <Card tone="warning">
+      <Eyebrow tone="warning">{deal.seller.firstName} proposed changes</Eyebrow>
       <h2 className="mt-2 font-display text-2xl font-semibold leading-tight">
         Review the updated terms below — re-confirm or push back.
       </h2>
@@ -443,6 +436,6 @@ function CounterReconfirmPanel({ deal }: { deal: DealDetail }) {
       {error && (
         <p className="mt-3 font-mono text-xs text-[#b54a3a]">{error}</p>
       )}
-    </section>
+    </Card>
   );
 }

@@ -2,6 +2,7 @@
 
 import { use, useEffect, useState } from "react";
 import Link from "next/link";
+import { Card, Eyebrow, MoneyAmount } from "@/components/ui";
 
 type DealView = {
   id: string;
@@ -114,9 +115,7 @@ export default function DisputePage({
     <main className="min-h-screen bg-[#f6f5f2] px-6 py-12 text-[#2a2924]">
       <div className="mx-auto flex w-full max-w-2xl flex-col gap-8">
         <header className="flex items-center justify-between">
-          <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-[#5a5548]">
-            Vouch · Dispute · {ref}
-          </p>
+          <Eyebrow>Vouch · Dispute · {ref}</Eyebrow>
           <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-[#8a8478]">
             {deal?.status ?? stage}
           </p>
@@ -130,10 +129,8 @@ export default function DisputePage({
         )}
 
         {stage === "intro" && deal && (
-          <section className="rounded-2xl border border-[#b54a3a]/40 bg-white p-8 shadow-[0_4px_16px_rgba(40,20,5,0.04)]">
-            <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-[#b54a3a]">
-              Vera · dispute intake
-            </p>
+          <Card tone="danger" padding="loose" shadow>
+            <Eyebrow tone="danger">Vera · dispute intake</Eyebrow>
             <h1 className="mt-3 font-display text-3xl font-semibold leading-tight">
               I understand there&rsquo;s a problem.
             </h1>
@@ -158,24 +155,20 @@ export default function DisputePage({
             {error && (
               <p className="mt-3 font-mono text-xs text-[#b54a3a]">{error}</p>
             )}
-          </section>
+          </Card>
         )}
 
         {stage === "replay" && replay && deal && (
           <>
-            <section className="rounded-2xl border border-[#5266eb]/40 bg-white p-8">
-              <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-[#5266eb]">
-                Vera replays the original agreement
-              </p>
+            <Card tone="indigo" padding="loose">
+              <Eyebrow tone="indigo">Vera replays the original agreement</Eyebrow>
               <p className="mt-5 font-display text-lg font-medium leading-relaxed">
                 &ldquo;{replay}&rdquo;
               </p>
-            </section>
+            </Card>
 
-            <section className="rounded-2xl border border-[rgba(50,30,5,0.10)] bg-white p-8">
-              <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-[#5a5548]">
-                Compared to that, what specifically is different?
-              </p>
+            <Card padding="loose">
+              <Eyebrow>Compared to that, what specifically is different?</Eyebrow>
               <textarea
                 value={evidenceSummary}
                 onChange={(e) => setEvidenceSummary(e.target.value)}
@@ -197,20 +190,25 @@ export default function DisputePage({
               {error && (
                 <p className="mt-3 font-mono text-xs text-[#b54a3a]">{error}</p>
               )}
-            </section>
+            </Card>
           </>
         )}
 
         {stage === "submitted" && deal && (
-          <section className="rounded-2xl border border-[#c98a42]/40 bg-white p-8">
-            <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-[#c98a42]">
+          <Card tone="warning" padding="loose">
+            <Eyebrow tone="warning">
               Got it · dispute {disputeId} recorded
-            </p>
+            </Eyebrow>
             <h2 className="mt-3 font-display text-2xl font-semibold leading-tight">
               I&rsquo;ll reach out to the other party. Most disputes resolve in under an hour.
             </h2>
             <p className="mt-3 text-sm text-[#5a5548]">
-              The {new Intl.NumberFormat("en-GB", { style: "currency", currency: deal.terms.currency }).format(deal.terms.amountMinor / 100)} stays in escrow.
+              The{" "}
+              <MoneyAmount
+                amountMinor={deal.terms.amountMinor}
+                currency={deal.terms.currency}
+              />{" "}
+              stays in escrow.
             </p>
             <Link
               href={`/deal/${deal.reference}`}
@@ -218,7 +216,7 @@ export default function DisputePage({
             >
               Back to deal →
             </Link>
-          </section>
+          </Card>
         )}
       </div>
     </main>
