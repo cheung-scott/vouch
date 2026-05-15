@@ -1,0 +1,1328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vouch — Hybrid (Marketing) · elevated</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ─────────────────────────────────────────────────────────
+   VOUCH design tokens — Hybrid (Stripe × A24 + Mercury × Linear)
+   Elevated with HN++ craft patterns.
+   ───────────────────────────────────────────────────────── */
+:root {
+  /* Shared across both modes */
+  --stripe-purple:        #635bff;
+  --stripe-purple-hover:  #5048e5;
+  --stripe-purple-soft:   rgba(99,91,255,0.12);
+  --indigo:               #5266eb;
+  --indigo-hover:         #4255d4;
+  --indigo-soft:          rgba(82,102,235,0.10);
+  --a24-red:              #d9351c;
+
+  /* Stripe × A24 (black) */
+  --black:                #000000;
+  --black-alt:            #0a0a0a;
+  --black-surface:        #141414;
+  --white:                #ffffff;
+  --white-dim:            rgba(255,255,255,0.72);
+  --white-mute:           rgba(255,255,255,0.48);
+  --white-trace:          rgba(255,255,255,0.18);
+  --border-dark:          rgba(255,255,255,0.10);
+  --border-dark-med:      rgba(255,255,255,0.18);
+  --glass-edge-dark:      rgba(255,255,255,0.06);
+
+  /* Mercury × Linear (cream) */
+  --cream:                #f6f5f2;
+  --cream-alt:            #ebe8e0;
+  --cream-card-glass:     rgba(255,253,248,0.55);
+  --cream-card-glass-hi:  rgba(255,253,248,0.85);
+  --ink:                  #2a2924;
+  --ink-muted:            #5a5548;
+  --ink-dim:              #8a8478;
+  --border-warm:          rgba(50,30,5,0.10);
+  --border-warm-med:      rgba(50,30,5,0.18);
+  --border-warm-strong:   rgba(50,30,5,0.28);
+  --glass-edge:           rgba(255,255,255,0.55);
+  --glass-inner:          rgba(255,255,255,0.30);
+
+  /* Effects */
+  --blur:                 blur(22px) saturate(170%);
+  --shadow-sm:            0 1px 2px rgba(40,20,5,0.06), 0 4px 12px rgba(40,20,5,0.04);
+  --shadow-md:            0 4px 16px rgba(40,20,5,0.08), 0 12px 40px rgba(40,20,5,0.06);
+  --shadow-lg:            0 8px 32px rgba(40,20,5,0.10), 0 24px 80px rgba(40,20,5,0.10);
+  --shadow-glow:          0 0 32px rgba(99,91,255,0.5);
+
+  /* Type */
+  --display: 'Fraunces', Georgia, serif;
+  --body:    'Inter', system-ui, sans-serif;
+  --mono:    'JetBrains Mono', 'SF Mono', monospace;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { min-height: 100%; background: var(--black); overflow-x: hidden; }
+body {
+  font-family: var(--body);
+  color: var(--white);
+  font-size: 16px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  position: relative;
+}
+.tabular { font-variant-numeric: tabular-nums; }
+.mono { font-family: var(--mono); }
+.container { max-width: 1180px; margin: 0 auto; padding: 0 32px; }
+
+/* ═══════════ HERO — Stripe × A24, 6-layer composition ═══════════ */
+.hero {
+  position: relative;
+  background: var(--black);
+  color: var(--white);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+/* Layer 1: ambient photo-tone substrate */
+.hero-bg-photo {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 800px 600px at 25% 35%, rgba(99,91,255,0.22) 0%, transparent 60%),
+    radial-gradient(ellipse 700px 500px at 75% 75%, rgba(217,53,28,0.10) 0%, transparent 55%);
+}
+
+/* Layer 2: warm veil */
+.hero-bg-veil {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(99,91,255,0.18) 0%, transparent 50%),
+    linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.4) 80%, var(--black) 100%);
+}
+
+/* Layer 3: subtle grid */
+.hero-bg-grid {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.045) 1px, transparent 1px);
+  background-size: 56px 56px;
+  mask-image: radial-gradient(ellipse 80% 60% at 50% 30%, black 0%, transparent 85%);
+  -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 30%, black 0%, transparent 85%);
+}
+
+/* Layer 4+5: blobs (animated) */
+.hero-bg-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(90px);
+  z-index: 1;
+  pointer-events: none;
+  animation: float 14s ease-in-out infinite alternate;
+}
+.hero-bg-blob.b1 {
+  top: -8%;
+  left: -12%;
+  width: 640px;
+  height: 640px;
+  background: var(--stripe-purple);
+  opacity: 0.45;
+}
+.hero-bg-blob.b2 {
+  bottom: -18%;
+  right: -10%;
+  width: 540px;
+  height: 540px;
+  background: var(--a24-red);
+  opacity: 0.18;
+  animation-delay: -7s;
+}
+@keyframes float {
+  0%   { transform: translate(0, 0) scale(1); }
+  100% { transform: translate(40px, 30px) scale(1.06); }
+}
+
+/* Layer 6: decorative API code text (HN++ trick) */
+.hero-bg-code {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  font-family: var(--mono);
+  font-size: 11px;
+  line-height: 1.85;
+  color: rgba(255,255,255,0.045);
+  white-space: pre;
+  overflow: hidden;
+  padding: 32px;
+  mask-image: linear-gradient(180deg, transparent 0%, black 20%, black 60%, transparent 95%);
+  -webkit-mask-image: linear-gradient(180deg, transparent 0%, black 20%, black 60%, transparent 95%);
+}
+
+/* Nav */
+.hero-nav {
+  position: relative;
+  z-index: 10;
+  padding: 24px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.logo {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: 24px;
+  letter-spacing: -0.02em;
+  color: var(--white);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.logo-mark {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--stripe-purple);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-glow);
+  position: relative;
+}
+.logo-mark::after {
+  content: '';
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--white);
+  animation: pulse 2.4s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 0.55; transform: scale(0.85); }
+  50%      { opacity: 1;    transform: scale(1.05); }
+}
+.hero-nav ul {
+  list-style: none;
+  display: flex;
+  gap: 32px;
+  font-size: 14px;
+  color: var(--white-dim);
+}
+.hero-nav ul a {
+  color: inherit;
+  text-decoration: none;
+  transition: color 0.15s;
+}
+.hero-nav ul a:hover { color: var(--white); }
+
+/* CTAs */
+.btn-stripe {
+  background: var(--stripe-purple);
+  color: var(--white);
+  padding: 14px 28px;
+  border-radius: 6px;
+  font-weight: 500;
+  font-size: 15px;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: none;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.1s, box-shadow 0.3s;
+  position: relative;
+}
+.btn-stripe:hover {
+  background: var(--stripe-purple-hover);
+  box-shadow: 0 0 24px rgba(99,91,255,0.4);
+}
+.btn-stripe:active { transform: scale(0.98); }
+.btn-ghost-dark {
+  background: transparent;
+  color: var(--white);
+  padding: 14px 28px;
+  border-radius: 6px;
+  font-weight: 500;
+  font-size: 15px;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid var(--border-dark-med);
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+.btn-ghost-dark:hover {
+  border-color: var(--white-mute);
+  background: rgba(255,255,255,0.04);
+}
+.btn-pill-mercury {
+  background: var(--indigo);
+  color: var(--white);
+  padding: 12px 24px;
+  border-radius: 999px;
+  font-weight: 500;
+  font-size: 14px;
+  text-decoration: none;
+  display: inline-block;
+  border: none;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.btn-pill-mercury:hover { background: var(--indigo-hover); }
+.btn-pill-secondary {
+  background: var(--cream-alt);
+  color: var(--ink);
+  padding: 12px 24px;
+  border-radius: 999px;
+  font-weight: 500;
+  font-size: 14px;
+  text-decoration: none;
+  display: inline-block;
+  border: 1px solid var(--border-warm-med);
+  cursor: pointer;
+}
+.btn-pill-secondary:hover { background: var(--cream); border-color: var(--border-warm-strong); }
+
+/* Hero content */
+.hero-content {
+  position: relative;
+  z-index: 5;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 60px 0 100px 0;
+}
+.hero-pop {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--a24-red);
+  color: var(--white);
+  font-family: var(--mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  padding: 6px 14px;
+  margin-bottom: 36px;
+  width: fit-content;
+  font-weight: 500;
+}
+.hero-pop::before { content: '●'; font-size: 7px; }
+.hero-content h1 {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: clamp(56px, 9vw, 124px);
+  line-height: 0.94;
+  letter-spacing: -0.04em;
+  margin-bottom: 36px;
+  max-width: 1080px;
+  text-wrap: balance;
+}
+.hero-content h1 .em {
+  font-style: italic;
+  background: linear-gradient(135deg, #ffffff 0%, #c4b5fd 50%, var(--stripe-purple) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 500;
+}
+.hero-content .sub {
+  font-size: clamp(17px, 1.6vw, 22px);
+  color: var(--white-dim);
+  max-width: 620px;
+  margin-bottom: 48px;
+  line-height: 1.5;
+}
+.hero-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.hero-meta {
+  margin-left: 8px;
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--white-mute);
+  letter-spacing: 0.08em;
+}
+
+/* Hero waveform watermark — bottom-right */
+.hero-waveform {
+  position: absolute;
+  bottom: 80px;
+  right: 32px;
+  z-index: 2;
+  opacity: 0.42;
+  pointer-events: none;
+}
+.hero-waveform-bars {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 110px;
+}
+.hero-waveform-bars span {
+  display: block;
+  width: 5px;
+  background: linear-gradient(180deg, var(--stripe-purple) 0%, #a855f7 100%);
+  border-radius: 3px;
+  animation: wave 1.4s ease-in-out infinite;
+}
+.hero-waveform-bars span:nth-child(1)  { height: 18%; animation-delay: 0.00s; }
+.hero-waveform-bars span:nth-child(2)  { height: 52%; animation-delay: 0.08s; }
+.hero-waveform-bars span:nth-child(3)  { height: 78%; animation-delay: 0.16s; }
+.hero-waveform-bars span:nth-child(4)  { height: 100%; animation-delay: 0.24s; }
+.hero-waveform-bars span:nth-child(5)  { height: 62%; animation-delay: 0.32s; }
+.hero-waveform-bars span:nth-child(6)  { height: 88%; animation-delay: 0.40s; }
+.hero-waveform-bars span:nth-child(7)  { height: 40%; animation-delay: 0.48s; }
+.hero-waveform-bars span:nth-child(8)  { height: 22%; animation-delay: 0.56s; }
+.hero-waveform-bars span:nth-child(9)  { height: 72%; animation-delay: 0.64s; }
+.hero-waveform-bars span:nth-child(10) { height: 34%; animation-delay: 0.72s; }
+@keyframes wave {
+  0%, 100% { transform: scaleY(0.35); opacity: 0.35; }
+  50%      { transform: scaleY(1);    opacity: 1; }
+}
+
+/* Hero bottom indicator strip */
+.hero-strip {
+  position: relative;
+  z-index: 5;
+  padding: 0 0 48px 0;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  color: var(--white-mute);
+  font-family: var(--mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+}
+.hero-strip-bar {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.hero-strip-bar::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #4ade80;
+  box-shadow: 0 0 8px #4ade80;
+  animation: blink 2s ease-in-out infinite;
+}
+@keyframes blink { 0%, 100% { opacity: 0.4; } 50% { opacity: 1; } }
+
+/* ═══════════ TRANSITION BAND (black, with stats) ═══════════ */
+.stat-band {
+  background: var(--black-alt);
+  color: var(--white);
+  padding: 96px 0;
+  border-top: 1px solid var(--border-dark);
+  border-bottom: 1px solid var(--border-dark);
+  position: relative;
+}
+.stat-band::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 100% 50% at 50% 0%, rgba(99,91,255,0.06) 0%, transparent 100%);
+  pointer-events: none;
+}
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 48px;
+  position: relative;
+  z-index: 2;
+}
+.stat .label {
+  font-family: var(--mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--white-mute);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.stat .label::before {
+  content: '';
+  width: 16px;
+  height: 1px;
+  background: var(--white-trace);
+}
+.stat .num {
+  font-family: var(--display);
+  font-size: clamp(48px, 6vw, 72px);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  margin-bottom: 12px;
+  letter-spacing: -0.025em;
+}
+.stat .num .accent {
+  background: linear-gradient(135deg, var(--stripe-purple) 0%, #a855f7 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.stat .desc {
+  font-size: 15px;
+  color: var(--white-dim);
+  line-height: 1.5;
+  max-width: 280px;
+}
+
+/* ═══════════ BLEED (black → cream) ═══════════ */
+.bleed {
+  height: 96px;
+  background: linear-gradient(180deg, var(--black-alt) 0%, var(--cream) 100%);
+}
+
+/* ═══════════ MERCURY × LINEAR SECTIONS (cream) ═══════════ */
+section.cream {
+  background: var(--cream);
+  color: var(--ink);
+  position: relative;
+}
+.cream-bg-veil {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 60% 40% at 15% 20%, rgba(82,102,235,0.06) 0%, transparent 50%),
+    radial-gradient(ellipse 50% 35% at 95% 80%, rgba(217,53,28,0.04) 0%, transparent 50%);
+}
+.cream-bg-grid {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(50,30,5,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(50,30,5,0.025) 1px, transparent 1px);
+  background-size: 56px 56px;
+  mask-image: radial-gradient(ellipse 70% 50% at 50% 50%, black 0%, transparent 90%);
+  -webkit-mask-image: radial-gradient(ellipse 70% 50% at 50% 50%, black 0%, transparent 90%);
+}
+
+/* Live activity strip */
+.live-strip {
+  padding: 80px 0;
+  border-bottom: 1px solid var(--border-warm);
+  position: relative;
+}
+.live-strip-inner {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 32px;
+  position: relative;
+  z-index: 2;
+}
+.live-stat {
+  position: relative;
+}
+.live-stat .label {
+  font-family: var(--mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--ink-muted);
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 500;
+}
+.live-stat .label .live-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--indigo);
+  box-shadow: 0 0 8px var(--indigo);
+  animation: blink 2s ease-in-out infinite;
+}
+.live-stat .num {
+  font-family: var(--display);
+  font-size: 44px;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+  line-height: 1;
+  margin-bottom: 8px;
+}
+.live-stat .desc {
+  font-size: 13px;
+  color: var(--ink-muted);
+  line-height: 1.5;
+}
+
+/* Eyebrow + heading pattern */
+.eyebrow {
+  font-family: var(--mono);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--ink-muted);
+  margin-bottom: 28px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-weight: 500;
+}
+.eyebrow::before {
+  content: '';
+  width: 24px;
+  height: 1px;
+  background: var(--ink-dim);
+}
+
+/* Cream section base */
+.calm-section {
+  padding: 128px 0;
+  position: relative;
+  z-index: 2;
+}
+.calm-section h2 {
+  font-family: var(--display);
+  font-size: clamp(40px, 5.5vw, 68px);
+  font-weight: 500;
+  letter-spacing: -0.025em;
+  margin-bottom: 28px;
+  max-width: 800px;
+  line-height: 1.04;
+  text-wrap: balance;
+  color: var(--ink);
+}
+.calm-section h2 em {
+  font-style: italic;
+  background: linear-gradient(135deg, var(--indigo) 0%, var(--stripe-purple) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 500;
+}
+.calm-section .lead {
+  font-size: 18px;
+  color: var(--ink-muted);
+  max-width: 640px;
+  margin-bottom: 72px;
+  line-height: 1.55;
+}
+
+/* Flow steps — glassmorphic cards */
+.flow-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+.flow-card {
+  background: var(--cream-card-glass);
+  backdrop-filter: var(--blur);
+  -webkit-backdrop-filter: var(--blur);
+  border: 1px solid var(--glass-edge);
+  border-radius: 16px;
+  padding: 36px;
+  box-shadow: var(--shadow-md);
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease;
+}
+.flow-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--border-warm-med);
+}
+.flow-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.7), transparent);
+}
+.flow-card .step {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--stripe-purple);
+  margin-bottom: 28px;
+  letter-spacing: 0.16em;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 500;
+}
+.flow-card .step::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border-warm);
+}
+.flow-card h3 {
+  font-family: var(--display);
+  font-size: 26px;
+  font-weight: 500;
+  letter-spacing: -0.015em;
+  margin-bottom: 14px;
+  line-height: 1.15;
+  color: var(--ink);
+}
+.flow-card p {
+  font-size: 15px;
+  color: var(--ink-muted);
+  line-height: 1.6;
+  margin-bottom: 24px;
+}
+.flow-card .mini-wave {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  height: 22px;
+  opacity: 0.55;
+}
+.flow-card .mini-wave span {
+  display: block;
+  width: 3px;
+  background: var(--indigo);
+  border-radius: 2px;
+  animation: wave 1.4s ease-in-out infinite;
+}
+.flow-card .mini-wave span:nth-child(1) { height: 30%; animation-delay: 0s; }
+.flow-card .mini-wave span:nth-child(2) { height: 70%; animation-delay: 0.1s; }
+.flow-card .mini-wave span:nth-child(3) { height: 100%; animation-delay: 0.2s; }
+.flow-card .mini-wave span:nth-child(4) { height: 50%; animation-delay: 0.3s; }
+.flow-card .mini-wave span:nth-child(5) { height: 80%; animation-delay: 0.4s; }
+.flow-card .mini-wave span:nth-child(6) { height: 35%; animation-delay: 0.5s; }
+
+/* Feature rows — editorial */
+.feature-row {
+  padding: 64px 0;
+  border-top: 1px solid var(--border-warm);
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: 64px;
+  align-items: start;
+}
+.feature-row .col-label {
+  font-family: var(--mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--ink-dim);
+  font-weight: 500;
+}
+.feature-row h3 {
+  font-family: var(--display);
+  font-size: 32px;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  margin-bottom: 14px;
+  line-height: 1.15;
+  color: var(--ink);
+}
+.feature-row p {
+  font-size: 16px;
+  color: var(--ink-muted);
+  line-height: 1.6;
+  max-width: 620px;
+}
+
+/* Pricing */
+.pricing-section {
+  background: var(--cream-alt);
+  padding: 128px 0;
+  position: relative;
+}
+.pricing-section::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 50% 30% at 50% 0%, rgba(99,91,255,0.06) 0%, transparent 50%);
+  pointer-events: none;
+}
+.pricing-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+  position: relative;
+  z-index: 2;
+}
+.tier {
+  background: var(--cream-card-glass-hi);
+  backdrop-filter: var(--blur);
+  -webkit-backdrop-filter: var(--blur);
+  border: 1px solid var(--glass-edge);
+  border-radius: 18px;
+  padding: 44px;
+  box-shadow: var(--shadow-md);
+  position: relative;
+  overflow: hidden;
+}
+.tier.featured {
+  border: 1px solid var(--indigo);
+  box-shadow: 0 0 0 1px var(--indigo-soft), 0 0 48px rgba(82,102,235,0.18), var(--shadow-lg);
+}
+.tier .featured-mark {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--indigo);
+  padding: 4px 10px;
+  background: var(--indigo-soft);
+  border-radius: 999px;
+  font-weight: 600;
+}
+.tier .who {
+  font-family: var(--mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--ink-muted);
+  margin-bottom: 20px;
+  font-weight: 500;
+}
+.tier .price {
+  font-family: var(--display);
+  font-size: 56px;
+  font-weight: 500;
+  letter-spacing: -0.025em;
+  font-variant-numeric: tabular-nums;
+  margin-bottom: 8px;
+  line-height: 1;
+}
+.tier .price small {
+  font-family: var(--body);
+  font-size: 15px;
+  font-weight: 400;
+  color: var(--ink-muted);
+  letter-spacing: 0;
+}
+.tier h3 {
+  font-family: var(--display);
+  font-size: 24px;
+  font-weight: 500;
+  margin: 28px 0 14px;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+.tier p {
+  color: var(--ink-muted);
+  font-size: 14px;
+  margin-bottom: 32px;
+  line-height: 1.6;
+}
+.tier ul {
+  list-style: none;
+  font-size: 14px;
+  margin-bottom: 36px;
+}
+.tier ul li {
+  padding: 12px 0;
+  border-top: 1px solid var(--border-warm);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--ink);
+}
+.tier ul li::before {
+  content: '✓';
+  display: inline-flex;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--indigo-soft);
+  color: var(--indigo);
+  font-size: 11px;
+  font-weight: 700;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* ═══════════ CLOSING (back to A24 black) ═══════════ */
+.closing {
+  background: var(--black);
+  color: var(--white);
+  padding: 160px 0;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.closing::before {
+  content: '';
+  position: absolute;
+  width: 1400px;
+  height: 1400px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(99,91,255,0.18) 0%, transparent 70%);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+.closing::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
+  background-size: 56px 56px;
+  mask-image: radial-gradient(ellipse 50% 35% at 50% 50%, transparent 0%, black 100%);
+  -webkit-mask-image: radial-gradient(ellipse 50% 35% at 50% 50%, transparent 0%, black 100%);
+  pointer-events: none;
+}
+.closing-content {
+  position: relative;
+  z-index: 2;
+}
+.closing h2 {
+  font-family: var(--display);
+  font-size: clamp(56px, 9vw, 120px);
+  font-weight: 600;
+  letter-spacing: -0.04em;
+  line-height: 0.95;
+  margin-bottom: 32px;
+  text-wrap: balance;
+}
+.closing h2 .em {
+  font-style: italic;
+  background: linear-gradient(135deg, #ffffff 0%, #c4b5fd 70%, var(--stripe-purple) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 500;
+}
+.closing p {
+  color: var(--white-dim);
+  font-size: 18px;
+  max-width: 560px;
+  margin: 0 auto 48px;
+  line-height: 1.5;
+}
+.closing-meta {
+  margin-top: 32px;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--white-mute);
+  letter-spacing: 0.14em;
+}
+
+/* Footer */
+footer {
+  background: var(--black);
+  color: var(--white-mute);
+  padding: 48px 0;
+  border-top: 1px solid var(--border-dark);
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.12em;
+}
+footer .container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+footer ul {
+  list-style: none;
+  display: flex;
+  gap: 24px;
+}
+footer ul a {
+  color: inherit;
+  text-decoration: none;
+  transition: color 0.15s;
+}
+footer ul a:hover { color: var(--white); }
+
+/* Ambient audio toggle (HN++ trick) */
+.ambient-toggle {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 100;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(255,255,255,0.18);
+  color: var(--white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.15s, background 0.15s;
+}
+.ambient-toggle:hover {
+  transform: scale(1.08);
+  background: rgba(0,0,0,0.75);
+}
+.ambient-toggle.muted { color: var(--white-mute); }
+
+/* Responsive */
+@media (max-width: 900px) {
+  .stat-grid { grid-template-columns: 1fr; gap: 32px; }
+  .live-strip-inner { grid-template-columns: repeat(2, 1fr); }
+  .flow-grid { grid-template-columns: 1fr; }
+  .pricing-grid { grid-template-columns: 1fr; }
+  .hero-nav ul { display: none; }
+  .hero-waveform { display: none; }
+  .feature-row { grid-template-columns: 1fr; gap: 16px; }
+}
+@media (max-width: 600px) {
+  .live-strip-inner { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════ HERO (Stripe × A24, 6-layer composition) ═══════════ -->
+<section class="hero">
+  <div class="hero-bg-photo" aria-hidden></div>
+  <div class="hero-bg-veil" aria-hidden></div>
+  <div class="hero-bg-grid" aria-hidden></div>
+  <div class="hero-bg-blob b1" aria-hidden></div>
+  <div class="hero-bg-blob b2" aria-hidden></div>
+  <div class="hero-bg-code" aria-hidden id="bgCode"></div>
+
+  <div class="container">
+    <nav class="hero-nav">
+      <div class="logo">
+        <span class="logo-mark"></span>
+        Vouch
+      </div>
+      <ul>
+        <li><a href="#how">How it works</a></li>
+        <li><a href="#freelancers">For freelancers</a></li>
+        <li><a href="#pricing">Pricing</a></li>
+        <li><a href="#" style="color:var(--white)">Sign in →</a></li>
+      </ul>
+    </nav>
+
+    <div class="hero-content">
+      <span class="hero-pop">£8.2bn lost to P2P scams in 2025</span>
+      <h1>You should receive<br>your money <span class="em">on time.</span></h1>
+      <p class="sub">Vouch holds the money. Vera, the AI mediator, handles the agreement. Voice-recorded contracts mean disputes resolve in minutes — not weeks.</p>
+      <div class="hero-actions">
+        <a href="#" class="btn-stripe">Start a deal →</a>
+        <a href="#" class="btn-ghost-dark">Watch the demo</a>
+        <span class="hero-meta">· 60-sec film</span>
+      </div>
+    </div>
+
+    <div class="hero-strip">
+      <span class="hero-strip-bar">Vera is live</span>
+      <span style="color:var(--white-trace)">·</span>
+      <span>Powered by Stripe + ElevenLabs</span>
+      <span style="margin-left:auto;color:var(--white-mute)">Read on the record →</span>
+    </div>
+  </div>
+
+  <div class="hero-waveform" aria-hidden>
+    <div class="hero-waveform-bars">
+      <span></span><span></span><span></span><span></span><span></span>
+      <span></span><span></span><span></span><span></span><span></span>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ STAT BAND (still black) ═══════════ -->
+<section class="stat-band">
+  <div class="container">
+    <div class="stat-grid">
+      <div class="stat">
+        <div class="label">The problem</div>
+        <div class="num"><span class="accent">£8.2bn</span></div>
+        <div class="desc">Lost to peer-to-peer payment fraud each year, globally.</div>
+      </div>
+      <div class="stat">
+        <div class="label">The freelance tax</div>
+        <div class="num tabular">20%</div>
+        <div class="desc">What Upwork takes from every milestone — before disputes.</div>
+      </div>
+      <div class="stat">
+        <div class="label">Vouch's fee</div>
+        <div class="num tabular">5%</div>
+        <div class="desc">Flat, per deal. Both parties protected. Refunded if the deal fails.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="bleed" aria-hidden></div>
+
+<!-- ═══════════ LIVE ACTIVITY STRIP (cream) ═══════════ -->
+<section class="cream live-strip">
+  <div class="cream-bg-veil" aria-hidden></div>
+  <div class="container live-strip-inner">
+    <div class="live-stat">
+      <div class="label"><span class="live-dot"></span> In escrow right now</div>
+      <div class="num tabular" id="liveEscrow">£18,420</div>
+      <div class="desc">Across 47 active deals worldwide</div>
+    </div>
+    <div class="live-stat">
+      <div class="label"><span class="live-dot"></span> Released today</div>
+      <div class="num tabular" id="liveReleased">£42,891</div>
+      <div class="desc">To 38 sellers and freelancers</div>
+    </div>
+    <div class="live-stat">
+      <div class="label"><span class="live-dot"></span> Disputes resolved</div>
+      <div class="num tabular" id="liveDisputes">12</div>
+      <div class="desc">Average resolution: 14 minutes</div>
+    </div>
+    <div class="live-stat">
+      <div class="label"><span class="live-dot"></span> Avg. voice agreement</div>
+      <div class="num tabular">73<span style="font-size:24px">s</span></div>
+      <div class="desc">From "let's talk" to money locked</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ HOW IT WORKS (cream, glassmorphic cards) ═══════════ -->
+<section class="cream calm-section" id="how">
+  <div class="cream-bg-veil" aria-hidden></div>
+  <div class="cream-bg-grid" aria-hidden></div>
+  <div class="container">
+    <div class="eyebrow">Three steps · 60 seconds</div>
+    <h2>From handshake to deposit, <em>recorded.</em></h2>
+    <p class="lead">Vouch combines what banks have done for centuries — holding money in escrow — with what voice can do now: make agreements clear, recorded, and enforceable.</p>
+
+    <div class="flow-grid">
+      <div class="flow-card">
+        <div class="step">01 · Voice</div>
+        <h3>Speak the terms.</h3>
+        <p>Both parties have a short voice call with Vera, your AI mediator. She asks the right questions, catches the ambiguities, reads the contract back. Both say "I agree" — and the agreement is on the record.</p>
+        <span class="mini-wave"><span></span><span></span><span></span><span></span><span></span><span></span></span>
+      </div>
+      <div class="flow-card">
+        <div class="step">02 · Stripe</div>
+        <h3>Money locks in.</h3>
+        <p>The moment both sides voice-agree, Stripe holds the funds. Neither party can touch it until the deal completes — or Vera mediates a dispute. Real money, real protection.</p>
+        <span class="mini-wave"><span></span><span></span><span></span><span></span><span></span><span></span></span>
+      </div>
+      <div class="flow-card">
+        <div class="step">03 · Deliver</div>
+        <h3>Confirm by voice.</h3>
+        <p>When the item arrives or the work is delivered, a 10-second voice check releases the money. If something's wrong, Vera mediates — with the original recording as evidence.</p>
+        <span class="mini-wave"><span></span><span></span><span></span><span></span><span></span><span></span></span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ FEATURE ROWS (cream, editorial) ═══════════ -->
+<section class="cream calm-section" id="freelancers" style="padding-top:0">
+  <div class="cream-bg-veil" aria-hidden></div>
+  <div class="container">
+    <div class="feature-row" style="border-top:0;padding-top:0">
+      <div class="col-label">For freelancers</div>
+      <div>
+        <h3>Paid as agreed. Every time.</h3>
+        <p>For designers, developers, copywriters — anyone who's ever delivered work and then been ghosted on the invoice. Vouch holds the client's payment before you ship. Voice-recorded scope means there's no "that's not what we agreed."</p>
+      </div>
+    </div>
+    <div class="feature-row">
+      <div class="col-label">For sellers</div>
+      <div>
+        <h3>Sell to strangers, safely.</h3>
+        <p>Selling a £400 phone, a used MacBook, designer goods, jewellery — anything where "Venmo and pray" feels risky. Vouch locks the buyer's money the moment both sides agree. Item ships, buyer voice-confirms, money releases. Both protected.</p>
+      </div>
+    </div>
+    <div class="feature-row">
+      <div class="col-label">For disputes</div>
+      <div>
+        <h3>Voice is the evidence.</h3>
+        <p>Disputes don't drag for weeks. Vera plays back the original recorded agreement, asks both parties what's different, and resolves clear cases automatically. Verified identities + recorded voices make legal action possible if needed.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ PRICING (cream alt) ═══════════ -->
+<section class="cream pricing-section" id="pricing">
+  <div class="cream-bg-veil" aria-hidden></div>
+  <div class="container">
+    <div class="eyebrow">Pricing</div>
+    <h2>5% per deal. <em>Nothing else.</em></h2>
+    <p class="lead">Stripe holds the money. Vera mediates the agreement. If the deal completes, we take 5%. If it doesn't, we refund — automatically.</p>
+
+    <div class="pricing-grid">
+      <div class="tier">
+        <div class="who">For peer-to-peer sellers</div>
+        <div class="price">5%<small> · per deal</small></div>
+        <h3>The handshake, recorded.</h3>
+        <p>For anyone selling something valuable to a stranger — phones, jewellery, used cars, designer goods, watches.</p>
+        <ul>
+          <li>Voice-recorded contract on every deal</li>
+          <li>Stripe-held escrow until delivery confirmed</li>
+          <li>Vera mediates disputes 24/7</li>
+          <li>Verified ID on both sides</li>
+          <li>Portable reputation score</li>
+        </ul>
+        <a href="#" class="btn-pill-secondary">Start as a seller</a>
+      </div>
+      <div class="tier featured">
+        <span class="featured-mark">Recommended</span>
+        <div class="who">For freelancers</div>
+        <div class="price">5%<small> · vs 20% on Upwork</small></div>
+        <h3>Paid as agreed.</h3>
+        <p>For designers, developers, copywriters — anyone tired of chasing invoices after the work was already done.</p>
+        <ul>
+          <li>Voice agreement on scope + deliverables</li>
+          <li>Funds locked before you start the work</li>
+          <li>Voice receipt confirmation triggers release</li>
+          <li>Cross-border deals in any language</li>
+          <li>Verified portable reputation</li>
+        </ul>
+        <a href="#" class="btn-pill-mercury">Start as a freelancer</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ CLOSING (back to A24 black) ═══════════ -->
+<section class="closing">
+  <div class="container closing-content">
+    <h2>Trust the<br><span class="em">handshake.</span></h2>
+    <p>5% per deal. No subscriptions. Get paid as agreed — every time.</p>
+    <a href="#" class="btn-stripe" style="padding:16px 36px;font-size:16px">Start your first deal →</a>
+    <div class="closing-meta">VOUCH · POWERED BY STRIPE + ELEVENLABS</div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div>VOUCH · BUILT FOR ELEVENHACKS 2026</div>
+    <ul>
+      <li><a href="#">Privacy</a></li>
+      <li><a href="#">Terms</a></li>
+      <li><a href="#">Contact</a></li>
+    </ul>
+  </div>
+</footer>
+
+<!-- Ambient audio toggle (HN++ trick) -->
+<button class="ambient-toggle muted" id="ambientToggle" aria-label="Toggle ambient audio">
+  <svg id="muteIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+    <line x1="22" y1="9" x2="16" y2="15"/>
+    <line x1="16" y1="9" x2="22" y2="15"/>
+  </svg>
+  <svg id="soundIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none">
+    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+    <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/>
+  </svg>
+</button>
+
+<script>
+// Decorative API code text in hero bg (HN++ pattern)
+const codeLines = [
+  'POST /v1/payment_intents',
+  '→ { "amount": 40000, "currency": "gbp", "capture_method": "manual" }',
+  '// manual capture — money authorised, not transferred',
+  '',
+  '// vera mediates the agreement',
+  'POST /v1/conversations',
+  '→ { "persona": "vera", "lang": "en-GB", "mode": "mediator" }',
+  '',
+  '// both parties on record',
+  'transcript.append("I agree — Sarah Williams")',
+  'transcript.append("I agree — Marcus Adebayo")',
+  'webhook.emit("deal.escrowed", { id: "vch_47291", amount: 40000 })',
+  '',
+  '// buyer voice-confirms delivery',
+  'POST /v1/transfers',
+  '→ { "destination": "acct_marcus", "amount": 38500, "currency": "gbp" }',
+  'webhook.emit("deal.released", { id: "vch_47291" })',
+  '',
+  '// the handshake, recorded.',
+  '// the money, held.',
+  '// every promise, on the record.',
+  '',
+];
+const codeEl = document.getElementById('bgCode');
+if (codeEl) {
+  let out = '';
+  for (let i = 0; i < 22; i++) for (const l of codeLines) out += l + '\n';
+  codeEl.textContent = out;
+}
+
+// Idle counter — live ticking £ amounts
+let escrow = 18420;
+let released = 42891;
+let disputes = 12;
+function bumpCounters() {
+  if (Math.random() > 0.55) {
+    escrow += Math.floor(Math.random() * 240) + 30;
+    const e = document.getElementById('liveEscrow');
+    if (e) e.textContent = '£' + escrow.toLocaleString();
+  }
+  if (Math.random() > 0.65) {
+    released += Math.floor(Math.random() * 320) + 80;
+    const r = document.getElementById('liveReleased');
+    if (r) r.textContent = '£' + released.toLocaleString();
+  }
+  if (Math.random() > 0.92) {
+    disputes += 1;
+    const d = document.getElementById('liveDisputes');
+    if (d) d.textContent = disputes;
+  }
+}
+setInterval(bumpCounters, 3200);
+
+// Ambient audio toggle (graceful — works even if audio file missing)
+const toggle = document.getElementById('ambientToggle');
+const muteIcon = document.getElementById('muteIcon');
+const soundIcon = document.getElementById('soundIcon');
+let audio = null;
+let muted = true;
+function ensureAudio() {
+  if (audio) return audio;
+  audio = new Audio('/audio/landing-loop.mp3');
+  audio.loop = true;
+  audio.volume = 0.16;
+  audio.muted = true;
+  audio.play().catch(() => {});
+  return audio;
+}
+toggle.addEventListener('click', () => {
+  const a = ensureAudio();
+  muted = !muted;
+  a.muted = muted;
+  if (!muted) a.play().catch(() => {});
+  toggle.classList.toggle('muted', muted);
+  muteIcon.style.display = muted ? 'block' : 'none';
+  soundIcon.style.display = muted ? 'none' : 'block';
+});
+</script>
+</body>
+</html>

@@ -1,26 +1,166 @@
 @import "tailwindcss";
 
+/* ─────────────────────────────────────────────────────────
+   VOUCH — design tokens
+   Source of truth: docs/DESIGN.md (Stripe × A24 + Mercury × Linear)
+   Ported pixel-faithful from docs/reference-html-mockups/*.html
+   ───────────────────────────────────────────────────────── */
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* ─── SHARED — both modes ─── */
+  --stripe-purple:        #635bff;
+  --stripe-purple-hover:  #5048e5;
+  --stripe-purple-soft:   rgba(99, 91, 255, 0.12);
+  --indigo:               #5266eb;
+  --indigo-hover:         #4255d4;
+  --indigo-soft:          rgba(82, 102, 235, 0.10);
+  --indigo-tint:          #e2e6fb;
+  --a24-red:              #d9351c;
+
+  /* ─── STRIPE × A24 (black) ─── */
+  --black:                #000000;
+  --black-alt:            #0a0a0a;
+  --black-surface:        #141414;
+  --white:                #ffffff;
+  --white-dim:            rgba(255, 255, 255, 0.72);
+  --white-mute:           rgba(255, 255, 255, 0.48);
+  --white-trace:          rgba(255, 255, 255, 0.18);
+  --border-dark:          rgba(255, 255, 255, 0.10);
+  --border-dark-med:      rgba(255, 255, 255, 0.18);
+  --glass-edge-dark:      rgba(255, 255, 255, 0.06);
+
+  /* ─── MERCURY × LINEAR (cream) ─── */
+  --cream:                #f6f5f2;
+  --cream-alt:            #ebe8e0;
+  --cream-card-glass:     rgba(255, 253, 248, 0.55);
+  --cream-card-glass-hi:  rgba(255, 253, 248, 0.85);
+  --surface:              #ffffff;
+  --surface-alt:          #fbfaf6;
+  --ink:                  #2a2924;
+  --ink-muted:            #5a5548;
+  --ink-dim:              #8a8478;
+  --border-warm:          rgba(50, 30, 5, 0.10);
+  --border-warm-med:      rgba(50, 30, 5, 0.18);
+  --border-warm-strong:   rgba(50, 30, 5, 0.28);
+  --glass-edge:           rgba(255, 255, 255, 0.55);
+
+  /* ─── Semantic ─── */
+  --success:              #2f7d57;
+  --success-soft:         rgba(47, 125, 87, 0.12);
+  --warning:              #c98a42;
+  --warning-soft:         rgba(201, 138, 66, 0.14);
+  --danger:               #b54a3a;
+  --danger-soft:          rgba(181, 74, 58, 0.12);
+  --locked:               #7a6ce8;
+  --locked-soft:          rgba(122, 108, 232, 0.12);
+
+  /* ─── Effects ─── */
+  --blur:                 blur(22px) saturate(170%);
+  --shadow-sm:            0 1px 2px rgba(40, 20, 5, 0.06), 0 4px 12px rgba(40, 20, 5, 0.04);
+  --shadow-md:            0 4px 16px rgba(40, 20, 5, 0.08), 0 12px 40px rgba(40, 20, 5, 0.06);
+  --shadow-lg:            0 8px 32px rgba(40, 20, 5, 0.10), 0 24px 80px rgba(40, 20, 5, 0.10);
+  --shadow-glow:          0 0 32px rgba(99, 91, 255, 0.5);
 }
 
+/* ─── Tailwind 4 — expose tokens as utilities ─── */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-stripe-purple:        var(--stripe-purple);
+  --color-stripe-purple-hover:  var(--stripe-purple-hover);
+  --color-indigo:               var(--indigo);
+  --color-indigo-hover:         var(--indigo-hover);
+  --color-a24-red:              var(--a24-red);
+  --color-cream:                var(--cream);
+  --color-cream-alt:            var(--cream-alt);
+  --color-ink:                  var(--ink);
+  --color-ink-muted:            var(--ink-muted);
+  --color-ink-dim:              var(--ink-dim);
+  --color-success:              var(--success);
+  --color-warning:              var(--warning);
+  --color-danger:               var(--danger);
+  --color-locked:               var(--locked);
+
+  --font-display:  var(--font-fraunces), Georgia, serif;
+  --font-sans:     var(--font-inter), system-ui, -apple-system, sans-serif;
+  --font-mono:     var(--font-jetbrains-mono), 'SF Mono', monospace;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* ─── Base ─── */
+html, body {
+  min-height: 100%;
+  background: var(--cream);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
 }
-
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
 }
+.tabular { font-variant-numeric: tabular-nums; }
+
+/* ─── Voice waveform — Vouch signature motif (3 sizes) ─── */
+.vouch-waveform {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  height: 28px;
+}
+.vouch-waveform.size-mini { height: 12px; gap: 2px; }
+.vouch-waveform.size-hero { height: 110px; gap: 5px; }
+.vouch-waveform span {
+  display: block;
+  width: 3px;
+  background: var(--indigo);
+  border-radius: 2px;
+  animation: vouch-wave 1.4s ease-in-out infinite;
+}
+.vouch-waveform.size-mini span { width: 2px; }
+.vouch-waveform.size-hero span {
+  width: 5px;
+  background: linear-gradient(180deg, var(--stripe-purple) 0%, #a855f7 100%);
+}
+.vouch-waveform span:nth-child(1)  { height: 18%; animation-delay: 0.00s; }
+.vouch-waveform span:nth-child(2)  { height: 52%; animation-delay: 0.08s; }
+.vouch-waveform span:nth-child(3)  { height: 78%; animation-delay: 0.16s; }
+.vouch-waveform span:nth-child(4)  { height: 100%; animation-delay: 0.24s; }
+.vouch-waveform span:nth-child(5)  { height: 62%; animation-delay: 0.32s; }
+.vouch-waveform span:nth-child(6)  { height: 88%; animation-delay: 0.40s; }
+.vouch-waveform span:nth-child(7)  { height: 40%; animation-delay: 0.48s; }
+.vouch-waveform span:nth-child(8)  { height: 22%; animation-delay: 0.56s; }
+.vouch-waveform span:nth-child(9)  { height: 72%; animation-delay: 0.64s; }
+.vouch-waveform span:nth-child(10) { height: 34%; animation-delay: 0.72s; }
+
+@keyframes vouch-wave {
+  0%, 100% { transform: scaleY(0.35); opacity: 0.35; }
+  50%      { transform: scaleY(1);    opacity: 1; }
+}
+
+/* ─── Glassmorphism utilities ─── */
+.glass {
+  background: var(--cream-card-glass-hi);
+  backdrop-filter: var(--blur);
+  -webkit-backdrop-filter: var(--blur);
+  border: 1px solid var(--glass-edge);
+}
+.glass-soft {
+  background: var(--cream-card-glass);
+  backdrop-filter: var(--blur);
+  -webkit-backdrop-filter: var(--blur);
+  border: 1px solid var(--glass-edge);
+}
+.glass-dark {
+  background: rgba(20, 20, 20, 0.55);
+  backdrop-filter: var(--blur);
+  -webkit-backdrop-filter: var(--blur);
+  border: 1px solid var(--border-dark-med);
+}
+
+/* ─── Pulse / blink (live indicators) ─── */
+@keyframes vouch-pulse {
+  0%, 100% { opacity: 0.55; transform: scale(0.85); }
+  50%      { opacity: 1;    transform: scale(1.05); }
+}
+@keyframes vouch-blink {
+  0%, 100% { opacity: 0.4; }
+  50%      { opacity: 1; }
+}
+.animate-vouch-pulse { animation: vouch-pulse 2.4s ease-in-out infinite; }
+.animate-vouch-blink { animation: vouch-blink 2s ease-in-out infinite; }

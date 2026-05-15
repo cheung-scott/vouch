@@ -1,0 +1,1034 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vouch — Hybrid (In-App) · elevated</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Fraunces:opsz,wght@9..144,400;9..144,500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ─────────────────────────────────────────────────────────
+   VOUCH In-App — Mercury × Linear (cream, glassmorphic)
+   ───────────────────────────────────────────────────────── */
+:root {
+  --accent:           #5266eb;
+  --accent-hover:     #4255d4;
+  --accent-soft:      rgba(82,102,235,0.10);
+  --accent-tint:      #e2e6fb;
+  --stripe:           #635bff;
+  --bg:               #f6f5f2;
+  --bg-alt:           #ebe8e0;
+  --surface:          #ffffff;
+  --surface-alt:      #fbfaf6;
+  --surface-glass:    rgba(255,253,248,0.65);
+  --surface-glass-hi: rgba(255,253,248,0.88);
+  --text:             #2a2924;
+  --text-muted:       #5a5548;
+  --text-dim:         #8a8478;
+  --border:           rgba(50,30,5,0.10);
+  --border-med:       rgba(50,30,5,0.18);
+  --border-strong:    rgba(50,30,5,0.28);
+  --glass-edge:       rgba(255,255,255,0.55);
+  --success:          #2f7d57;
+  --warning:          #c98a42;
+  --danger:           #b54a3a;
+  --locked:           #7a6ce8;
+  --pop:              #d9351c;
+
+  --blur:             blur(20px) saturate(170%);
+  --shadow-sm:        0 1px 2px rgba(40,20,5,0.05), 0 2px 8px rgba(40,20,5,0.03);
+  --shadow-md:        0 2px 8px rgba(40,20,5,0.06), 0 8px 24px rgba(40,20,5,0.04);
+
+  --display: 'Fraunces', Georgia, serif;
+  --body:    'Inter', system-ui, sans-serif;
+  --mono:    'JetBrains Mono', 'SF Mono', monospace;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--body);
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100%;
+}
+.tabular { font-variant-numeric: tabular-nums; }
+.mono { font-family: var(--mono); }
+
+/* Layered cream background */
+.bg-veil {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 50% 40% at 15% 15%, rgba(82,102,235,0.05) 0%, transparent 60%),
+    radial-gradient(ellipse 45% 30% at 85% 80%, rgba(217,53,28,0.03) 0%, transparent 60%);
+}
+.bg-grid {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(50,30,5,0.022) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(50,30,5,0.022) 1px, transparent 1px);
+  background-size: 48px 48px;
+  mask-image: radial-gradient(ellipse 80% 60% at 50% 50%, black 0%, transparent 95%);
+  -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 50%, black 0%, transparent 95%);
+}
+
+/* ═══════════ APP SHELL ═══════════ */
+.app { display: grid; grid-template-columns: 240px 1fr; min-height: 100vh; }
+
+/* Sidebar */
+.sidebar {
+  background: var(--surface-glass);
+  backdrop-filter: var(--blur);
+  -webkit-backdrop-filter: var(--blur);
+  border-right: 1px solid var(--border);
+  padding: 22px 16px;
+  display: flex;
+  flex-direction: column;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+}
+.sidebar .brand {
+  font-family: var(--display);
+  font-size: 22px;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  padding: 0 8px 28px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.sidebar .brand-mark {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--accent);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  box-shadow: 0 0 12px rgba(82,102,235,0.4);
+}
+.sidebar .brand-mark::after {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--surface);
+  animation: pulse 2.4s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 0.55; transform: scale(0.85); }
+  50%      { opacity: 1;    transform: scale(1.05); }
+}
+.sidebar nav { display: flex; flex-direction: column; gap: 2px; }
+.sidebar nav a {
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: 13px;
+  padding: 7px 10px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 500;
+  transition: background 0.15s, color 0.15s;
+}
+.sidebar nav a:hover { background: var(--bg-alt); color: var(--text); }
+.sidebar nav a.active { background: var(--accent-soft); color: var(--accent); }
+.sidebar nav a .icon {
+  width: 14px;
+  height: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.sidebar nav a kbd {
+  margin-left: auto;
+  font-family: var(--mono);
+  font-size: 10px;
+  background: var(--surface);
+  padding: 2px 6px;
+  border-radius: 3px;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+}
+.sidebar .section-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--text-dim);
+  padding: 28px 10px 8px;
+  font-weight: 600;
+}
+.sidebar .user {
+  margin-top: auto;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.sidebar .user .avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent) 0%, #7a6ce8 100%);
+  color: var(--surface);
+  font-size: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+}
+.sidebar .user .meta { font-size: 12px; min-width: 0; }
+.sidebar .user .meta .name {
+  font-weight: 500;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.sidebar .user .meta .email {
+  font-size: 11px;
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Main */
+.main { display: flex; flex-direction: column; min-width: 0; }
+.topbar {
+  background: var(--surface-glass);
+  backdrop-filter: var(--blur);
+  -webkit-backdrop-filter: var(--blur);
+  border-bottom: 1px solid var(--border);
+  padding: 14px 32px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+.breadcrumb {
+  font-size: 13px;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.breadcrumb .current { color: var(--text); font-weight: 500; }
+.topbar .search {
+  margin-left: auto;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 12px;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 300px;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.topbar .search:focus-within {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px var(--accent-soft);
+}
+.topbar .search kbd {
+  margin-left: auto;
+  font-family: var(--mono);
+  font-size: 10px;
+  background: var(--bg-alt);
+  padding: 2px 6px;
+  border-radius: 3px;
+  border: 1px solid var(--border);
+}
+.btn-primary {
+  background: var(--accent);
+  color: var(--surface);
+  padding: 7px 14px;
+  border-radius: 6px;
+  font-weight: 500;
+  font-size: 13px;
+  text-decoration: none;
+  border: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.btn-primary:hover { background: var(--accent-hover); }
+
+/* Content */
+.content { padding: 36px 32px; flex: 1; }
+.page-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 36px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+.page-header h1 {
+  font-family: var(--display);
+  font-size: 36px;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+.page-header .meta {
+  font-size: 13px;
+  color: var(--text-muted);
+  font-family: var(--mono);
+}
+
+/* Summary cards (glassmorphic Linear-density) */
+.summary {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 32px;
+}
+.summary-card {
+  background: var(--surface-glass-hi);
+  backdrop-filter: var(--blur);
+  -webkit-backdrop-filter: var(--blur);
+  border: 1px solid var(--glass-edge);
+  border-radius: 10px;
+  padding: 22px;
+  box-shadow: var(--shadow-sm);
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+.summary-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+.summary-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.7), transparent);
+}
+.summary-card .label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--text-muted);
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+.summary-card .value {
+  font-family: var(--display);
+  font-size: 36px;
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+  margin-bottom: 8px;
+}
+.summary-card .value small {
+  font-size: 15px;
+  color: var(--text-muted);
+  font-weight: 400;
+}
+.summary-card .delta {
+  font-size: 12px;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.summary-card .delta.up { color: var(--success); }
+.summary-card .delta.locked { color: var(--locked); }
+.summary-card .delta .dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+.summary-card .delta.locked .dot { animation: pulse 2s ease-in-out infinite; }
+
+/* Deal table (glassmorphic) */
+.deals-card {
+  background: var(--surface-glass-hi);
+  backdrop-filter: var(--blur);
+  -webkit-backdrop-filter: var(--blur);
+  border: 1px solid var(--glass-edge);
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 32px;
+  box-shadow: var(--shadow-sm);
+}
+.deals-toolbar {
+  padding: 14px 22px;
+  border-bottom: 1px solid var(--border);
+  background: rgba(235,232,224,0.4);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.deals-toolbar h2 { font-size: 14px; font-weight: 600; }
+.deals-toolbar .meta {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text-muted);
+  letter-spacing: 0.05em;
+}
+.deals-toolbar .filters { display: flex; gap: 6px; font-size: 12px; }
+.filter {
+  padding: 5px 12px;
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+  cursor: pointer;
+  font-weight: 500;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+.filter:hover { color: var(--text); border-color: var(--border-med); }
+.filter.active { background: var(--text); color: var(--bg); border-color: var(--text); }
+
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+thead th {
+  padding: 10px 22px;
+  text-align: left;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--text-muted);
+  font-weight: 600;
+  border-bottom: 1px solid var(--border);
+  background: rgba(235,232,224,0.4);
+}
+thead th.num { text-align: right; }
+tbody td {
+  padding: 14px 22px;
+  border-bottom: 1px solid var(--border);
+  height: 44px;
+  vertical-align: middle;
+}
+tbody tr:last-child td { border-bottom: 0; }
+tbody tr { cursor: pointer; transition: background 0.15s; }
+tbody tr:hover { background: rgba(251,250,246,0.6); }
+tbody tr.selected {
+  background: var(--accent-soft);
+  box-shadow: inset 3px 0 0 var(--accent);
+}
+td.num { text-align: right; font-variant-numeric: tabular-nums; font-weight: 500; }
+
+td .counterparty { display: flex; align-items: center; gap: 12px; }
+td .counterparty .avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--bg-alt);
+  color: var(--text-muted);
+  font-size: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+td .counterparty .info { min-width: 0; }
+td .counterparty .name { font-weight: 500; color: var(--text); }
+td .role { font-size: 11px; color: var(--text-dim); margin-top: 1px; }
+
+td .desc-cell { display: flex; align-items: center; gap: 8px; color: var(--text-muted); font-size: 13px; }
+
+td .badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 10px;
+  padding: 3px 9px;
+  border-radius: 4px;
+  font-weight: 600;
+  font-family: var(--mono);
+  letter-spacing: 0.06em;
+}
+td .badge .dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: currentColor;
+}
+td .badge.locked { background: rgba(122,108,232,0.12); color: var(--locked); }
+td .badge.locked .dot { animation: pulse 2s ease-in-out infinite; }
+td .badge.released { background: rgba(47,125,87,0.12); color: var(--success); }
+td .badge.agreed { background: rgba(201,138,66,0.14); color: var(--warning); }
+td .badge.dispute { background: rgba(181,74,58,0.12); color: var(--danger); }
+
+td .mini-wave {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  height: 14px;
+  vertical-align: middle;
+  opacity: 0.55;
+}
+td .mini-wave span {
+  display: block;
+  width: 2px;
+  background: var(--accent);
+  border-radius: 1px;
+}
+td .mini-wave span:nth-child(1) { height: 30%; }
+td .mini-wave span:nth-child(2) { height: 60%; }
+td .mini-wave span:nth-child(3) { height: 90%; }
+td .mini-wave span:nth-child(4) { height: 50%; }
+td .mini-wave span:nth-child(5) { height: 35%; }
+
+/* Deal detail (glassmorphic) */
+.deal-detail {
+  background: var(--surface-glass-hi);
+  backdrop-filter: var(--blur);
+  -webkit-backdrop-filter: var(--blur);
+  border: 1px solid var(--glass-edge);
+  border-radius: 12px;
+  padding: 36px;
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 48px;
+  box-shadow: var(--shadow-sm);
+}
+.deal-detail .lhs h2 {
+  font-family: var(--display);
+  font-size: 26px;
+  font-weight: 500;
+  letter-spacing: -0.015em;
+  margin-bottom: 6px;
+}
+.deal-detail .lhs .ref {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-family: var(--mono);
+  margin-bottom: 28px;
+}
+
+.vera-listening {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  padding: 8px 14px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 500;
+  margin-bottom: 24px;
+  border: 1px solid rgba(82,102,235,0.18);
+}
+.vera-listening .wave {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  height: 12px;
+}
+.vera-listening .wave span {
+  display: block;
+  width: 2px;
+  background: var(--accent);
+  border-radius: 1px;
+  animation: wave 1.4s ease-in-out infinite;
+}
+.vera-listening .wave span:nth-child(1) { height: 30%; animation-delay: 0s; }
+.vera-listening .wave span:nth-child(2) { height: 70%; animation-delay: 0.1s; }
+.vera-listening .wave span:nth-child(3) { height: 100%; animation-delay: 0.2s; }
+.vera-listening .wave span:nth-child(4) { height: 60%; animation-delay: 0.3s; }
+.vera-listening .wave span:nth-child(5) { height: 40%; animation-delay: 0.4s; }
+@keyframes wave {
+  0%, 100% { transform: scaleY(0.35); opacity: 0.4; }
+  50%      { transform: scaleY(1);    opacity: 1; }
+}
+
+.timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  border-left: 2px solid var(--border);
+  padding-left: 24px;
+  margin-left: 6px;
+}
+.timeline .step { position: relative; }
+.timeline .step::before {
+  content: '';
+  position: absolute;
+  left: -30px;
+  top: 5px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--surface);
+  border: 2px solid var(--border-strong);
+}
+.timeline .step.done::before { background: var(--success); border-color: var(--success); }
+.timeline .step.active::before {
+  background: var(--accent);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 4px var(--accent-soft);
+  animation: pulse 2s ease-in-out infinite;
+}
+.timeline .step .label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 3px;
+}
+.timeline .step .meta {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-family: var(--mono);
+}
+.timeline .step .desc {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-top: 6px;
+  line-height: 1.55;
+}
+
+.deal-detail .rhs {
+  background: var(--bg-alt);
+  border-radius: 10px;
+  padding: 26px;
+  border: 1px solid var(--border);
+}
+.deal-detail .rhs .label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--text-muted);
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+.deal-detail .amount {
+  font-family: var(--display);
+  font-size: 52px;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  margin-bottom: 8px;
+}
+.deal-detail .status {
+  font-size: 13px;
+  color: var(--locked);
+  font-weight: 500;
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.deal-detail .status .dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  animation: pulse 2s ease-in-out infinite;
+}
+.deal-detail .parties {
+  font-size: 12px;
+  color: var(--text-muted);
+  border-top: 1px solid var(--border);
+  padding-top: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.deal-detail .parties .party {
+  display: flex;
+  justify-content: space-between;
+}
+.deal-detail .parties .party .v {
+  color: var(--text);
+  font-weight: 500;
+}
+
+.deal-actions {
+  margin-top: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.btn-action {
+  background: var(--accent);
+  color: var(--surface);
+  padding: 10px 14px;
+  border-radius: 6px;
+  font-weight: 500;
+  font-size: 13px;
+  text-decoration: none;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  cursor: pointer;
+  width: 100%;
+}
+.btn-action.secondary {
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--border-med);
+}
+
+/* Vera floating pill */
+.vera-floating {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 100;
+  background: var(--surface-glass-hi);
+  backdrop-filter: var(--blur);
+  -webkit-backdrop-filter: var(--blur);
+  border: 1px solid var(--glass-edge);
+  border-radius: 999px;
+  padding: 10px 16px 10px 14px;
+  box-shadow: var(--shadow-md);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text);
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.vera-floating:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(40,20,5,0.12);
+}
+.vera-floating .wave {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  height: 14px;
+}
+.vera-floating .wave span {
+  display: block;
+  width: 2px;
+  background: var(--accent);
+  border-radius: 1px;
+  animation: wave 1.4s ease-in-out infinite;
+}
+.vera-floating .wave span:nth-child(1) { height: 40%; animation-delay: 0s; }
+.vera-floating .wave span:nth-child(2) { height: 80%; animation-delay: 0.1s; }
+.vera-floating .wave span:nth-child(3) { height: 100%; animation-delay: 0.2s; }
+.vera-floating .wave span:nth-child(4) { height: 60%; animation-delay: 0.3s; }
+.vera-floating .wave span:nth-child(5) { height: 35%; animation-delay: 0.4s; }
+.vera-floating kbd {
+  font-family: var(--mono);
+  font-size: 10px;
+  background: var(--bg-alt);
+  padding: 2px 6px;
+  border-radius: 3px;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  margin-left: 6px;
+}
+
+@media (max-width: 1100px) {
+  .summary { grid-template-columns: repeat(2, 1fr); }
+  .deal-detail { grid-template-columns: 1fr; gap: 24px; }
+}
+@media (max-width: 768px) {
+  .app { grid-template-columns: 1fr; }
+  .sidebar { display: none; }
+  .summary { grid-template-columns: 1fr; }
+  .topbar .search { width: auto; flex: 1; min-width: 0; }
+  .vera-floating { right: 12px; bottom: 12px; }
+}
+</style>
+</head>
+<body>
+
+<div class="bg-veil" aria-hidden></div>
+<div class="bg-grid" aria-hidden></div>
+
+<div class="app">
+
+  <!-- ═══════════ SIDEBAR ═══════════ -->
+  <aside class="sidebar">
+    <div class="brand">
+      <span class="brand-mark"></span>
+      Vouch
+    </div>
+    <nav>
+      <a href="#" class="active"><span class="icon">⊟</span> Deals <kbd>D</kbd></a>
+      <a href="#"><span class="icon">＋</span> New deal <kbd>N</kbd></a>
+      <a href="#"><span class="icon">⚠</span> Disputes</a>
+      <a href="#"><span class="icon">★</span> Reputation</a>
+    </nav>
+    <div class="section-label">Account</div>
+    <nav>
+      <a href="#"><span class="icon">⚙</span> Settings</a>
+      <a href="#"><span class="icon">≡</span> Stripe Connect</a>
+      <a href="#"><span class="icon">∿</span> Activity</a>
+    </nav>
+    <div class="user">
+      <div class="avatar">SC</div>
+      <div class="meta">
+        <div class="name">Scott Cheung</div>
+        <div class="email">scott@vouch.app</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ═══════════ MAIN ═══════════ -->
+  <div class="main">
+
+    <div class="topbar">
+      <div class="breadcrumb">
+        <span>Deals</span>
+        <span style="color:var(--text-dim)">/</span>
+        <span class="current">All active</span>
+      </div>
+      <div class="search">🔍 Search deals, people, or amounts… <kbd>⌘ K</kbd></div>
+      <a href="#" class="btn-primary">＋ New deal</a>
+    </div>
+
+    <div class="content">
+
+      <div class="page-header">
+        <h1>Your active deals</h1>
+        <div class="meta">4 active · £1,840 in escrow · 12 completed all-time</div>
+      </div>
+
+      <!-- Summary cards -->
+      <div class="summary">
+        <div class="summary-card">
+          <div class="label">In Escrow</div>
+          <div class="value tabular">£1,000</div>
+          <div class="delta locked"><span class="dot"></span>Held — Stripe Connect</div>
+        </div>
+        <div class="summary-card">
+          <div class="label">Awaiting Shipment</div>
+          <div class="value tabular">£840</div>
+          <div class="delta">2 deals agreed</div>
+        </div>
+        <div class="summary-card">
+          <div class="label">Released This Month</div>
+          <div class="value tabular">£3,420</div>
+          <div class="delta up"><span class="dot"></span>↑ 4 completed deals</div>
+        </div>
+        <div class="summary-card">
+          <div class="label">Reputation Score</div>
+          <div class="value tabular">98<small>/100</small></div>
+          <div class="delta">12 deals · 100% release rate</div>
+        </div>
+      </div>
+
+      <!-- Deals table -->
+      <div class="deals-card">
+        <div class="deals-toolbar">
+          <h2>All active deals</h2>
+          <div class="meta">Last sync 2s ago</div>
+          <div class="filters">
+            <button class="filter active">All</button>
+            <button class="filter">In escrow</button>
+            <button class="filter">Agreed</button>
+            <button class="filter">Disputed</button>
+          </div>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Counterparty</th>
+              <th>Description</th>
+              <th>Status</th>
+              <th>Updated</th>
+              <th class="num">Amount</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="selected">
+              <td>
+                <div class="counterparty">
+                  <div class="avatar">MW</div>
+                  <div class="info">
+                    <div class="name">Marcus Williams</div>
+                    <div class="role">P2P · iPhone seller</div>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <div class="desc-cell">
+                  iPhone 15 256GB white · Royal Mail, shipped
+                  <span class="mini-wave"><span></span><span></span><span></span><span></span><span></span></span>
+                </div>
+              </td>
+              <td><span class="badge locked"><span class="dot"></span>IN_ESCROW</span></td>
+              <td><span style="color:var(--text-muted);font-family:var(--mono);font-size:11px">2h ago</span></td>
+              <td class="num">£400.00</td>
+            </tr>
+            <tr>
+              <td>
+                <div class="counterparty">
+                  <div class="avatar">LP</div>
+                  <div class="info">
+                    <div class="name">Lena Park</div>
+                    <div class="role">Freelance · Logo design</div>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <div class="desc-cell">
+                  Logo concepts (3) · Milestone 1 of 2
+                  <span class="mini-wave"><span></span><span></span><span></span><span></span><span></span></span>
+                </div>
+              </td>
+              <td><span class="badge agreed"><span class="dot"></span>REVIEWING</span></td>
+              <td><span style="color:var(--text-muted);font-family:var(--mono);font-size:11px">4h ago</span></td>
+              <td class="num">£200.00</td>
+            </tr>
+            <tr>
+              <td>
+                <div class="counterparty">
+                  <div class="avatar">AC</div>
+                  <div class="info">
+                    <div class="name">Adam Chen</div>
+                    <div class="role">P2P · MacBook seller</div>
+                  </div>
+                </div>
+              </td>
+              <td><div class="desc-cell">MacBook Air M3 · Awaiting shipment</div></td>
+              <td><span class="badge agreed"><span class="dot"></span>AGREED</span></td>
+              <td><span style="color:var(--text-muted);font-family:var(--mono);font-size:11px">1d ago</span></td>
+              <td class="num">£840.00</td>
+            </tr>
+            <tr>
+              <td>
+                <div class="counterparty">
+                  <div class="avatar">SR</div>
+                  <div class="info">
+                    <div class="name">Sofia Rodríguez</div>
+                    <div class="role">Freelance · Brand strategy</div>
+                  </div>
+                </div>
+              </td>
+              <td><div class="desc-cell">Brand strategy document · Milestone 2 of 3</div></td>
+              <td><span class="badge locked"><span class="dot"></span>IN_ESCROW</span></td>
+              <td><span style="color:var(--text-muted);font-family:var(--mono);font-size:11px">3d ago</span></td>
+              <td class="num">£600.00</td>
+            </tr>
+            <tr>
+              <td>
+                <div class="counterparty">
+                  <div class="avatar">JO</div>
+                  <div class="info">
+                    <div class="name">James Okafor</div>
+                    <div class="role">P2P · Rolex buyer</div>
+                  </div>
+                </div>
+              </td>
+              <td><div class="desc-cell">Rolex Submariner · Voice-confirmed, released</div></td>
+              <td><span class="badge released"><span class="dot"></span>RELEASED</span></td>
+              <td><span style="color:var(--text-muted);font-family:var(--mono);font-size:11px">5d ago</span></td>
+              <td class="num">£3,200.00</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Selected deal detail -->
+      <div class="deal-detail">
+        <div class="lhs">
+          <div class="vera-listening">
+            <div class="wave"><span></span><span></span><span></span><span></span><span></span></div>
+            Vera is waiting on Sarah's delivery confirmation
+          </div>
+          <h2>Marcus Williams · iPhone 15 256GB</h2>
+          <div class="ref">DEAL_47291 · Created 14 May 2026 14:23 BST</div>
+
+          <div class="timeline">
+            <div class="step done">
+              <div class="label">Sarah voice-committed</div>
+              <div class="meta">14 May · 14:23 · 42s recording</div>
+              <div class="desc">"I want to buy the iPhone 15 256GB white from Marcus for £400, shipped by Friday."</div>
+            </div>
+            <div class="step done">
+              <div class="label">Marcus voice-committed</div>
+              <div class="meta">14 May · 14:31 · 38s recording</div>
+              <div class="desc">"Yes, that's what we agreed. Royal Mail tracked, by Friday end of day."</div>
+            </div>
+            <div class="step done">
+              <div class="label">Joint sign-off complete</div>
+              <div class="meta">14 May · 14:45 · 22s recording</div>
+              <div class="desc">Both parties verbally agreed to terms. Vera read contract back; both said "I agree."</div>
+            </div>
+            <div class="step done">
+              <div class="label">£400 locked in escrow</div>
+              <div class="meta">14 May · 14:45 · Stripe Connect held</div>
+              <div class="desc">Funds held pending delivery confirmation. Auto-refund if not delivered by 21 May.</div>
+            </div>
+            <div class="step active">
+              <div class="label">Awaiting buyer voice-confirmation</div>
+              <div class="meta">In progress · Tracking shows delivered 15 May 09:12</div>
+              <div class="desc">Sarah has 24 hours to confirm the item received or open a dispute. Vera will reach out automatically.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="rhs">
+          <div class="label">Amount in escrow</div>
+          <div class="amount tabular">£400</div>
+          <div class="status"><span class="dot"></span>Held — awaiting release</div>
+          <div class="parties">
+            <div class="party"><span>Buyer</span><span class="v">Sarah Chen</span></div>
+            <div class="party"><span>Seller</span><span class="v">Marcus Williams</span></div>
+            <div class="party"><span>Platform fee</span><span class="v tabular">£15.00</span></div>
+            <div class="party"><span>Net to seller</span><span class="v tabular">£385.00</span></div>
+          </div>
+          <div class="deal-actions">
+            <button class="btn-action">▶ Play recording</button>
+            <button class="btn-action secondary">View on Stripe →</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Floating Vera button -->
+<div class="vera-floating" id="veraFloating">
+  <div class="wave"><span></span><span></span><span></span><span></span><span></span></div>
+  Talk to Vera
+  <kbd>⌘ V</kbd>
+</div>
+
+<script>
+  // Simple keyboard shortcut for the floating Vera button (cmdK & cmdV are intercepted by browser, so we just do animation toggle)
+  const v = document.getElementById('veraFloating');
+  if (v) {
+    v.addEventListener('click', () => {
+      v.style.transform = 'scale(0.97)';
+      setTimeout(() => v.style.transform = '', 120);
+    });
+  }
+</script>
+
+</body>
+</html>
