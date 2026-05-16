@@ -67,6 +67,7 @@ export default function NewDealPage() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [contractText, setContractText] = useState<string | null>(null);
+  const [notifyMethod, setNotifyMethod] = useState<"email" | "sms" | "none" | null>(null);
 
   const current = QUESTIONS[step];
   const isLast = step === QUESTIONS.length - 1;
@@ -155,6 +156,16 @@ export default function NewDealPage() {
       });
       const json = await res.json();
       if (!res.ok) throw new Error(json.message ?? json.error ?? "commit_failed");
+      // Fire-and-forget seller-invitation notification. Failure here doesn't
+      // block the buyer — they always get the link on-screen to share manually.
+      fetch("/api/notify/seller-invitation", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ deal_id: dealId }),
+      })
+        .then((r) => r.json())
+        .then((r) => setNotifyMethod(r.method ?? "none"))
+        .catch(() => setNotifyMethod("none"));
       setStage("committed");
     } catch (err) {
       setError(err instanceof Error ? err.message : "unknown error");
@@ -340,7 +351,13 @@ export default function NewDealPage() {
                   : `/deal/${reference}/seller`}
               </a>
               <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-[#8a8478]">
-                Day 2 demo · email/SMS notification stub wires in once messaging provider is picked
+                {notifyMethod === "email"
+                  ? "Notification stub: server logged an email-send to the other party. Real provider wires in Day 4+."
+                  : notifyMethod === "sms"
+                    ? "Notification stub: server logged an SMS-send to the other party. Real provider wires in Day 4+."
+                    : notifyMethod === "none"
+                      ? "No email or phone on the other party — share the link above with them directly."
+                      : "Day 2 demo · email/SMS notification stub wires in once messaging provider is picked"}
               </p>
             </div>
           </Card>
