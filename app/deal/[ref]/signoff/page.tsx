@@ -1,7 +1,8 @@
 "use client";
 
-import { use, useEffect, useState } from "react";
+import { use, useCallback, useEffect, useState } from "react";
 import { Card, Eyebrow, MoneyAmount } from "@/components/ui";
+import { VeraVoiceSession } from "@/components/VeraVoiceSession";
 
 type DealView = {
   id: string;
@@ -37,13 +38,25 @@ export default function SignoffPage({
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  async function refreshDeal() {
+  const refreshDeal = useCallback(async () => {
     const res = await fetch(`/api/deals/${ref}`, { cache: "no-store" });
     const json = await res.json();
     if (!res.ok) throw new Error(json.error ?? "deal_not_found");
     setDeal(json.deal);
     return json.deal as DealView;
-  }
+  }, [ref]);
+
+  // After a voice session ends, pull fresh deal state and let any escrow
+  // advancement (Vera called lock_escrow / release_escrow) reflect in the UI.
+  const refreshAndReflectStage = useCallback(async () => {
+    try {
+      const d = await refreshDeal();
+      if (d.status === "IN_ESCROW") setStage("in_escrow");
+      else if (d.status === "RELEASED") setStage("released");
+    } catch {
+      // Non-fatal: leave the page on its current stage.
+    }
+  }, [refreshDeal]);
 
   useEffect(() => {
     let cancelled = false;
@@ -183,14 +196,26 @@ export default function SignoffPage({
             </p>
 
             {stage === "ready" && (
-              <button
-                type="button"
-                onClick={startRecitation}
-                disabled={busy}
-                className="mt-8 rounded-md bg-[#635bff] px-5 py-2 text-sm font-medium text-white transition-colors hover:bg-[#5048e5] disabled:opacity-40"
-              >
-                {busy ? "…" : "Hear the agreement"}
-              </button>
+              <div className="mt-8 flex flex-col gap-3">
+                <VeraVoiceSession
+                  sessionType="JOINT_SIGNOFF"
+                  userFirstName={deal.buyer.firstName}
+                  dealId={deal.id}
+                  startLabel="Have Vera mediate the joint sign-off"
+                  onSessionEnd={refreshAndReflectStage}
+                />
+                <p className="text-center font-mono text-[10px] uppercase tracking-[0.14em] text-[#8a8478]">
+                  or
+                </p>
+                <button
+                  type="button"
+                  onClick={startRecitation}
+                  disabled={busy}
+                  className="rounded-md bg-[#635bff] px-5 py-2 text-sm font-medium text-white transition-colors hover:bg-[#5048e5] disabled:opacity-40"
+                >
+                  {busy ? "…" : "Read the agreement on-screen"}
+                </button>
+              </div>
             )}
 
             {stage === "recitation" && recitation && (
@@ -280,16 +305,28 @@ export default function SignoffPage({
               {deal.seller.firstName}, ship the item or do the work. {deal.buyer.firstName},
               I&rsquo;ll be here when it&rsquo;s time to release the money.
             </p>
-            <button
-              type="button"
-              onClick={confirmReceipt}
-              disabled={busy}
-              className="mt-6 rounded-md bg-[#635bff] px-5 py-2 text-sm font-medium text-white transition-colors hover:bg-[#5048e5] disabled:opacity-40"
-            >
-              {busy
-                ? "Releasing…"
-                : `${deal.buyer.firstName} confirms receipt — release →`}
-            </button>
+            <div className="mt-6 flex flex-col gap-3">
+              <VeraVoiceSession
+                sessionType="VOICE_RECEIPT"
+                userFirstName={deal.buyer.firstName}
+                dealId={deal.id}
+                startLabel={`${deal.buyer.firstName} — confirm receipt by voice`}
+                onSessionEnd={refreshAndReflectStage}
+              />
+              <p className="text-center font-mono text-[10px] uppercase tracking-[0.14em] text-[#8a8478]">
+                or
+              </p>
+              <button
+                type="button"
+                onClick={confirmReceipt}
+                disabled={busy}
+                className="rounded-md bg-[#635bff] px-5 py-2 text-sm font-medium text-white transition-colors hover:bg-[#5048e5] disabled:opacity-40"
+              >
+                {busy
+                  ? "Releasing…"
+                  : `Tap to release →`}
+              </button>
+            </div>
             {error && (
               <p className="mt-3 font-mono text-xs text-[#b54a3a]">{error}</p>
             )}

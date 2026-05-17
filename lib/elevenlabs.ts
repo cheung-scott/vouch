@@ -68,31 +68,88 @@ export async function transcribeAudio(params: {
   });
 }
 
-export async function createVeraConvAISession(params: {
-  sessionType:
-    | "BUYER_ONBOARDING"
-    | "SELLER_ONBOARDING"
-    | "JOINT_SIGNOFF"
-    | "VOICE_RECEIPT"
-    | "DISPUTE";
+export type VeraSessionType =
+  | "BUYER_ONBOARDING"
+  | "SELLER_ONBOARDING"
+  | "JOINT_SIGNOFF"
+  | "VOICE_RECEIPT"
+  | "DISPUTE";
+
+export type VeraDynamicVariables = {
+  session_type: VeraSessionType;
+  user_first_name: string;
+  deal_id: string;
+  counterparty_name: string;
+  amount_spoken: string;
+  locale: string;
+};
+
+export function buildVeraDynamicVariables(params: {
+  sessionType: VeraSessionType;
   userFirstName: string;
   dealId?: string;
   counterpartyName?: string;
   amountSpoken?: string;
+  locale?: string;
+}): VeraDynamicVariables {
+  return {
+    session_type: params.sessionType,
+    user_first_name: params.userFirstName,
+    deal_id: params.dealId ?? "",
+    counterparty_name: params.counterpartyName ?? "",
+    amount_spoken: params.amountSpoken ?? "",
+    locale: params.locale ?? "en",
+  };
+}
+
+export async function createVeraConvAISession(params: {
+  sessionType: VeraSessionType;
+  userFirstName: string;
+  dealId?: string;
+  counterpartyName?: string;
+  amountSpoken?: string;
+  locale?: string;
 }) {
   if (!VERA_AGENT_ID) {
     throw new Error("ELEVENLABS_VERA_AGENT_ID is not configured");
   }
   return {
     agent_id: VERA_AGENT_ID,
-    dynamic_variables: {
-      session_type: params.sessionType,
-      user_first_name: params.userFirstName,
-      deal_id: params.dealId ?? "",
-      counterparty_name: params.counterpartyName ?? "",
-      amount_spoken: params.amountSpoken ?? "",
-    },
+    dynamic_variables: buildVeraDynamicVariables(params),
   };
+}
+
+// WebRTC conversation token for private ConvAI agents.
+// Server-side only — never expose the agent ID or API key to the client.
+// Token TTL is short (≈15 min); fetch fresh per session start.
+// Endpoint per https://elevenlabs.io/docs/conversational-ai/customization/authentication
+export async function getVeraConversationToken(): Promise<string> {
+  if (!apiKey) throw new Error("ELEVENLABS_API_KEY is not configured");
+  if (!VERA_AGENT_ID) throw new Error("ELEVENLABS_VERA_AGENT_ID is not configured");
+
+  const url = new URL(
+    "https://api.elevenlabs.io/v1/convai/conversation/token",
+  );
+  url.searchParams.set("agent_id", VERA_AGENT_ID);
+  const res = await fetch(url, {
+    method: "GET",
+    headers: { "xi-api-key": apiKey, accept: "application/json" },
+    cache: "no-store",
+  });
+  if (!res.ok) {
+    // Don't proxy raw API error text to clients (S-007 / S-009 pattern).
+    // Log full detail server-side; throw a sanitised error.
+    const detail = await res.text().catch(() => "<no body>");
+    console.error(
+      "[elevenlabs] conversation-token fetch failed",
+      res.status,
+      detail,
+    );
+    throw new Error(`convai_token_failed_${res.status}`);
+  }
+  const json = (await res.json()) as { token?: string };
+  if (!json.token) throw new Error("convai_token_missing");
+  return json.token;
 }
 
 export async function designVoice(params: {

@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Card, Eyebrow } from "@/components/ui";
+import { VeraVoiceSession } from "@/components/VeraVoiceSession";
 
 type Prefill = {
   source: string;
@@ -263,6 +264,44 @@ export default function NewDealPage() {
     setDraft(answers[QUESTIONS[step - 1].id]);
   }
 
+  // Pull the latest deal state and reflect any progress Vera made via her
+  // server tools (extract_terms, commit_buyer_side, etc.). Called after a
+  // voice session ends.
+  const refreshFromServer = useCallback(async () => {
+    if (!dealId) return;
+    try {
+      const res = await fetch(`/api/deals/${dealId}`, { cache: "no-store" });
+      if (!res.ok) return;
+      const { deal } = (await res.json()) as {
+        deal: {
+          status: string;
+          terms: { item?: string; amountMinor?: number; currency?: string };
+          seller: { firstName?: string };
+        };
+      };
+      if (deal.status === "AWAITING_SELLER" || deal.status === "AGREED") {
+        setStage("committed");
+        return;
+      }
+      // Re-hydrate the answers strip from server terms so the next typed
+      // answer continues from whatever Vera already captured.
+      setAnswers((prev) => ({
+        ...prev,
+        item: deal.terms.item ?? prev.item,
+        counterparty: deal.seller.firstName ?? prev.counterparty,
+        amount:
+          deal.terms.amountMinor && deal.terms.currency
+            ? formatAmount(
+                (deal.terms.amountMinor / 100).toString(),
+                deal.terms.currency,
+              )
+            : prev.amount,
+      }));
+    } catch {
+      // Best-effort refresh — failure is non-fatal, the user can keep typing.
+    }
+  }, [dealId]);
+
   return (
     <main className="min-h-screen bg-[#f6f5f2] px-6 py-12 text-[#2a2924]">
       <div className="mx-auto flex w-full max-w-2xl flex-col gap-10">
@@ -384,7 +423,21 @@ export default function NewDealPage() {
                 {current.veraLine}
               </h2>
 
-              <div className="mt-8 flex flex-col gap-3">
+              <div className="mt-6">
+                <VeraVoiceSession
+                  sessionType="BUYER_ONBOARDING"
+                  userFirstName={buyerName}
+                  dealId={dealId ?? undefined}
+                  disabled={!buyerName.trim()}
+                  startLabel={`Talk to Vera about question ${step + 1}`}
+                  onSessionEnd={refreshFromServer}
+                />
+              </div>
+
+              <div className="mt-6 flex flex-col gap-3">
+                <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-[#8a8478]">
+                  Or type your answer
+                </p>
                 <textarea
                   value={draft}
                   onChange={(e) => setDraft(e.target.value)}
@@ -392,10 +445,7 @@ export default function NewDealPage() {
                   rows={3}
                   className="w-full resize-none rounded-md border border-[rgba(50,30,5,0.18)] bg-[#fbfaf6] px-4 py-3 text-[15px] outline-none focus:border-[#5266eb] focus:ring-2 focus:ring-[#5266eb]/30"
                 />
-                <div className="flex items-center justify-between">
-                  <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-[#8a8478]">
-                    Push-to-talk wires in once Vera ConvAI agent is provisioned
-                  </p>
+                <div className="flex items-center justify-end">
                   <div className="flex gap-2">
                     <button
                       type="button"

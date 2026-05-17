@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev --webpack",
     "build": "next build --webpack",
     "start": "next start",
     "lint": "eslint",
@@ -12,7 +12,9 @@
     "vera:ab": "node --env-file=.env.local scripts/vera-narrator-ab.mjs"
   },
   "dependencies": {
+    "@elevenlabs/client": "^1.7.0",
     "@elevenlabs/elevenlabs-js": "^2.47.0",
+    "@elevenlabs/react": "^1.6.0",
     "@stripe/stripe-js": "^9.5.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",

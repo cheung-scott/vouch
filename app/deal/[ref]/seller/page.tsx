@@ -1,7 +1,8 @@
 "use client";
 
-import { use, useEffect, useState } from "react";
+import { use, useCallback, useEffect, useState } from "react";
 import { Card, Eyebrow } from "@/components/ui";
+import { VeraVoiceSession } from "@/components/VeraVoiceSession";
 
 type Stage =
   | "loading"
@@ -37,16 +38,15 @@ export default function SellerPage({
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    let cancelled = false;
-    (async () => {
+  const loadDeal = useCallback(
+    async (opts: { silent?: boolean } = {}) => {
       try {
         const res = await fetch(`/api/deals/${ref}`, { cache: "no-store" });
         const json = await res.json();
         if (!res.ok) throw new Error(json.error ?? "deal_not_found");
-        if (cancelled) return;
         setDeal(json.deal);
-        setSellerName(json.deal.seller.firstName ?? "");
+        // Don't clobber a name the seller just typed.
+        setSellerName((prev) => prev || (json.deal.seller.firstName ?? ""));
         if (json.deal.status === "DRAFT") {
           setError(
             `${json.deal.buyer.firstName} hasn't finished capturing terms yet. Check back once they confirm.`,
@@ -56,11 +56,10 @@ export default function SellerPage({
           ["AGREED", "IN_ESCROW", "RELEASED"].includes(json.deal.status)
         ) {
           setStage("committed");
-        } else {
+        } else if (!opts.silent) {
           setStage("preflight");
         }
       } catch (err) {
-        if (cancelled) return;
         const raw = err instanceof Error ? err.message : "unknown";
         setError(
           raw === "deal_not_found"
@@ -69,11 +68,20 @@ export default function SellerPage({
         );
         setStage("error");
       }
+    },
+    [ref],
+  );
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      if (cancelled) return;
+      await loadDeal();
     })();
     return () => {
       cancelled = true;
     };
-  }, [ref]);
+  }, [loadDeal]);
 
   async function listenToTerms() {
     if (!deal) return;
@@ -194,13 +202,24 @@ export default function SellerPage({
                 placeholder="Your first name"
                 className="rounded-md border border-[rgba(50,30,5,0.18)] bg-[#fbfaf6] px-4 py-3 text-[15px] outline-none focus:border-[#5266eb] focus:ring-2 focus:ring-[#5266eb]/30"
               />
+              <VeraVoiceSession
+                sessionType="SELLER_ONBOARDING"
+                userFirstName={sellerName}
+                dealId={deal.id}
+                disabled={!sellerName.trim()}
+                startLabel="Have Vera read the terms to you"
+                onSessionEnd={() => loadDeal({ silent: true })}
+              />
+              <p className="text-center font-mono text-[10px] uppercase tracking-[0.14em] text-[#8a8478]">
+                or
+              </p>
               <button
                 type="button"
                 onClick={listenToTerms}
                 disabled={busy || !sellerName.trim()}
                 className="rounded-md bg-[#635bff] px-5 py-3 text-sm font-medium text-white transition-colors hover:bg-[#5048e5] disabled:opacity-40"
               >
-                {busy ? "Loading terms…" : "Hear the terms →"}
+                {busy ? "Loading terms…" : "Read the terms on-screen →"}
               </button>
               {error && (
                 <p className="font-mono text-xs text-[#b54a3a]">{error}</p>
