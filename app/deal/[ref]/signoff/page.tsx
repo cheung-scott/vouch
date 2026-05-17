@@ -37,6 +37,11 @@ export default function SignoffPage({
   const [sellerAgreed, setSellerAgreed] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  // Who's currently sitting at this screen? The joint sign-off is a
+  // shared session and Vera's greeting + counterparty inference need to
+  // know the actual speaker. Default to buyer (URL path arrives here
+  // from /new) but allow swap before starting voice.
+  const [speaker, setSpeaker] = useState<"buyer" | "seller">("buyer");
 
   const refreshDeal = useCallback(async () => {
     const res = await fetch(`/api/deals/${ref}`, { cache: "no-store" });
@@ -197,9 +202,19 @@ export default function SignoffPage({
 
             {stage === "ready" && (
               <div className="mt-8 flex flex-col gap-3">
+                <SpeakerPicker
+                  buyerName={deal.buyer.firstName}
+                  sellerName={deal.seller.firstName}
+                  value={speaker}
+                  onChange={setSpeaker}
+                />
                 <VeraVoiceSession
                   sessionType="JOINT_SIGNOFF"
-                  userFirstName={deal.buyer.firstName}
+                  userFirstName={
+                    speaker === "buyer"
+                      ? deal.buyer.firstName
+                      : deal.seller.firstName
+                  }
                   dealId={deal.id}
                   startLabel="Have Vera mediate the joint sign-off"
                   onSessionEnd={refreshAndReflectStage}
@@ -313,6 +328,10 @@ export default function SignoffPage({
                 startLabel={`${deal.buyer.firstName} — confirm receipt by voice`}
                 onSessionEnd={refreshAndReflectStage}
               />
+              <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-[#8a8478]">
+                Receipt confirmation is buyer-only by design — Vera releases
+                escrow only when the buyer says so.
+              </p>
               <p className="text-center font-mono text-[10px] uppercase tracking-[0.14em] text-[#8a8478]">
                 or
               </p>
@@ -351,5 +370,45 @@ export default function SignoffPage({
         )}
       </div>
     </main>
+  );
+}
+
+function SpeakerPicker({
+  buyerName,
+  sellerName,
+  value,
+  onChange,
+}: {
+  buyerName: string;
+  sellerName: string;
+  value: "buyer" | "seller";
+  onChange: (next: "buyer" | "seller") => void;
+}) {
+  const options: { id: "buyer" | "seller"; label: string }[] = [
+    { id: "buyer", label: buyerName },
+    { id: "seller", label: sellerName },
+  ];
+  return (
+    <div className="flex flex-col gap-2">
+      <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-[#5a5548]">
+        Who&rsquo;s speaking now?
+      </p>
+      <div className="flex gap-2">
+        {options.map((opt) => (
+          <button
+            key={opt.id}
+            type="button"
+            onClick={() => onChange(opt.id)}
+            className={`flex-1 rounded-md border px-4 py-2 text-sm font-medium transition-colors ${
+              value === opt.id
+                ? "border-[#5266eb] bg-[#e2e6fb] text-[#2a2924]"
+                : "border-[rgba(50,30,5,0.18)] bg-white text-[#5a5548] hover:bg-[#fbfaf6]"
+            }`}
+          >
+            {opt.label}
+          </button>
+        ))}
+      </div>
+    </div>
   );
 }

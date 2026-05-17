@@ -69,10 +69,15 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  await dealStore.setStatus(deal.id, "RELEASED");
-  const updated = await dealStore.update(deal.id, {
+  // Persist transfer id BEFORE flipping status (T1 M-2, same shape as
+  // B-1 on lock-escrow). If the second write fails, retries still find
+  // the deal in IN_ESCROW with a transfer id already stored — the
+  // idempotency guard at the top short-circuits and just re-flips
+  // status. Reverse order would lose the transfer id permanently.
+  await dealStore.update(deal.id, {
     stripeTransferId: transferId ?? undefined,
   });
+  const updated = await dealStore.setStatus(deal.id, "RELEASED");
 
   // 48h settlement window per Stripe's standard Connect payout timing
   // for UK test-mode accounts.

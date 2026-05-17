@@ -156,8 +156,12 @@ function VeraVoiceSessionInner({
   }, [conversation, dealId, disabled, locale, sessionType, userFirstName]);
 
   const stop = useCallback(() => {
+    // Don't optimistically flip to "idle" here — let onDisconnect own
+    // the transition. Otherwise the user can re-tap "Talk to Vera"
+    // before WebRTC has torn down, racing a fresh startSession against
+    // the in-flight endSession on the same conversation object (SDK
+    // throws — T1 H-1).
     void endSession();
-    setLocal("idle");
   }, [endSession]);
 
   // Belt-and-braces: end any live session on unmount so navigation away from

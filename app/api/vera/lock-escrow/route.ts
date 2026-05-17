@@ -68,10 +68,13 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  await dealStore.setStatus(deal.id, "IN_ESCROW");
-  const updated = await dealStore.update(deal.id, {
-    stripePaymentIntentId: paymentIntentId,
-  });
+  // Persist the PI id BEFORE flipping status. If the second write fails,
+  // a later retry hits the idempotency guard (we already have a PI) and
+  // the state guard (still in AGREED) — both pass, retry succeeds. The
+  // reverse order would leave the deal stuck in IN_ESCROW with no PI id
+  // and no recovery path (T1 B-1).
+  await dealStore.update(deal.id, { stripePaymentIntentId: paymentIntentId });
+  const updated = await dealStore.setStatus(deal.id, "IN_ESCROW");
 
   // 14-day escrow window for the demo. Real product derives this from
   // the agreed terms (e.g. delivery deadline + buffer).
