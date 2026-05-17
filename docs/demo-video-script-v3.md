@@ -208,7 +208,7 @@ All clips use the **mediating preset** unless noted. Render via TTS (not ConvAI 
 
 ### Polish (contract preset: stability 0.85, style 0.05, model `eleven_v3` multilingual)
 
-3. **Beat 4 Vera in Polish:** *"Sarah ustawiła ofertę. Pozwól mi przeczytać warunki: jeden iPhone piętnaście, dwieście pięćdziesiąt sześć gigabajtów, w oryginalnym opakowaniu, bez zarysowań, za czterysta funtów, dostarczony Royal Mail śledzonym do piątku."* (~6s)
+3. **Beat 4 Vera in Polish:** *"Sarah przygotowała ofertę. Pozwól mi przeczytać warunki: jeden iPhone piętnaście, dwieście pięćdziesiąt sześć gigabajtów, w oryginalnym opakowaniu, bez zarysowań, za czterysta funtów, dostarczony Royal Mail Tracked, do piątku."* (~6s) — **PENDING native verification before final render.**
 
 ### Human voice clips (NOT TTS — these are real recordings needed)
 
