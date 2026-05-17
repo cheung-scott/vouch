@@ -3,7 +3,6 @@ import {
   createAccountOnboardingLink,
   sanitizeStripeError,
 } from "@/lib/stripe";
-import { dealStore } from "@/lib/deals";
 
 export const runtime = "nodejs";
 
@@ -13,12 +12,13 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "invalid_account" }, { status: 400 });
   }
 
-  const deals = await dealStore.list();
-  const owned = deals.some((d) => d.seller.stripeAccountId === accountId);
-  if (!owned) {
-    return NextResponse.json({ error: "account_not_recognized" }, { status: 404 });
-  }
-
+  // Stripe redirects here when an onboarding link expires (15 min TTL).
+  // Trust the acct_ prefix as the format guard — the older "is this
+  // account owned by any deal in our store?" check returned 404 for
+  // standalone /onboard test sessions (no deal yet) and for sellers whose
+  // deal_id hadn't been persisted yet (pre-fix, every account). Stripe
+  // research audit, May 17. Post-hackathon: re-add a session-bound check
+  // once AuthN lands (S-103 §3).
   const appUrl = process.env.APP_URL ?? "http://localhost:3000";
 
   try {

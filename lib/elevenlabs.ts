@@ -61,9 +61,13 @@ export async function transcribeAudio(params: {
   file: Blob | File | ArrayBuffer | Uint8Array;
   languageCode?: string;
 }) {
+  // scribe_v2 ships with broader language coverage (90+ langs incl. Polish)
+  // and better accuracy on shorter utterances. ConvAI v2.2 internally uses
+  // Scribe v2 Realtime; pinning v2 here matches that for any direct STT calls
+  // we still make outside the ConvAI loop. ConvAI research synthesis, May 17.
   return elevenlabs.speechToText.convert({
     file: params.file as Blob,
-    modelId: "scribe_v1",
+    modelId: "scribe_v2",
     languageCode: params.languageCode,
   });
 }
