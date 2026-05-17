@@ -1,7 +1,29 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, Eyebrow } from "@/components/ui";
+
+type Prefill = {
+  source: string;
+  item?: string;
+  counterparty?: string;
+  amount?: string;
+  ref?: string;
+};
+
+const CURRENCY_SYMBOL: Record<string, string> = {
+  GBP: "£",
+  USD: "$",
+  EUR: "€",
+};
+
+function formatAmount(price: string, currency: string): string {
+  if (!price) return "";
+  const symbol = CURRENCY_SYMBOL[currency];
+  if (symbol) return `${symbol}${price}`;
+  if (currency) return `${currency} ${price}`;
+  return price;
+}
 
 type QuestionId = "item" | "counterparty" | "amount" | "delivery" | "extras";
 
@@ -68,6 +90,48 @@ export default function NewDealPage() {
   const [error, setError] = useState<string | null>(null);
   const [contractText, setContractText] = useState<string | null>(null);
   const [notifyMethod, setNotifyMethod] = useState<"email" | "sms" | "none" | null>(null);
+  const [prefill, setPrefill] = useState<Prefill | null>(null);
+
+  // Read query params on mount (e.g. from the Chrome extension on an eBay listing).
+  // If source=ebay (or any other extension source), pre-populate the captured terms
+  // so Sarah only needs to confirm + answer Q4 (delivery) and Q5 (extras).
+  //
+  // Note: this is a one-shot effect (empty deps) that reads a browser-only global
+  // and seeds state. It cannot loop. The react-hooks/set-state-in-effect rule
+  // would prefer a lazy useState initializer, but lazy initializers run during
+  // SSR too where `window` is undefined — leading to a hydration mismatch when
+  // the client picks up the URL params. A guarded useEffect is the cleanest
+  // pattern here.
+  /* eslint-disable react-hooks/set-state-in-effect */
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
+    const source = params.get("source");
+    if (!source) return;
+
+    const item = params.get("item") ?? undefined;
+    const seller = params.get("seller") ?? undefined;
+    const price = params.get("price") ?? "";
+    const currency = params.get("currency") ?? "";
+    const ref = params.get("ref") ?? undefined;
+    const amount = formatAmount(price, currency);
+
+    setPrefill({
+      source,
+      item: item || undefined,
+      counterparty: seller || undefined,
+      amount: amount || undefined,
+      ref,
+    });
+
+    setAnswers((prev) => ({
+      ...prev,
+      ...(item ? { item } : {}),
+      ...(seller ? { counterparty: seller } : {}),
+      ...(amount ? { amount } : {}),
+    }));
+  }, []);
+  /* eslint-enable react-hooks/set-state-in-effect */
 
   const current = QUESTIONS[step];
   const isLast = step === QUESTIONS.length - 1;
@@ -91,6 +155,25 @@ export default function NewDealPage() {
       if (!res.ok) throw new Error(json.message ?? json.error ?? "create_failed");
       setDealId(json.id);
       setReference(json.reference);
+
+      // If we have extension pre-fills, send them through extract-terms so the
+      // backend deal state matches, then jump straight to Q4 (delivery).
+      if (prefill) {
+        const prefillStrings: string[] = [];
+        if (prefill.item) prefillStrings.push(prefill.item);
+        if (prefill.counterparty) prefillStrings.push(prefill.counterparty);
+        if (prefill.amount) prefillStrings.push(prefill.amount);
+        for (const utterance of prefillStrings) {
+          await fetch("/api/vera/extract-terms", {
+            method: "POST",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify({ deal_id: json.id, user_input: utterance }),
+          });
+        }
+        // Jump to delivery question (index 3) — first three are pre-filled
+        setStep(3);
+      }
+
       setStage("questions");
     } catch (err) {
       setError(err instanceof Error ? err.message : "unknown error");
@@ -197,6 +280,46 @@ export default function NewDealPage() {
                   : "Committed"}
           </p>
         </header>
+
+        {stage === "preflight" && prefill && (
+          <Card tone="indigo" padding="loose" shadow>
+            <Eyebrow tone="indigo">
+              Continuing from {prefill.source === "ebay" ? "eBay" : prefill.source}
+            </Eyebrow>
+            <h2 className="mt-3 font-display text-2xl font-semibold leading-tight">
+              I&rsquo;ve <span className="italic text-[#5266eb]">captured the basics</span>.
+            </h2>
+            <p className="mt-2 text-sm text-[#5a5548]">
+              Confirm your name below and I&rsquo;ll skip ahead to delivery.
+            </p>
+            <dl className="mt-5 divide-y divide-[rgba(50,30,5,0.10)] rounded-xl border border-[rgba(50,30,5,0.10)] bg-white">
+              {prefill.item && (
+                <div className="grid grid-cols-[110px_1fr] gap-4 px-5 py-3 text-sm">
+                  <dt className="font-mono text-[11px] uppercase tracking-[0.12em] text-[#5a5548]">
+                    Item
+                  </dt>
+                  <dd className="text-[#2a2924]">{prefill.item}</dd>
+                </div>
+              )}
+              {prefill.amount && (
+                <div className="grid grid-cols-[110px_1fr] gap-4 px-5 py-3 text-sm">
+                  <dt className="font-mono text-[11px] uppercase tracking-[0.12em] text-[#5a5548]">
+                    Amount
+                  </dt>
+                  <dd className="text-[#2a2924]">{prefill.amount}</dd>
+                </div>
+              )}
+              {prefill.counterparty && (
+                <div className="grid grid-cols-[110px_1fr] gap-4 px-5 py-3 text-sm">
+                  <dt className="font-mono text-[11px] uppercase tracking-[0.12em] text-[#5a5548]">
+                    Seller
+                  </dt>
+                  <dd className="text-[#2a2924]">{prefill.counterparty}</dd>
+                </div>
+              )}
+            </dl>
+          </Card>
+        )}
 
         {stage === "preflight" && (
           <Card padding="loose" shadow>

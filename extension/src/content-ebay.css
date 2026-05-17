@@ -1,0 +1,128 @@
+/*
+ * Vouch "Pay with Vouch" button styles — injected into eBay listing pages.
+ *
+ * Design tokens mirror docs/DESIGN.md:
+ *   cream   #f6f5f2
+ *   indigo  #5266eb (primary)
+ *   coral   #b54a3a (accent)
+ *   ink     #2a2924
+ * Sharp 6px corners, mono labels, JetBrains Mono for the sub-text.
+ *
+ * Scoped via #vouch-pay-button to avoid bleeding into eBay's styles.
+ */
+
+#vouch-pay-button.vouch-pay-button {
+  /* layout */
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  margin: 0 0 12px 0;
+  padding: 12px 18px;
+
+  /* visuals */
+  background: #5266eb;
+  background-image: linear-gradient(135deg, #5266eb 0%, #4658de 100%);
+  color: #fbfaf6;
+  border: 1px solid rgba(50, 30, 5, 0.06);
+  border-radius: 6px;
+  box-shadow:
+    0 1px 0 rgba(0, 0, 0, 0.04),
+    0 6px 18px rgba(82, 102, 235, 0.25);
+
+  /* type */
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue",
+    Arial, sans-serif;
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1.2;
+  text-align: left;
+
+  /* interaction */
+  cursor: pointer;
+  transition:
+    transform 0.12s ease,
+    box-shadow 0.18s ease,
+    background-color 0.18s ease;
+}
+
+#vouch-pay-button.vouch-pay-button:hover {
+  background-image: linear-gradient(135deg, #4658de 0%, #3c4cc9 100%);
+  box-shadow:
+    0 1px 0 rgba(0, 0, 0, 0.04),
+    0 10px 24px rgba(82, 102, 235, 0.35);
+  transform: translateY(-1px);
+}
+
+#vouch-pay-button.vouch-pay-button:active {
+  transform: translateY(0);
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.04);
+}
+
+#vouch-pay-button.vouch-pay-button:focus-visible {
+  outline: 2px solid #b54a3a;
+  outline-offset: 2px;
+}
+
+#vouch-pay-button .vouch-pay-button__mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 32px;
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.14);
+  color: #fbfaf6;
+}
+
+#vouch-pay-button .vouch-pay-button__label {
+  display: block;
+  font-size: 15px;
+  font-weight: 500;
+  letter-spacing: -0.005em;
+}
+
+#vouch-pay-button .vouch-pay-button__label strong {
+  font-weight: 700;
+  font-family: "Fraunces", Georgia, "Times New Roman", serif;
+  font-style: italic;
+  font-size: 17px;
+}
+
+#vouch-pay-button .vouch-pay-button__sub {
+  display: block;
+  margin-top: 2px;
+  font-family:
+    "JetBrains Mono", ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
+    monospace;
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  opacity: 0.78;
+}
+
+#vouch-pay-button.vouch-pay-button.is-loading {
+  pointer-events: none;
+  opacity: 0.75;
+}
+
+#vouch-pay-button.vouch-pay-button.is-loading::after {
+  content: "";
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  margin-left: 8px;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  border-top-color: #fbfaf6;
+  border-radius: 50%;
+  animation: vouch-spin 0.8s linear infinite;
+}
+
+@keyframes vouch-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
