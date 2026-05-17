@@ -11,18 +11,27 @@ export const elevenlabs = new ElevenLabsClient({
   apiKey: apiKey ?? "placeholder",
 });
 
+// ElevenLabs SDK v2 expects camelCase voice setting keys (similarityBoost,
+// useSpeakerBoost). Earlier versions of these constants used snake_case which
+// the SDK silently dropped — flagged in OffPlanLog A-008. Fixed here so all
+// downstream TTS calls actually honour the intended settings.
+//
+// Preset values aligned with docs/demo-video-script-v3.md and OffPlanLog P-004:
+//   - mediating: in-product ConvAI default voice
+//   - contract:  formal recitation moments (read_contract_back / read_buyer_terms / replay_agreement)
+
 export const VERA_VOICE_SETTINGS = {
   stability: 0.65,
-  similarity_boost: 0.75,
+  similarityBoost: 0.75,
   style: 0.2,
-  use_speaker_boost: true,
+  useSpeakerBoost: true,
 } as const;
 
 export const VERA_CONTRACT_VOICE_SETTINGS = {
-  stability: 0.55,
-  similarity_boost: 0.75,
-  style: 0.3,
-  use_speaker_boost: true,
+  stability: 0.85,
+  similarityBoost: 0.8,
+  style: 0.05,
+  useSpeakerBoost: true,
 } as const;
 
 export const VERA_MODEL_DEFAULT = "eleven_turbo_v2_5";

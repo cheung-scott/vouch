@@ -1,6 +1,15 @@
 {
   "_comment": "Paste these tool definitions into Vera's ConvAI agent at elevenlabs.io/app/conversational-ai. Each tool maps to a POST endpoint on the Vouch backend. Replace {BASE_URL} with your tunnel URL during dev (ngrok / Cloudflare tunnel) or https://vouch.app in prod.",
   "_baseUrl": "{BASE_URL}",
+  "_dynamicVariables": {
+    "_comment": "Configure these on the ConvAI agent (ElevenLabs UI > Dynamic Variables). The platform sets values per session before sending the first turn to Vera.",
+    "session_type": { "type": "string", "description": "BUYER_ONBOARDING | SELLER_ONBOARDING | JOINT_SIGNOFF | VOICE_RECEIPT | DISPUTE" },
+    "user_first_name": { "type": "string", "description": "Greeting target — Sarah, Marcus, etc." },
+    "deal_id": { "type": "string", "description": "Active deal UUID (empty for BUYER_ONBOARDING pre-creation)." },
+    "counterparty_name": { "type": "string", "description": "Other party's first name, if known." },
+    "amount_spoken": { "type": "string", "description": "Pre-formatted amount string for natural speech (e.g. \"four hundred pounds\")." },
+    "locale": { "type": "string", "description": "BCP-47 language code. Default 'en'. Examples: pl (Polish), es (Spanish), de (German), fr (French). See VERA-SYSTEM-PROMPT.md § Multilingual." }
+  },
   "tools": [
     {
       "name": "extract_terms",
