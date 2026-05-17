@@ -59,16 +59,16 @@ const PRESETS = [
   },
   {
     id: "narrator",
-    label: "Narrator mode (kurzgesagt-style demo video VO)",
+    label: "Narrator mode (confident-product demo video VO, per P-004)",
     modelId: "eleven_multilingual_v2",
     voiceSettings: {
-      stability: 0.4,
+      stability: 0.55,        // tuned for confident-product (P-004) — was 0.40 for kurzgesagt-emotional
       similarityBoost: 0.85,
-      style: 0.45,
+      style: 0.30,            // tuned for confident-product (P-004) — was 0.45 for kurzgesagt-emotional
       useSpeakerBoost: true,
     },
     text:
-      "You should receive your money. On time. Last year, eight point two billion pounds were lost to peer-to-peer scams. Vouch is voice-recorded escrow — built on Stripe, powered by AI mediation.",
+      "Receive your money. On time. Vouch is voice-recorded escrow — built on Stripe. Trust the handshake. Hold the money.",
   },
 ];
 

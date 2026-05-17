@@ -40,3 +40,10 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# scratch / work-in-progress (renders, music candidates, screen recordings, etc.)
+/tmp/
+
+# regenerable Vera A/B audio outputs (run `pnpm vera:ab` to regenerate)
+/public/audio/vera-ab/
+
