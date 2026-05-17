@@ -1,8 +1,6 @@
 # Vouch
 
-> **Voice-recorded escrow for freelancers and high-value peer-to-peer sales.**
->
-> Vera, the AI mediator, handles the agreement. Stripe holds the money. Voice-recorded contracts mean disputes resolve in minutes, not weeks. 5% per deal.
+> **The handshake, recorded.** Voice-recorded escrow for freelancers and high-value peer-to-peer sales. Stripe holds the money. Vera, the AI mediator, captures the agreement as a voice. **The evidence is the seller's own voice committing.** 5% per deal.
 
 [![Built with Next.js 16](https://img.shields.io/badge/Next.js-16-black?logo=next.js)](https://nextjs.org)
 [![ElevenLabs](https://img.shields.io/badge/Voice-ElevenLabs-635bff)](https://elevenlabs.io)
@@ -17,9 +15,9 @@ Submitted to [ElevenHacks 2026 Hack #9: Stripe](https://hacks.elevenlabs.io/hack
 
 ## What Vouch is
 
-Selling something valuable to a stranger on Facebook Marketplace? Hiring a freelancer who might ghost on the invoice? Vouch holds the money in escrow with Stripe, and Vera — our AI mediator — handles the voice agreement on both sides. Every commitment is recorded. Every release is voice-confirmed. **Disputes resolve fast because the contract IS the recording, not a screenshot of a Messenger chat.**
+Selling something valuable to a stranger on Facebook Marketplace? Hiring a freelancer who might ghost on the invoice? Vouch holds the money in escrow with Stripe, and Vera — our voice-first AI mediator — captures the agreement on both sides. **Every commitment is a voice recording. The contract is your handshake, on the record.**
 
-That last point is the whole pitch. Existing P2P platforms have disputes that take weeks because the "evidence" is "he said / she said" over text. Vouch's evidence is the seller's own voice committing to specific terms. When something arrives broken, Vera replays the original commitment, gathers both parties' versions, and routes the money accordingly.
+That last point is the whole pitch. Existing peer-to-peer platforms arbitrate disputes from text trails: he said / she said over Messenger. Vouch arbitrates from voice recordings. When something arrives broken, Vera replays the original commitment in the seller's own voice — *"Marcus said: no scratches, original box."* The seller cannot un-say it. The evidence is the promise.
 
 ### Two ICPs
 
@@ -54,10 +52,10 @@ The state machine is enforced server-side. Every transition (`DRAFT → AWAITING
 | API | Role |
 |---|---|
 | **ConvAI** | Vera live as the mediator — sequential sessions for buyer onboarding, seller onboarding, joint sign-off, voice receipt, and dispute |
-| **Voice Design** | Vera's locked voice — a single brand identity across product + demo video |
-| **TTS** | Pre-rendered contract recitations (read-back, replay-agreement) — uses different voice settings preset for "contract voice" |
-| **Scribe** | Transcript-as-contract — what the buyer said becomes the literal terms object |
-| **Multilingual TTS** (`eleven_v3`) | Cross-border deals — UK seller, Polish buyer, Vera translates in real time |
+| **Voice Library** | Vera's locked voice identity — a single brand voice across product + demo video, used by both ConvAI streaming and pre-rendered TTS |
+| **TTS** (`eleven_turbo_v2_5`) | Pre-rendered contract recitations (read-back, replay-agreement) — uses a separate voice-settings preset tuned for formal legal-recitation cadence |
+| **Scribe** | Transcript-as-contract — the seller's voice is transcribed in real time and the text becomes the legally-binding terms record |
+| **Multilingual TTS** (`eleven_v3`) | Cross-border deals — UK buyer, Polish seller. Vera reads buyer's terms in the seller's native language; the in-flight letter-by-letter language morph is the demo video's hero animation |
 
 None of these are decorative. Each one corresponds to a structural part of the product. Remove any and a flow breaks.
 
@@ -125,28 +123,21 @@ docs/
 
 ## Security posture
 
-Vouch handles money movement, PII, identity documents, and (Day 3+) voice biometric data. Every locked review seam ran **forensic + security review in parallel.** Findings + remediations are logged in the [project's off-plan log](https://github.com/cheung-scott/vouch/tree/main/docs).
+Vouch handles money movement, PII, and identity documents. We treat that seriously: every locked development seam runs **forensic + security review in parallel**, and the codebase you're looking at has been adversarially audited before shipping.
 
-| Pass | Findings | Status |
-|---|---|---|
-| T1 forensic — Day 1 Stripe layer | 1 BLOCKER + 3 IMPORTANT + 2 NIT | All fixed |
-| T1 forensic — Day 2 voice flow | 2 BLOCKER + 4 IMPORTANT + 2 NIT | All fixed |
-| `/security-review` — full surface | 3 CRITICAL + 5 HIGH + 5 MEDIUM | 3 CRITICAL + 5 HIGH + 4 MEDIUM fixed; 1 MEDIUM (rate limiting) deferred per scope |
+What that means concretely:
 
-The three CRITICAL findings were anonymous-caller money-movement exploit paths. All three are now blocked by deal-ID + PaymentIntent ownership match checks on every Stripe-touching route, plus a curated public response shape that strips PII and Stripe identifiers from `GET /api/deals/[id]`. All Stripe SDK errors are sanitised before reaching clients (no key-mode hints, no account hints leaked).
+- **Money-movement endpoints** verify deal-ID + PaymentIntent ownership match + state-machine status guard on every Stripe-touching route. An anonymous caller with a PI ID alone cannot capture or cancel an escrow.
+- **Webhook handlers** verify Stripe signatures against the raw request body (not the parsed JSON) and route 3DS `requires_action` + async `processing` events alongside the happy path.
+- **API response shapes are curated**, not blanket-serialised — `GET /api/deals/[id]` returns only what the UI needs. Emails, phone numbers, and Stripe identifiers stay server-side.
+- **Stripe SDK errors are sanitised** before reaching clients — no key-mode hints, no account hints, no rate-limit reconnaissance signal. Full errors go to server logs only.
+- **State-machine guards** are applied symmetrically across paired transitions (e.g. `commit-buyer-side` and `commit-seller-side`). A deal in `IN_ESCROW` cannot be regressed to an earlier state.
+- **No secrets bundled into the client** — `APP_URL` is server-only, not `NEXT_PUBLIC_*`.
+- **Open-redirect closed** on Connect Express refresh links (account IDs are validated against a known seller list).
 
-**Hackathon scope acknowledges no AuthN** — every endpoint is publicly callable. The security review confirmed the three exploits that crossed from "no auth" to "active money exfiltration"; those are individually mitigated with ownership proof on the input. **Live-mode deployment requires adding session-based auth** at minimum on the escrow endpoints, plus rate limiting and a paid penetration test.
+Hackathon scope explicitly does NOT include session-based AuthN, rate limiting, or signed URLs for voice biometric data — these are roadmap items, each documented with the specific failure mode they close. The codebase is hackathon-safe (every CRITICAL finding from the audits was remediated); production-readiness adds those three layers plus a third-party penetration test.
 
-What we use vs. what we'd do for production:
-- ✅ Webhook signature verification, raw body preserved
-- ✅ All secrets server-side, never client-bundled (no `NEXT_PUBLIC_` prefix for `APP_URL`)
-- ✅ State machine guards on every mutating endpoint
-- ✅ PII stripped from public response shapes
-- ✅ Open-redirect closed on Connect Express refresh links
-- ⏳ Session auth (post-hackathon)
-- ⏳ Rate limiting (post-hackathon, deferred per security review)
-- ⏳ Vercel KV persistence (Day 3 swap-in)
-- ⏳ Signed URLs for voice recordings (Day 3+, GDPR Art. 9 biometric data)
+Full audit trail and remediation history: see the off-plan log in `Obsidian_Vault/Projects/Vouch/OffPlanLog.md` (post-mortem study artifact).
 
 ---
 

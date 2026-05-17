@@ -56,6 +56,14 @@ export const DealSchema = z.object({
   seller: PartySchema,
   stripePaymentIntentId: z.string().optional(),
   stripeTransferId: z.string().optional(),
+  // Stripe Issuing — escrow virtual card lifecycle.
+  // Per-seller cardholder is created on first IN_ESCROW transition; card is minted
+  // frozen and activated on voice-confirmed receipt. Card status drives the
+  // visible "escrow card" state on the deal detail page. See lib/stripe.ts
+  // § Stripe Issuing for the lifecycle helpers.
+  stripeIssuingCardholderId: z.string().optional(),
+  stripeIssuingCardId: z.string().optional(),
+  stripeIssuingCardStatus: z.enum(["frozen", "active", "canceled"]).optional(),
   // SECURITY: never include this raw URL in public API responses (GDPR Art. 9 biometric data).
   // Day 3+ implementation must generate signed URLs server-side per request after auth.
   voiceAgreementRecordingUrl: z.string().url().optional(),

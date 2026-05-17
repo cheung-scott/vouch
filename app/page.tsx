@@ -27,15 +27,23 @@ export default function HomePage() {
           </p>
         </div>
 
-        <Link
-          href="/app"
-          className="rounded-md bg-stripe-purple px-7 py-3.5 text-sm font-medium text-white transition-colors hover:bg-stripe-purple-hover"
-        >
-          Start a deal →
-        </Link>
+        <div className="flex flex-wrap items-center justify-center gap-3">
+          <Link
+            href="/new"
+            className="rounded-md bg-stripe-purple px-7 py-3.5 text-sm font-medium text-white transition-colors hover:bg-stripe-purple-hover"
+          >
+            Start a deal →
+          </Link>
+          <Link
+            href="/demo"
+            className="rounded-md border border-white/15 bg-white/[0.04] px-6 py-3.5 text-sm font-medium text-white/90 backdrop-blur transition-colors hover:bg-white/[0.08]"
+          >
+            See the demo
+          </Link>
+        </div>
 
         <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-white/40">
-          Vouch · Powered by Stripe + ElevenLabs
+          Vouch · Voice-recorded escrow on Stripe + ElevenLabs
         </p>
       </div>
     </main>
