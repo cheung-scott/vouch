@@ -4,6 +4,7 @@ import {
   type ReleaseEscrowOutput,
 } from "@/types/vera";
 import { dealStore } from "@/lib/deals";
+import { releaseEscrow, sanitizeStripeError } from "@/lib/stripe";
 
 export async function POST(req: NextRequest) {
   const body = await req.json().catch(() => ({}));
@@ -30,17 +31,56 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  // TODO(day-3): call releaseEscrow() against the real Stripe PI once keys present.
-  const stubTransferId = `tr_stub_${deal.reference.toLowerCase()}`;
-  const settlesBy = new Date(Date.now() + 1000 * 60 * 60 * 48).toISOString();
+  // Idempotency: if the deal already has a transfer ID, the release
+  // already happened — return the existing one rather than capturing
+  // twice. (Stripe's capture call on a captured PI errors with
+  // payment_intent_unexpected_state but we'd rather not surface that.)
+  let transferId = deal.stripeTransferId ?? null;
+
+  if (!transferId) {
+    if (!deal.stripePaymentIntentId) {
+      return NextResponse.json(
+        { error: "no_payment_intent" },
+        { status: 409 },
+      );
+    }
+    try {
+      const result = await releaseEscrow({
+        paymentIntentId: deal.stripePaymentIntentId,
+        dealId: deal.id,
+      });
+      // B-001 lesson: charge.transfer is where the destination transfer
+      // lives, not pi.latest_charge. releaseEscrow() in lib/stripe.ts
+      // already pulls transfer_id from charge.transfer.id.
+      transferId = result.transfer_id ?? null;
+      if (!transferId) {
+        console.warn(
+          "[release-escrow] Stripe returned no transfer_id — capture may have succeeded but transfer hop hasn't materialized yet",
+          { dealId: deal.id, pi: deal.stripePaymentIntentId },
+        );
+      }
+    } catch (err) {
+      const { code } = sanitizeStripeError(err);
+      console.error("[release-escrow] releaseEscrow failed", err);
+      return NextResponse.json(
+        { error: "stripe_error", code },
+        { status: 502 },
+      );
+    }
+  }
+
   await dealStore.setStatus(deal.id, "RELEASED");
   const updated = await dealStore.update(deal.id, {
-    stripeTransferId: deal.stripeTransferId ?? stubTransferId,
+    stripeTransferId: transferId ?? undefined,
   });
+
+  // 48h settlement window per Stripe's standard Connect payout timing
+  // for UK test-mode accounts.
+  const settlesBy = new Date(Date.now() + 1000 * 60 * 60 * 48).toISOString();
 
   const response: ReleaseEscrowOutput = {
     success: true,
-    transfer_id: updated.stripeTransferId ?? stubTransferId,
+    transfer_id: transferId ?? "",
     amount: updated.terms.amountMinor,
     currency: updated.terms.currency,
     settles_by: settlesBy,

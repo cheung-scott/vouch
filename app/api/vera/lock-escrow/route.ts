@@ -4,6 +4,8 @@ import {
   type LockEscrowOutput,
 } from "@/types/vera";
 import { dealStore } from "@/lib/deals";
+import { createEscrowPaymentIntent, sanitizeStripeError } from "@/lib/stripe";
+import { toStripeCurrency } from "@/types/deal";
 
 export async function POST(req: NextRequest) {
   const body = await req.json().catch(() => ({}));
@@ -30,21 +32,58 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  // TODO(day-3): call createEscrowPaymentIntent here once Stripe keys + seller
-  // Connect account are provisioned. For now we set state and return a stub PI id.
-  const stubPaymentIntentId = `pi_stub_${deal.reference.toLowerCase()}`;
-  const expiresAt = new Date(Date.now() + 1000 * 60 * 60 * 24 * 14).toISOString();
+  // Idempotency: if a real PI already exists on this deal, return it
+  // rather than re-creating — prevents double-holds when Vera retries
+  // lock_escrow on a transient failure.
+  let paymentIntentId = deal.stripePaymentIntentId ?? null;
+
+  if (!paymentIntentId) {
+    // Seller must be onboarded onto a Connect account before money can
+    // be routed to them. Surface a clean 409 if not — beats letting
+    // Stripe return a cryptic "no_such_destination" 400.
+    const sellerAccountId = deal.seller.stripeAccountId;
+    if (!sellerAccountId) {
+      return NextResponse.json(
+        { error: "seller_not_onboarded" },
+        { status: 409 },
+      );
+    }
+
+    try {
+      const pi = await createEscrowPaymentIntent({
+        amountMinor: deal.terms.amountMinor,
+        currency: toStripeCurrency(deal.terms.currency),
+        buyerCustomerId: deal.buyer.stripeCustomerId,
+        sellerAccountId,
+        dealId: deal.id,
+      });
+      paymentIntentId = pi.id;
+    } catch (err) {
+      const { code } = sanitizeStripeError(err);
+      console.error("[lock-escrow] createEscrowPaymentIntent failed", err);
+      return NextResponse.json(
+        { error: "stripe_error", code },
+        { status: 502 },
+      );
+    }
+  }
+
   await dealStore.setStatus(deal.id, "IN_ESCROW");
   const updated = await dealStore.update(deal.id, {
-    stripePaymentIntentId:
-      deal.stripePaymentIntentId ?? stubPaymentIntentId,
+    stripePaymentIntentId: paymentIntentId,
   });
+
+  // 14-day escrow window for the demo. Real product derives this from
+  // the agreed terms (e.g. delivery deadline + buffer).
+  const expiresAt = new Date(
+    Date.now() + 1000 * 60 * 60 * 24 * 14,
+  ).toISOString();
 
   const response: LockEscrowOutput = {
     success: true,
     amount: updated.terms.amountMinor,
     currency: updated.terms.currency,
-    stripe_pi_id: updated.stripePaymentIntentId ?? stubPaymentIntentId,
+    stripe_pi_id: paymentIntentId,
     expires_at: expiresAt,
   };
   return NextResponse.json(response);
