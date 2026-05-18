@@ -10,7 +10,8 @@
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md,css}\"",
     "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md,css}\"",
     "vera:ab": "node --env-file=.env.local scripts/vera-narrator-ab.mjs",
-    "tools:import": "node --env-file=.env.local scripts/import-vera-tools.mjs"
+    "tools:import": "node --env-file=.env.local scripts/import-vera-tools.mjs",
+    "tts:compare:fr": "node --env-file=.env.local scripts/compare-tts-french.mjs"
   },
   "dependencies": {
     "@elevenlabs/client": "^1.7.0",
