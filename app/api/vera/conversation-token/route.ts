@@ -56,11 +56,16 @@ export async function POST(request: Request) {
     locale,
   } = parsed.data;
 
-  // BUYER_ONBOARDING is allowed without a deal_id (deal is created mid-flow).
-  // All other session types require an existing deal — and we derive the
-  // counterparty / amount from the server record, not the client.
+  // BUYER_ONBOARDING is allowed without a deal_id — we auto-create a
+  // blank deal here so Vera has a deal_id from turn 1. Without this,
+  // extract_terms calls don't persist (no deal to update) and the
+  // subsequent read_contract_back fails with 400 missing_deal_id —
+  // exactly the failure mode the dashboard Test panel hit.
+  // For all other session types, an existing deal_id is required.
   let counterpartyName = "";
   let amountSpoken = "";
+  let effectiveDealId = dealId;
+
   if (dealId) {
     const deal = await dealStore.get(dealId);
     if (!deal) {
@@ -71,7 +76,28 @@ export async function POST(request: Request) {
       deal.terms.amountMinor,
       deal.terms.currency,
     );
-  } else if (sessionType !== "BUYER_ONBOARDING") {
+  } else if (sessionType === "BUYER_ONBOARDING") {
+    // Auto-create a blank deal seeded with the buyer's first name. Terms
+    // get filled in turn-by-turn as Vera calls extract_terms with this
+    // deal_id. The seller party is a placeholder until SELLER_ONBOARDING.
+    const { randomUUID } = await import("node:crypto");
+    const created = await dealStore.create({
+      buyer: {
+        id: randomUUID(),
+        role: "BUYER",
+        firstName: userFirstName,
+        identityVerified: false,
+      },
+      seller: {
+        id: randomUUID(),
+        role: "SELLER",
+        firstName: "the other party",
+        identityVerified: false,
+      },
+      terms: { item: "", quantity: 1, amountMinor: 0, currency: "GBP" },
+    });
+    effectiveDealId = created.id;
+  } else {
     return NextResponse.json({ error: "deal_id_required" }, { status: 400 });
   }
 
@@ -86,7 +112,7 @@ export async function POST(request: Request) {
   const dynamicVariables = buildVeraDynamicVariables({
     sessionType,
     userFirstName,
-    dealId,
+    dealId: effectiveDealId,
     counterpartyName,
     amountSpoken,
     locale,

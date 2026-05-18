@@ -112,15 +112,23 @@ export async function releaseEscrow(params: {
   dealId: string;
   amountToCapture?: number;
 }) {
-  const pi = await stripe.paymentIntents.capture(
+  // The Stripe `expand` parameter is NOT supported on `capture()` —
+  // historically it was silently ignored which meant our transfer_id
+  // never populated and the deal record kept stub IDs. Stripe-Full-Audit
+  // caught this. Fix: capture WITHOUT expand, then retrieve with expand
+  // to pull the populated charge.transfer chain.
+  const captured = await stripe.paymentIntents.capture(
     params.paymentIntentId,
-    {
-      expand: ["latest_charge.transfer"],
-      ...(params.amountToCapture
-        ? { amount_to_capture: params.amountToCapture }
-        : {}),
-    },
+    params.amountToCapture
+      ? { amount_to_capture: params.amountToCapture }
+      : undefined,
   );
+
+  // Now hydrate latest_charge.transfer via a fresh retrieve with expand.
+  const pi = await stripe.paymentIntents.retrieve(captured.id, {
+    expand: ["latest_charge.transfer"],
+  });
+
   const charge =
     pi.latest_charge && typeof pi.latest_charge === "object"
       ? (pi.latest_charge as Stripe.Charge)

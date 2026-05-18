@@ -12,7 +12,8 @@
     "vera:ab": "node --env-file=.env.local scripts/vera-narrator-ab.mjs",
     "tools:import": "node --env-file=.env.local scripts/import-vera-tools.mjs",
     "tts:compare:fr": "node --env-file=.env.local scripts/compare-tts-french.mjs",
-    "personas:generate": "node --env-file=.env.local scripts/generate-personas.mjs"
+    "personas:generate": "node --env-file=.env.local scripts/generate-personas.mjs",
+    "tags:verify": "node --env-file=.env.local scripts/verify-audio-tags.mjs"
   },
   "dependencies": {
     "@elevenlabs/client": "^1.7.0",
