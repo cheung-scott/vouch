@@ -65,13 +65,19 @@ export async function POST(req: NextRequest) {
     //    In production we'd cache cardholders per Stripe account ID; for
     //    hackathon scope we create one per deal — simpler invariants.
     const cardholder = await createIssuingCardholder({
-      fullName: deal.seller.firstName,
-      email: deal.seller.email ?? "seller@vouch.app",
+      // Stripe Issuing requires a full legal name. Party schema only
+      // has firstName, so test mode uses a placeholder surname. Production
+      // should collect full legal name during Connect onboarding (per
+      // Stripe-Full-Audit findings).
+      fullName: `${deal.seller.firstName} Test`,
+      email:
+        deal.seller.email ?? `seller-${deal.reference.toLowerCase()}@vouch.app`,
       phone: deal.seller.phone,
       billingAddress: {
-        // TODO Day 4 PM: take from Stripe Connect account, not hardcoded.
-        // Test mode accepts any valid-shape address.
-        line1: "1 Test Street",
+        // `address_full_match` is Stripe's test-mode magic value that
+        // passes all KYC address checks. Production should take the
+        // verified address from the Stripe Connect account.
+        line1: "address_full_match",
         city: "London",
         postalCode: "EC1A 1BB",
         country: "GB",

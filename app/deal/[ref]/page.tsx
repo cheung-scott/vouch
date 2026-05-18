@@ -22,6 +22,7 @@ type DealDetail = {
   updatedAt: string;
   lockedAt?: string;
   releasedAt?: string;
+  stripeIssuingCardStatus?: "frozen" | "active" | "canceled";
 };
 
 function fmtTimestamp(iso?: string): string {
@@ -139,6 +140,10 @@ export default function DealDetailPage({
         </header>
 
         <ActionPanel deal={deal} />
+
+        {deal.stripeIssuingCardStatus && (
+          <IssuingCardBadge status={deal.stripeIssuingCardStatus} />
+        )}
 
         <Card>
           <Eyebrow>Terms</Eyebrow>
@@ -437,5 +442,60 @@ function CounterReconfirmPanel({ deal }: { deal: DealDetail }) {
         <p className="mt-3 font-mono text-xs text-[#b54a3a]">{error}</p>
       )}
     </Card>
+  );
+}
+
+function IssuingCardBadge({
+  status,
+}: {
+  status: "frozen" | "active" | "canceled";
+}) {
+  const config = {
+    frozen: {
+      tone: "indigo" as const,
+      label: "Virtual card minted",
+      sub: "Frozen — unfreezes on voice-confirmed receipt",
+      icon: "🧊",
+      border: "border-[#5266eb]/30",
+      bg: "bg-[#5266eb]/5",
+      text: "text-[#5266eb]",
+    },
+    active: {
+      tone: "success" as const,
+      label: "Virtual card active",
+      sub: "Seller can spend the released amount immediately",
+      icon: "✓",
+      border: "border-[#2f7d57]/30",
+      bg: "bg-[#2f7d57]/5",
+      text: "text-[#2f7d57]",
+    },
+    canceled: {
+      tone: "danger" as const,
+      label: "Virtual card cancelled",
+      sub: "Deal disputed or refunded — card terminated",
+      icon: "✕",
+      border: "border-[#b54a3a]/30",
+      bg: "bg-[#b54a3a]/5",
+      text: "text-[#b54a3a]",
+    },
+  }[status];
+
+  return (
+    <div
+      className={`flex items-center gap-4 rounded-xl border ${config.border} ${config.bg} px-5 py-4`}
+    >
+      <span className={`grid h-10 w-10 place-items-center rounded-full text-lg ${config.text}`}>
+        {config.icon}
+      </span>
+      <div className="flex flex-1 flex-col">
+        <span className={`font-mono text-[11px] uppercase tracking-[0.14em] ${config.text}`}>
+          Stripe Issuing
+        </span>
+        <span className={`mt-1 font-display text-base font-semibold ${config.text}`}>
+          {config.label}
+        </span>
+        <span className="mt-0.5 text-xs text-[#5a5548]">{config.sub}</span>
+      </div>
+    </div>
   );
 }

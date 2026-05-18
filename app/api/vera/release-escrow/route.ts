@@ -4,7 +4,11 @@ import {
   type ReleaseEscrowOutput,
 } from "@/types/vera";
 import { dealStore } from "@/lib/deals";
-import { releaseEscrow, sanitizeStripeError } from "@/lib/stripe";
+import {
+  activateIssuingCard,
+  releaseEscrow,
+  sanitizeStripeError,
+} from "@/lib/stripe";
 
 export async function POST(req: NextRequest) {
   const body = await req.json().catch(() => ({}));
@@ -78,6 +82,24 @@ export async function POST(req: NextRequest) {
     stripeTransferId: transferId ?? undefined,
   });
   const updated = await dealStore.setStatus(deal.id, "RELEASED");
+
+  // Best-effort: unfreeze the Issuing card so the seller can spend the
+  // released amount immediately (no waiting for Connect payout). Fail-soft
+  // — main escrow flow already succeeded above; this is a bonus.
+  if (
+    updated.stripeIssuingCardId &&
+    updated.stripeIssuingCardStatus === "frozen"
+  ) {
+    try {
+      await activateIssuingCard(updated.stripeIssuingCardId);
+      await dealStore.update(deal.id, { stripeIssuingCardStatus: "active" });
+    } catch (err) {
+      console.warn(
+        "[release-escrow] Issuing card activation failed (non-fatal)",
+        sanitizeStripeError(err).code,
+      );
+    }
+  }
 
   // 48h settlement window per Stripe's standard Connect payout timing
   // for UK test-mode accounts.

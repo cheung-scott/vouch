@@ -37,6 +37,10 @@ export async function GET(
     updatedAt: deal.updatedAt,
     lockedAt: deal.lockedAt,
     releasedAt: deal.releasedAt,
+    // Issuing status only (NOT the card or cardholder IDs — those would
+    // be a lookup vector against the Stripe API per the S-007 pattern).
+    // The UI just needs to know the badge state.
+    stripeIssuingCardStatus: deal.stripeIssuingCardStatus,
   };
   return NextResponse.json({ deal: publicDeal });
 }
