@@ -2,8 +2,8 @@
 
 **Length:** 65 seconds (Track 4)
 **Music:** Track 4 — `hitslab-product-launch-advertisement-commercial-music-301409.mp3`
-**Editorial frame:** Narrated product film. Vera narrates money-movement moments + dispute resolution; Sarah + Marcus appear diegetically. No external narrator.
-**Status:** Ready for Day 6 Remotion render. Locked.
+**Editorial frame:** Confident product anthem. **No external narrator.** Vera speaks only when the product needs her (intake Q4, multilingual translation, receipt ask). Money-movement + dispute moments stay silent of narration — visuals + SFX + music carry them. Marcus's diegetic voice (Zgadzam się + no scratches) is the moat in Beats 4 + 10.
+**Status:** Ready for Day 6 Remotion render. Locked 2026-05-19 evening after revert-to-minimal-narration decision.
 
 This document supersedes:
 - `docs/demo-video-script-v3.md` (narrative + audio direction — partially outdated, see deltas below)
@@ -17,22 +17,27 @@ It bakes in the user's audio-pick decisions made 2026-05-19 evening.
 
 | Decision | v3 (original) | v4 (locked) | Why |
 |---|---|---|---|
-| Vera narration scope | 3 clips (Beats 3, 4, 7) | **7 clips (Beats 3, 4, 5, 7, 8, 10, 11)** | Added narration over lock/release/dispute/verdict to anchor money-movement comprehension. Trade-off: shifts from "product film" toward "narrated product film." |
+| Vera narration scope | 3 clips (Beats 3, 4, 7) | **3 clips (Beats 3, 4, 7) — UNCHANGED** | We briefly considered adding Vera VO over lock/release/dispute/verdict, but reverted "less is more" — v3's silent-money-movement + silent-Act-2 thesis preserved. The 4 already-rendered Vera clips for Beats 5/8/10/11 stay on disk for archive but are NOT wired into Remotion. |
 | Beat 4 Polish text | Full recital (~6s, all terms) | **Shortened (~3s, key terms + closing question)** | 17s actual render at contract preset was too long for fast-paced demo |
-| Beat 5 audio (lock) | Music + lock-thunk SFX only ("No voice") | **+ Vera: "Four hundred pounds is now locked with Stripe." (~3s)** | Drops "escrow" jargon for lay-audience clarity |
-| Beat 8 audio (release) | Music + release-bell SFX only ("No voice") | **+ Vera: "Four hundred pounds is being released to Marcus right now. Thanks for using Vouch." (~4s)** | Anchors the release moment narratively |
-| Beat 10 audio (dispute) | Diegetic Marcus "no scratches" ONLY | **Diegetic Marcus + Vera: "Marcus said: 'iPhone 15, no scratches, original box.' That was the deal." (~4s, mediating preset)** | Diegetic Marcus alone risked judges missing the moat moment |
-| Beat 11 audio (verdict) | Music + soft chime + coin sweep ("No voice") | **+ Vera: "Ruling: refund to Sarah. Marcus's account flagged for review." (~3s)** | Closing punchline before silent money sweep |
+| Beat 5 audio (lock) | Music + lock-thunk SFX only ("No voice") | **Unchanged from v3** | Less is more — visuals + SFX carry the lock |
+| Beat 8 audio (release) | Music + release-bell SFX only ("No voice") | **Unchanged from v3** | Less is more — visuals + SFX carry the release |
+| Beat 10 audio (dispute) | Diegetic Marcus "no scratches" ONLY | **Unchanged from v3 — diegetic Marcus is the moat** | The product showing its own evidence chain — Vera doesn't need to narrate over Marcus's own voice indicting him |
+| Beat 11 audio (verdict) | Music + soft chime + coin sweep ("No voice") | **Unchanged from v3** | Less is more — verdict card + SFX carry it |
 | Motion direction | Reference clips needed per beat | **Zelios archetypes + Framer Motion / Remotion / GSAP recipes per beat** | Day 5 motion synthesis added implementation detail |
-| Beat numbering (audio) | Audio file names didn't match script beats | **Standardised** (see Audio file map below) | Three audio files misnumbered in old script |
+| Beat numbering (audio) | Audio file names didn't match script beats | **Renumbering deferred** (see Audio file map below) | Three audio files misnumbered in old script; mapping documented; rename post-submission |
+| Marcus "no scratches" clip | Reused from Beat 4 (didn't exist) | **Generated fresh via EL TTS using Marcus's voice ID, 5 takes** | Beat 10 needs a dedicated "no scratches" clip; reusing Beat 4 wasn't viable |
+| Cracked iPhone visual (Beat 9) | Stock photo recommended | **Real-life photograph from Unsplash** | "broken iPhone screen on table" search; gut-punch realism trumps illustration |
 
-### Design tension callout
+### Design tension — RESOLVED 2026-05-19
 
-The locked v3 thesis was *"product film, NOT explainer — no external narration. Acts 1 lock/release + Act 2 entirety silent."* v4 adds Vera VO at money-movement moments, which softens the "the product showing its own evidence chain" pitch in Act 2.
+The locked v3 thesis is *"product film, NOT explainer — no external narration. Money-movement + Act 2 silent."* This v4 lock UPHOLDS that thesis. Earlier-in-the-day exploration added Vera VO for Beats 5/8/10/11, but we reverted — *"less is more."* The Vera-narrated audio for those 4 beats was rendered + A/B'd but is NOT wired into the demo render. Stays on disk for archive.
 
-**Mitigation in v4:** Vera's lines are tight (≤4s each), conversational not explanatory, and run UNDER the visual action — they don't replace the silence, they texture it. The diegetic Marcus "no scratches" clip still plays in Beat 10; Vera contextualises rather than narrates over it.
-
-If you reverse this decision before render, all Vera Beat 5/8/10/11 clips drop. Visuals + SFX + music + diegetic Marcus carry everything per original v3.
+**What this means for the demo:**
+- **Beat 5 (lock)** carries on music + lock-thunk SFX + status pill cascade + tagline lockup
+- **Beat 8 (release)** carries on music build + release-bell SFX + HERO TICK + money slide + tagline lockup
+- **Beat 10 (dispute)** carries on diegetic Marcus "no scratches" + waveform highlight + evidence comparison glow
+- **Beat 11 (verdict)** carries on dispute-chime SFX + verdict card + money reversal + coin sweep
+- Vera speaks only in Beats 3, 4, 7 (intake, Polish recital, receipt ask)
 
 ---
 
@@ -143,7 +148,7 @@ const words = ["Receive", "your", "money,", "on", "time."];
 | **Music** | ⚠ Drum hit between 0:28-0:30. **Vault snap MUST land on it.** Single most critical sync point. |
 | **Tagline** | *"receive your money, on time."* small mono under the lock animation |
 | **On-screen** | Cream surface. Pile of £400 (stack-of-cards visual) slides into vault/lock. Status pill: AWAITING_SELLER → AGREED → IN_ESCROW. |
-| **Audio** | Music + 🔒 **Lock-thunk SFX (`lock-thunk-v3-take5.mp3`, ~150ms)** — most important SFX in the video. **+ Vera (mediating): *"[confidently] Four hundred pounds is now locked with Stripe."* (~3s, runs UNDER the lock animation, NOT over the SFX)** |
+| **Audio** | Music + 🔒 **Lock-thunk SFX (`lock-thunk-v3-take5.mp3`, ~150ms)** — most important SFX in the video. **No voice.** (v4 revert: the previously-A/B'd Vera "locked with Stripe" line is NOT wired in — visuals + SFX carry the lock per v3's silent-money-movement thesis.) |
 | **Animation** | **PEAK MOMENT.** Sequence:<br/>1. 0:28.0-0:28.4 — Money slides to centre (400ms, staggered)<br/>2. 0:28.4-0:28.55 — Vault appears (SVG), shutter open at 90°<br/>3. 0:28.55-0:28.7 — Money compresses (`scale: 1 → 0.6`)<br/>4. 0:28.7 — ⭐ DRUM HIT → vault snaps shut (80ms keyframe scale jolt)<br/>5. 0:28.7-0:28.78 — 2-3px SCREEN SHAKE on root composition<br/>6. 0:28.78-0:29.2 — Concentric pulse rings (3 rings, stagger 120ms)<br/>7. 0:28.9-0:29.5 — Status pill cascade<br/>8. 0:29-0:31 — Tagline mono types in underneath<br/>9. 0:31-0:33 — Hold + ambient breathing<br/>**Vera VO begins at ~0:30 (after the drum hit) so SFX has clean air.** |
 | **Transition out** | Cinematic whoosh — radial mask expanding from vault centre to fill frame with cream, 350ms easeInOut + whoosh SFX |
 | **Zelios archetype** | ⭐⭐ Concentric pulse + radial wipe + screen shake (Jobster 0:58 + Slack USE-ONCE) |
@@ -192,7 +197,7 @@ const shake = frame > shakeStart && frame < shakeStart + 2
 | **Music** | ⚠ **BUILD into the drop at 0:47.** HERO TICK at 0:43-0:44, money slide at 0:45-0:46, tagline lockup at 0:46. HARD CUT to black at exactly frame 1410 (0:47.00 at 30fps). |
 | **Tagline** | *"Receive your money, on time."* full lockup, lands AS Marcus's money arrives |
 | **On-screen** | Big animated ✓ tick lands center-screen. £400 amount counter releases from escrow → Marcus's avatar. Marcus's notification chime visual. Tagline + Marcus's avatar share the frame. |
-| **Audio** | 🔔 **Release-bell SFX (`release-bell-v2-take5.mp3`, ~400ms)** on tick land. **+ Vera (mediating): *"[confidently] Four hundred pounds is being released to Marcus right now. [warmly] Thanks for using Vouch."* (~4s, runs UNDER the build/release moment)** |
+| **Audio** | Music build crescendos. 🔔 **Release-bell SFX (`release-bell-v2-take5.mp3`, ~400ms)** on tick land. **No voice.** (v4 revert: previously-A/B'd Vera "released to Marcus + thanks for using Vouch" line is NOT wired in — music build + SFX carry the release per v3 thesis.) |
 | **Animation** | Sequence:<br/>1. 0:42-0:43 — Checkmark completes (`pathLength: 0.4 → 1.0`, 500ms easeOutQuart) + single pulse ring on completion<br/>2. 0:43-0:44 — HERO TICK scale-in (`scale: [0, 1.15, 1]`, 350ms) + single ring pulse<br/>3. 0:44-0:45 — £400 counter ticks up from £0 → £400 (700ms easeOutQuart via Framer `animate()`)<br/>4. 0:44-0:46 — Money slides vault → Marcus's avatar via SVG path (`offsetPath` + `offsetDistance: 0% → 100%`, 1.2s easeInOut)<br/>5. 0:46-0:47 — Tagline word-by-word lockup, final word at frame 1409 (0:46.97)<br/>6. 0:47.0 — HARD CUT to black (1 frame) |
 | **Transition out** | **HARD CUT to black** synced to Track 4's drop |
 | **Zelios archetype** | ⭐ Concentric pulse + MotionPath (Jobster 0:58 adapted) |
@@ -228,7 +233,7 @@ const shake = frame > shakeStart && frame < shakeStart + 2
 | **Music** | Building back up. Waveform scrub on "scratches" lands precisely on the rebuild moment. |
 | **Tagline** | (off-screen — UI has the focus) |
 | **On-screen** | Two stacked cards. **TOP** — Vera replay UI: *"Marcus said: no scratches, original box."* Audio waveform highlighted at "scratches." **BOTTOM** — Sarah's evidence photo + delivery-day timestamp. |
-| **Audio** | Music rebuilding. **Diegetic Marcus voice clip plays MARCUS'S ACTUAL recording saying "no scratches"** (~0.5s, reused from Marcus's Beat 4 seller-agreement recording — see Audio sourcing note). **+ Vera (mediating): *"[confidently] Marcus said: 'iPhone 15, no scratches, original box.' That was the deal."* (~4s, contextualises the diegetic moment)** |
+| **Audio** | Music rebuilding. **Diegetic Marcus voice clip plays MARCUS'S ACTUAL recording saying "no scratches, original box."** (~1s, from `marcus-no-scratches-*.mp3` — generated fresh via EL TTS with the same Charlie voice ID as the Zgadzam clips, so it sounds like the same person). **No Vera narration.** The product showing its own evidence chain is the moat — let it land in silence. |
 | **Animation** | Both cards enter from off-screen (TOP from above, BOTTOM from below), stagger 120ms, total 600ms easeOutQuart. Waveform highlight on "scratches": 5-bar waveform across top card, the "scratches" bar scales `1 → 1.6 → 1` (300ms) + concentric pulse ring from that bar (Jobster pattern scaled down) + background highlight pill draws under the word (clipPath wipe left-to-right, 200ms easeOutQuart, warning-soft colour). Bottom card glow: 1px border animates border-warm → indigo (400ms), then breathes (1.4s loop). |
 | **Transition out** | Both cards collapse + merge centre-frame using FLIP (Framer `layoutId` swap), 400ms easeInOut, into verdict frame |
 | **Zelios archetype** | ⭐ Concentric pulse on waveform + side-by-side evidence cards (Jobster) |
@@ -244,7 +249,7 @@ const shake = frame > shakeStart && frame < shakeStart + 2
 | **Music** | Full energy return. Verdict card lands on a music accent. Coin sweep SFX bridges into money reversal. |
 | **Tagline** | *"Every deal, kept."* small under verdict card |
 | **On-screen** | Verdict card slides in: **"Ruling: refund to Sarah. Marcus's account flagged."** Beneath: £400 slides back from escrow → Sarah's avatar. Status pill: REFUNDED. |
-| **Audio** | Music. 🔔 **Dispute-chime SFX (`dispute-chime-take3.mp3`)** on verdict. Coin/cash sweep SFX on money return. **+ Vera (contract preset): *"[seriously] Ruling: refund to Sarah. Marcus's account flagged for review."* (~3s, lands as verdict card appears)** |
+| **Audio** | Music (full energy return). 🔔 **Dispute-chime SFX (`dispute-chime-take3.mp3`)** on verdict card land. Coin/cash sweep SFX on money return. **No voice.** (v4 revert: previously-A/B'd Vera "Ruling: refund to Sarah..." line is NOT wired in — verdict card typography + SFX + money reversal carry it per v3 thesis.) |
 | **Animation** | 0:57.0-0:57.6 — Verdict card slides up (`y: 100 → 0, scale: 0.96 → 1, opacity: 0 → 1`, 500ms easeOutQuart, glassmorphism backdrop blur 22px saturate 170%). 0:58.0-0:58.4 — "Ruling..." word-by-word (80ms stagger). 0:59.0-1:00.2 — £400 slides BACK (MotionPath reverse of Beat 8). Counter ticks £400 → £0 (800ms). 1:00.5 — REFUNDED status pill cross-fades in (success colour). 1:00-1:01.5 — Sarah's avatar micro-bounce (`scale: 1 → 1.06 → 1`, 250ms, no spring). 1:01.5-1:02.0 — Tagline holds. |
 | **Transition out** | Slight fade (200ms), hold resolution beat 500ms, cross-fade to Beat 12 |
 | **Zelios archetype** | ⭐ Pain→solution pivot completion + MotionPath reverse |
@@ -285,17 +290,24 @@ The script's beat numbering (1-12) and the audio file prefix (beat-3, beat-4, be
 
 ## 📋 Final voice asset list (LOCKED — A/B'd 2026-05-19)
 
-### Vera TTS clips (7 total, all in `public/audio/demo-vera/`)
+### Vera TTS clips (3 total, all in `public/audio/demo-vera/`)
 
 | Beat | File | Preset | Text |
 |---|---|---|---|
 | 3 | `beat-3-q4-tight.mp3` | mediating | *"When and how is it being delivered?"* |
 | 4 | `beat-4-polish-recital-default.mp3` | contract | *"[confidently] iPhone piętnaście, czterysta funtów, do piątku. Zgadzasz się?"* |
-| 5 | `beat-8-lock-confirmation-tight.mp3` | mediating | *"[confidently] Four hundred pounds is now locked with Stripe."* |
 | 7 | `beat-7-receipt-ask-loose.mp3` | mediating | *"It's arrived. Does it match?"* |
-| 8 | `beat-9-release-confirmation-tight.mp3` | mediating | *"[confidently] Four hundred pounds is being released to Marcus right now. [warmly] Thanks for using Vouch."* |
-| 10 | `beat-10-dispute-replay-?.mp3` | mediating | *"[confidently] Marcus said: 'iPhone 15, no scratches, original box.' That was the deal."* (take pending re-A/B) |
-| 11 | `beat-12-verdict-default.mp3` | contract | *"[seriously] Ruling: refund to Sarah. Marcus's account flagged for review."* |
+
+### Archived Vera TTS clips (rendered + A/B'd but NOT wired into render)
+
+These exist on disk but are not used in the demo. Kept for archive / potential future use if the silent-thesis is reverted.
+
+| Beat | File | Status |
+|---|---|---|
+| 5 | `beat-8-lock-confirmation-tight.mp3` | archived |
+| 8 | `beat-9-release-confirmation-tight.mp3` | archived |
+| 10 | `beat-10-dispute-replay-*.mp3` (v3 + v4 takes) | archived |
+| 11 | `beat-12-verdict-default.mp3` | archived |
 
 ### Human voice clips (3 total, in `public/audio/personas/`)
 
@@ -305,13 +317,11 @@ The script's beat numbering (1-12) and the audio file prefix (beat-3, beat-4, be
 | 4 | `marcus-zgadzam-balanced.mp3` | Marcus (Polish): *"Zgadzam się."* (~1s) |
 | 7 | `sarah-yes-expressive-1.mp3` | Sarah: *"Yes."* (~0.5s) |
 
-### Diegetic clip reuse
+### Diegetic Marcus clip (Beat 10)
 
-| Beat | File | Notes |
+| Beat | File | Source |
 |---|---|---|
-| 10 | `marcus-zgadzam-balanced.mp3` (excerpt OR new recording) | "no scratches" clip — see sourcing note below |
-
-> **Audio sourcing note on Marcus's "no scratches"**: v3 specified this be reused from Marcus's Beat 4 seller-agreement recording at 0:18-0:28. Currently `personas/` only has Marcus saying "Zgadzam się" — no "no scratches" recording exists. **Action before Day 6 render**: either (a) generate Marcus's "no scratches" clip via EL TTS using the same voice ID, ~0.5s, or (b) restructure Beat 10 to lean entirely on Vera's narration line + visual waveform animation without diegetic playback. Recommendation: generate via TTS.
+| 10 | `marcus-no-scratches-?.mp3` (5 takes available) | Marcus: *"No scratches, original box."* (~1s) — generated via EL TTS using the same Charlie voice ID as the Zgadzam clips. **Pick winner before Day 6 render.** |
 
 ---
 
@@ -366,12 +376,16 @@ The script's beat numbering (1-12) and the audio file prefix (beat-3, beat-4, be
 
 ---
 
-## 📋 Open questions
+## 📋 Open questions — RESOLVED 2026-05-19
 
-1. **Marcus's "no scratches" diegetic clip** — generate via TTS or remove from Beat 10? (Recommendation: generate.)
-2. **Audio file renumbering** — rename `beat-8-lock-confirmation.mp3` → `beat-5-lock-confirmation.mp3` etc. now or post-submission? (Recommendation: defer.)
-3. **Cracked iPhone visual (Beat 9)** — stock photograph from Unsplash search "broken iPhone screen on table," or Claude Design illustration? (Still open from v3.)
-4. **Vera narration trade-off (callout above)** — keep all 7 Vera clips (current v4 lock), or revert to v3's 3-clip silent-lock-release minimal scope? (Default: keep.)
+1. ✅ **Marcus's "no scratches" diegetic clip** — generated via EL TTS, 5 takes in `public/audio/personas/marcus-no-scratches-*.mp3`. Pick winner before render.
+2. ✅ **Audio file renumbering** — deferred to post-submission. Mapping documented in "Audio file → demo beat mapping" section above.
+3. ✅ **Cracked iPhone visual (Beat 9)** — real-life photograph from Unsplash ("broken iPhone screen on table" search). Stock realism > illustration for the gut-punch.
+4. ✅ **Vera narration trade-off** — REVERTED to v3's 3-clip silent-lock-release thesis. Less is more. Archived 4 unused Vera clips noted above.
+
+### Still pending (decide before Day 6 render)
+
+- **Marcus "no scratches" take pick** — listen to 5 takes, pick winner (`marcus-no-scratches-balanced/consistent-1/consistent-2/expressive-1/expressive-2`)
 
 ---
 
