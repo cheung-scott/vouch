@@ -26,7 +26,7 @@ const jetbrainsMono = JetBrains_Mono({
 export const metadata: Metadata = {
   title: "Vouch — voice-recorded escrow",
   description:
-    "Voice-recorded escrow for freelancers and high-value peer-to-peer sales. Vera, your AI mediator, handles the agreement. Stripe holds the money. 5% per deal.",
+    "Voice-recorded escrow for freelancers and high-value peer-to-peer sales. Vera, your AI mediator, handles the agreement. Stripe holds the money. 2.9% per deal — zero markup on Stripe.",
   metadataBase: new URL("https://vouch.app"),
   openGraph: {
     title: "Vouch — voice-recorded escrow",

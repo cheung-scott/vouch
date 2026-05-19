@@ -15,7 +15,12 @@ export const stripe = new Stripe(apiKey ?? "sk_test_placeholder", {
   },
 });
 
-export const VOUCH_PLATFORM_FEE_BPS = 500;
+// 290 bps = 2.9% — matches Stripe's processing rate. Pitch line:
+// "Vouch adds zero markup on Stripe — we cover Vera's mediation cost
+// from the spread on multi-currency + volume tiers post-MVP." Beats
+// Escrow.com's 3.25% low-tier and reads as discipline, not gouging.
+// (Was 5% on Day 0; user revisited Day 5 as too aggressive for category.)
+export const VOUCH_PLATFORM_FEE_BPS = 290;
 
 export function calculatePlatformFee(amountMinor: number): number {
   return Math.round((amountMinor * VOUCH_PLATFORM_FEE_BPS) / 10_000);

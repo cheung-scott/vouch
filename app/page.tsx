@@ -59,7 +59,7 @@ function Hero() {
         </div>
 
         <p className="mt-6 font-mono text-[11px] uppercase tracking-[0.14em] text-white/40">
-          Built on Stripe Connect + ElevenLabs ConvAI · 5% per deal
+          Built on Stripe Connect + ElevenLabs ConvAI · 2.9% per deal · zero markup on Stripe
         </p>
       </div>
     </section>
@@ -310,7 +310,7 @@ function BuiltOn() {
               "Connect Express (seller onboarding)",
               "Payment Intents (manual capture escrow)",
               "Issuing (frozen virtual cards, agentic commerce)",
-              "Application fees (5% platform fee)",
+              "Application fees (2.9% — zero markup on Stripe)",
               "Webhooks (state-machine source of truth)",
             ]}
           />

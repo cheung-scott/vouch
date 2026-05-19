@@ -1,6 +1,6 @@
 # Vouch
 
-> **The handshake, recorded.** Voice-recorded escrow for freelancers and high-value peer-to-peer sales. Stripe holds the money. Vera, the AI mediator, captures the agreement as a voice. **The evidence is the seller's own voice committing.** 5% per deal.
+> **The handshake, recorded.** Voice-recorded escrow for freelancers and high-value peer-to-peer sales. Stripe holds the money. Vera, the AI mediator, captures the agreement as a voice. **The evidence is the seller's own voice committing.** 2.9% per deal — zero markup on Stripe.
 
 [![Built with Next.js 16](https://img.shields.io/badge/Next.js-16-black?logo=next.js)](https://nextjs.org)
 [![ElevenLabs](https://img.shields.io/badge/Voice-ElevenLabs-635bff)](https://elevenlabs.io)
@@ -65,7 +65,7 @@ None of these are decorative. Each one corresponds to a structural part of the p
 |---|---|
 | **Connect Express** | Custodial escrow — Vouch is the platform, sellers are the connected accounts. Buyer pays platform → platform holds → platform transfers to seller on release. Express's hosted onboarding handles KYC, so we don't need a separate Identity flow |
 | **PaymentIntents (manual capture)** | The escrow mechanic itself — authorize the buyer's card, hold the amount, capture (release) or cancel (refund) on resolution. Destination charges route to the seller's Connect account at capture time |
-| **Application fees** | The 5% platform fee, automatically retained at capture |
+| **Application fees** | The 2.9% platform fee, automatically retained at capture (zero markup on Stripe's own processing rate — Vera's mediation cost gets recovered via post-MVP volume tiers, not by gouging deals) |
 | **Issuing** | When escrow locks, Vouch mints a frozen virtual card sized to the escrow amount. Voice-confirmed receipt activates it. Aligns with Stripe's 2026 agentic-commerce thesis — except Vouch *inverts* the usual pattern: instead of the agent paying with a card, Vera mints one FOR the seller |
 | **Webhooks** | Signature-verified event handling for the entire lifecycle (`payment_intent.amount_capturable_updated` → IN_ESCROW, `payment_intent.succeeded` → RELEASED, `payment_intent.canceled` → CANCELLED, `account.updated`, `charge.dispute.created`). Webhook handler is the async source of truth for state mutations |
 

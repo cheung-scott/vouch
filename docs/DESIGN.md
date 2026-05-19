@@ -6,7 +6,7 @@
 >
 > **Inspirations:** Mercury (the cream-canvas fintech warmth), Linear (surgical density + ⌘K muscle memory), Stripe (Söhne-clean grid + purple as the only trust signal), A24 (full-bleed black hero plates + display-serif theatre), Hacker News++ (layered backgrounds + glassmorphism craft + ambient audio).
 >
-> **What Vouch is:** Voice-recorded escrow + AI mediator (Vera) for high-value P2P sales and freelance milestones. Stripe holds the money. ElevenLabs powers the voice. 5% per deal. The handshake, recorded.
+> **What Vouch is:** Voice-recorded escrow + AI mediator (Vera) for high-value P2P sales and freelance milestones. Stripe holds the money. ElevenLabs powers the voice. 2.9% per deal — zero markup on Stripe. The handshake, recorded.
 
 ---
 
