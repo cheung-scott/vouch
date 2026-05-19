@@ -19,7 +19,7 @@
   "dependencies": {
     "@elevenlabs/client": "^1.7.0",
     "@elevenlabs/elevenlabs-js": "^2.47.0",
-    "@elevenlabs/react": "^1.6.0",
+    "@elevenlabs/react": "^1.6.1",
     "@stripe/agent-toolkit": "^0.9.0",
     "@stripe/connect-js": "^3.4.4",
     "@stripe/react-connect-js": "^3.4.2",
