@@ -81,34 +81,91 @@ export default async function OnboardReturnPage({
     }
   }
 
+  const isVerified =
+    "charges_enabled" in status &&
+    status.charges_enabled &&
+    status.payouts_enabled &&
+    status.details_submitted;
+
   return (
     <main className="flex min-h-screen flex-col items-center justify-center bg-[#f6f5f2] px-6 py-16 text-[#2a2924]">
       <div className="w-full max-w-md">
-        <Eyebrow>Vouch · Onboarding complete</Eyebrow>
+        <Eyebrow>
+          Vouch · {isVerified ? "You're verified" : "Almost there"}
+        </Eyebrow>
         <h1 className="mt-4 font-display text-4xl font-semibold leading-tight tracking-tight">
-          You&rsquo;re <span className="italic text-[#5266eb]">back</span>.
+          {isVerified ? (
+            <>
+              You&rsquo;re <span className="italic text-[#5266eb]">in</span>.
+            </>
+          ) : (
+            <>
+              Nearly <span className="italic text-[#5266eb]">there</span>.
+            </>
+          )}
         </h1>
+        <p className="mt-4 text-sm text-[#5a5548]">
+          {isVerified
+            ? "Stripe has verified your identity and bank account. You can now receive payouts from buyers."
+            : "Stripe needs a few more details before you can accept funds."}
+        </p>
 
-        <pre className="mt-8 overflow-auto rounded-md border border-[rgba(50,30,5,0.10)] bg-white p-4 font-mono text-[11px]">
-          {JSON.stringify(status, null, 2)}
-        </pre>
-
-        {dealReference && (
-          <Link
-            href={`/deal/${dealReference}/seller`}
-            className="mt-6 inline-block rounded-md bg-[#635bff] px-5 py-3 text-sm font-medium text-white transition-colors hover:bg-[#5048e5]"
-          >
-            Continue to the deal →
-          </Link>
+        {"charges_enabled" in status && (
+          <div className="mt-8 grid grid-cols-3 gap-2">
+            <StatusChip ok={status.details_submitted} label="Identity" />
+            <StatusChip ok={status.charges_enabled} label="Payments" />
+            <StatusChip ok={status.payouts_enabled} label="Payouts" />
+          </div>
         )}
 
-        <Link
-          href="/onboard"
-          className="mt-6 ml-3 inline-block text-sm text-[#5266eb] underline"
-        >
-          ← Back to onboarding
-        </Link>
+        {"error" in status && (
+          <div className="mt-8 rounded-md border border-[rgba(181,74,58,0.4)] bg-[rgba(181,74,58,0.08)] p-3 font-mono text-xs text-[#b54a3a]">
+            Couldn&rsquo;t fetch account status: {status.error}
+          </div>
+        )}
+
+        <div className="mt-8 flex flex-col gap-3">
+          {dealReference && (
+            <Link
+              href={`/deal/${dealReference}/seller`}
+              className="rounded-md bg-[#635bff] px-5 py-3 text-center text-sm font-medium text-white transition-colors hover:bg-[#5048e5]"
+            >
+              Continue to your deal →
+            </Link>
+          )}
+          {!dealReference && isVerified && (
+            <Link
+              href="/"
+              className="rounded-md bg-[#635bff] px-5 py-3 text-center text-sm font-medium text-white transition-colors hover:bg-[#5048e5]"
+            >
+              Back to Vouch →
+            </Link>
+          )}
+          {!isVerified && (
+            <Link
+              href="/onboard"
+              className="rounded-md border border-[rgba(50,30,5,0.18)] bg-white px-5 py-3 text-center text-sm font-medium text-[#2a2924] hover:bg-[#efeee9]"
+            >
+              Continue onboarding
+            </Link>
+          )}
+        </div>
       </div>
     </main>
+  );
+}
+
+function StatusChip({ ok, label }: { ok: boolean; label: string }) {
+  return (
+    <div
+      className={`flex items-center gap-2 rounded-md border px-3 py-2 text-xs font-medium ${
+        ok
+          ? "border-[rgba(50,150,90,0.3)] bg-[rgba(50,150,90,0.08)] text-[#2f7a4e]"
+          : "border-[rgba(50,30,5,0.12)] bg-white text-[#8a8478]"
+      }`}
+    >
+      <span className="text-base leading-none">{ok ? "✓" : "•"}</span>
+      <span>{label}</span>
+    </div>
   );
 }

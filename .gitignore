@@ -47,3 +47,5 @@ next-env.d.ts
 # regenerable Vera A/B audio outputs (run `pnpm vera:ab` to regenerate)
 /public/audio/vera-ab/
 
+
+.vercel

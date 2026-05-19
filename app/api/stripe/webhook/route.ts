@@ -8,9 +8,18 @@ export const dynamic = "force-dynamic";
 
 export async function POST(req: NextRequest) {
   const signature = req.headers.get("stripe-signature");
-  const secret = process.env.STRIPE_WEBHOOK_SECRET;
+  // Stripe v2 webhooks split event scopes: "Your account" (platform-side PI/
+  // transfer/dispute events) and "Connected accounts" (seller-side
+  // account.updated, identity.*). Each destination has its own signing
+  // secret. Both POST to this single endpoint, so we try each secret in
+  // turn and accept the event if either verifies.
+  const platformSecret = process.env.STRIPE_WEBHOOK_SECRET_PLATFORM;
+  const connectSecret = process.env.STRIPE_WEBHOOK_SECRET_CONNECT;
+  const secrets = [platformSecret, connectSecret].filter(
+    (s): s is string => Boolean(s),
+  );
 
-  if (!signature || !secret) {
+  if (!signature || secrets.length === 0) {
     return NextResponse.json(
       { error: "webhook_misconfigured" },
       { status: 400 },
@@ -19,11 +28,21 @@ export async function POST(req: NextRequest) {
 
   const payload = await req.text();
 
-  let event;
-  try {
-    event = constructWebhookEvent({ payload, signature, secret });
-  } catch (err) {
-    console.error("[webhook] signature verification failed", err);
+  let event: Stripe.Event | undefined;
+  let lastErr: unknown;
+  for (const secret of secrets) {
+    try {
+      event = constructWebhookEvent({ payload, signature, secret });
+      break;
+    } catch (err) {
+      lastErr = err;
+    }
+  }
+  if (!event) {
+    console.error(
+      "[webhook] signature verification failed against all secrets",
+      lastErr,
+    );
     return NextResponse.json({ error: "bad_request" }, { status: 400 });
   }
 

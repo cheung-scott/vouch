@@ -74,15 +74,11 @@ export default function OnboardPage() {
             </div>
           )}
           {status.kind === "ok" && (
-            <pre className="mt-4 overflow-auto rounded-md border border-[rgba(50,30,5,0.10)] bg-white p-3 font-mono text-[11px]">
-              {JSON.stringify(status.payload, null, 2)}
-            </pre>
+            <p className="mt-4 text-sm text-[#5a5548]">
+              Redirecting you to Stripe&hellip;
+            </p>
           )}
         </div>
-
-        <p className="mt-12 font-mono text-[11px] uppercase tracking-[0.14em] text-[#8a8478]">
-          Requires STRIPE_SECRET_KEY in .env.local
-        </p>
       </div>
     </main>
   );
