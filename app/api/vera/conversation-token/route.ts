@@ -17,7 +17,15 @@ const SessionTypeEnum = z.enum([
 
 const RequestSchema = z.object({
   session_type: SessionTypeEnum,
-  user_first_name: z.string().min(1).max(80),
+  // Tightened (Sec-Review S-108): only allow letters, spaces, hyphens,
+  // apostrophes — covers most international names. Blocks control chars
+  // + newlines + curly braces that could be used to break out of the
+  // dynamic-variable interpolation and inject prompt content into Vera.
+  user_first_name: z
+    .string()
+    .min(1)
+    .max(80)
+    .regex(/^[\p{L}\s'\-]+$/u, "invalid_name_chars"),
   deal_id: z.string().uuid().optional(),
   locale: z
     .string()

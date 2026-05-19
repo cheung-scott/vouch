@@ -40,6 +40,21 @@ export async function POST(req: NextRequest) {
     if (!deal) {
       return NextResponse.json({ error: "deal_not_found" }, { status: 404 });
     }
+    // SECURITY (Sec-Review S-101): status-gate the bind. Without this
+    // guard, an unauthenticated caller can race the real seller through
+    // Express onboarding and bind their own acct_ to a deal that's
+    // already advanced past the onboarding window. Only deals in DRAFT
+    // or AWAITING_SELLER state are eligible — once a deal reaches AGREED
+    // or beyond, the seller's account is locked in.
+    const eligibleForBinding = ["DRAFT", "AWAITING_SELLER"].includes(
+      deal.status,
+    );
+    if (!eligibleForBinding) {
+      return NextResponse.json(
+        { error: "deal_not_in_onboarding_state", current_status: deal.status },
+        { status: 409 },
+      );
+    }
     if (deal.seller.stripeAccountId) {
       // Already wired — return the existing onboarding flow for refresh
       // rather than creating a duplicate account.

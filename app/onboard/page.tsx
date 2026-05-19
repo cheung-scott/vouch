@@ -31,24 +31,6 @@ export default function OnboardPage() {
     }
   }
 
-  async function startIdentity() {
-    setStatus({ kind: "loading", what: "identity" });
-    try {
-      const res = await fetch("/api/identity/create-session", {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({ email, party_role: "BUYER" }),
-      });
-      const json = await res.json();
-      if (!res.ok) throw new Error(json.message ?? json.error ?? "failed");
-      setStatus({ kind: "ok", what: "identity", payload: json });
-      if (json.url) window.location.href = json.url;
-    } catch (err) {
-      const message = err instanceof Error ? err.message : "unknown error";
-      setStatus({ kind: "error", what: "identity", message });
-    }
-  }
-
   return (
     <main className="flex min-h-screen flex-col items-center justify-center bg-[#f6f5f2] px-6 py-16 text-[#2a2924]">
       <div className="w-full max-w-md">
@@ -83,16 +65,6 @@ export default function OnboardPage() {
               {status.kind === "loading" && status.what === "connect"
                 ? "Creating account..."
                 : "Start Stripe Connect Express onboarding →"}
-            </button>
-            <button
-              type="button"
-              onClick={startIdentity}
-              disabled={!email || status.kind === "loading"}
-              className="rounded-md border border-[rgba(50,30,5,0.18)] bg-white px-5 py-3 text-sm font-medium text-[#2a2924] transition-colors hover:bg-[#fbfaf6] disabled:opacity-40"
-            >
-              {status.kind === "loading" && status.what === "identity"
-                ? "Creating Identity session..."
-                : "Verify identity (Stripe Identity) →"}
             </button>
           </div>
 

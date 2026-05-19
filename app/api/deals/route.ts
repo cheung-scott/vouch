@@ -79,12 +79,21 @@ export async function POST(req: NextRequest) {
 }
 
 export async function GET(req: NextRequest) {
+  // Fail-closed (Sec-Review S-107): if OWNER_TOKEN is not configured,
+  // refuse the request rather than allow unauthenticated enumeration of
+  // every deal in the store. This is the list endpoint — leaking it
+  // exposes PII (buyer + seller first names + amounts + status) per
+  // Day 1's S-002 CRITICAL. Setting the env var explicitly opts in.
   const ownerToken = process.env.OWNER_TOKEN;
-  if (ownerToken) {
-    const provided = req.headers.get("x-owner-token");
-    if (provided !== ownerToken) {
-      return NextResponse.json({ error: "unauthorized" }, { status: 401 });
-    }
+  if (!ownerToken) {
+    return NextResponse.json(
+      { error: "list_not_configured" },
+      { status: 403 },
+    );
+  }
+  const provided = req.headers.get("x-owner-token");
+  if (provided !== ownerToken) {
+    return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
 
   const statusParam = req.nextUrl.searchParams.get("status");
