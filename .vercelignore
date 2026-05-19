@@ -1,0 +1,20 @@
+# Don't ship test / demo-only audio assets to Vercel — they bloat the
+# deploy bundle and aren't needed at runtime (the live app doesn't
+# reference them; they're consumed only by the demo-video render in the
+# vouch-demo-remotion sibling repo).
+public/audio/personas/
+public/audio/tag-verify/
+public/audio/ab-tts/
+public/audio/demo-vera/
+
+# Local dev artefacts
+.env.local
+.env.local.bak
+.next/
+
+# Test / scratch directories
+**/__tests__/
+**/.smoke-test*
+
+# Repo-local docs not needed in prod (already in vault)
+docs/reference-html-mockups/

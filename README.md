@@ -51,10 +51,10 @@ The state machine is enforced server-side. Every transition (`DRAFT → AWAITING
 
 | API | Role |
 |---|---|
-| **ConvAI** | Vera live as the mediator — sequential sessions for buyer onboarding, seller onboarding, joint sign-off, voice receipt, and dispute |
-| **Voice Library** | Vera's locked voice identity — a single brand voice across product + demo video, used by both ConvAI streaming and pre-rendered TTS |
-| **TTS** (`eleven_turbo_v2_5`) | Pre-rendered contract recitations (read-back, replay-agreement) — uses a separate voice-settings preset tuned for formal legal-recitation cadence |
-| **Scribe** | Transcript-as-contract — the seller's voice is transcribed in real time and the text becomes the legally-binding terms record |
+| **ConvAI** | Vera live as the mediator — sequential sessions for buyer onboarding, seller onboarding, joint sign-off, voice receipt, and dispute. 12 server tools, 80 languages enabled |
+| **Voice Library** | Vera's locked voice identity (Samara X — Smooth Classy British) — a single brand voice across product + demo video, used by both ConvAI streaming and pre-rendered TTS |
+| **v3 Conversational** | Default TTS model — unlocks expressive audio tags (`[warmly]`, `[confidently]`, `[empathetically]`) at specific moments in the prompt for emotional adherence at money-movement + dispute beats |
+| **Scribe v2 Realtime** | ConvAI's default ASR. The user's voice becomes the legally-binding terms record in real time. Captions surface live in `<VeraVoiceSession>` |
 | **Multilingual TTS** (`eleven_v3`) | Cross-border deals — UK buyer, Polish seller. Vera reads buyer's terms in the seller's native language; the in-flight letter-by-letter language morph is the demo video's hero animation |
 
 None of these are decorative. Each one corresponds to a structural part of the product. Remove any and a flow breaks.
@@ -63,11 +63,11 @@ None of these are decorative. Each one corresponds to a structural part of the p
 
 | Primitive | Role |
 |---|---|
-| **Connect Express** | Custodial escrow — Vouch is the platform, sellers are the connected accounts. Buyer pays platform → platform holds → platform transfers to seller on release |
-| **Identity** | Hosted KYC + selfie verification for both parties before money is locked |
-| **PaymentIntents (manual capture)** | The escrow mechanic itself — authorize the buyer's card, hold the amount, capture (release) or cancel (refund) on resolution |
-| **Application fees** | The 5% platform fee, collected at capture time |
-| **Webhooks** | Signature-verified event handling for the entire lifecycle (`payment_intent.*`, `identity.verification_session.*`, `charge.dispute.*`, `account.updated`, `transfer.*`) |
+| **Connect Express** | Custodial escrow — Vouch is the platform, sellers are the connected accounts. Buyer pays platform → platform holds → platform transfers to seller on release. Express's hosted onboarding handles KYC, so we don't need a separate Identity flow |
+| **PaymentIntents (manual capture)** | The escrow mechanic itself — authorize the buyer's card, hold the amount, capture (release) or cancel (refund) on resolution. Destination charges route to the seller's Connect account at capture time |
+| **Application fees** | The 5% platform fee, automatically retained at capture |
+| **Issuing** | When escrow locks, Vouch mints a frozen virtual card sized to the escrow amount. Voice-confirmed receipt activates it. Aligns with Stripe's 2026 agentic-commerce thesis — except Vouch *inverts* the usual pattern: instead of the agent paying with a card, Vera mints one FOR the seller |
+| **Webhooks** | Signature-verified event handling for the entire lifecycle (`payment_intent.amount_capturable_updated` → IN_ESCROW, `payment_intent.succeeded` → RELEASED, `payment_intent.canceled` → CANCELLED, `account.updated`, `charge.dispute.created`). Webhook handler is the async source of truth for state mutations |
 
 ### Hybrid aesthetic — Stripe × A24 (marketing) + Mercury × Linear (app)
 
@@ -83,7 +83,7 @@ Full spec: [`docs/DESIGN.md`](docs/DESIGN.md). HTML mockups: [`docs/reference-ht
 app/
   page.tsx                       # Marketing landing (Stripe × A24)
   layout.tsx, globals.css        # Design tokens from docs/DESIGN.md
-  onboard/                       # Day 1 harness: Stripe Connect + Identity onboarding
+  onboard/                       # Stripe Connect Express onboarding harness (deal_id-aware)
   new/                           # Buyer voice intake (5 questions → typed terms)
   demo/                          # Interactive 3-min walkthrough (no signup, no real Stripe)
   deals/                         # Dashboard — list view
@@ -93,11 +93,11 @@ app/
     dispute/                     # Dispute intake + replay + evidence
   api/
     deals/                       # Deal CRUD (GET gated by OWNER_TOKEN in prod)
-    connect/                     # Stripe Connect Express + onboarding links
-    identity/                    # Stripe Identity verification sessions
+    connect/                     # Stripe Connect Express + onboarding links (deal-scoped binding)
     escrow/                      # PaymentIntent create / capture / cancel
                                  # (all guarded: deal_id + PI ownership + status check)
-    stripe/webhook/              # Signature-verified Stripe webhook
+    issuing/                     # Stripe Issuing — mint frozen card + activate / cancel
+    stripe/webhook/              # Signature-verified Stripe webhook (mutates deal state)
     vera/                        # 12 ConvAI tool endpoints — see docs/vera-tools.json
 components/
   Waveform.tsx, VeraIndicator.tsx, AmbientAudio.tsx, CommandBar.tsx
@@ -133,7 +133,7 @@ What that means concretely:
 - **Stripe SDK errors are sanitised** before reaching clients — no key-mode hints, no account hints, no rate-limit reconnaissance signal. Full errors go to server logs only.
 - **State-machine guards** are applied symmetrically across paired transitions (e.g. `commit-buyer-side` and `commit-seller-side`). A deal in `IN_ESCROW` cannot be regressed to an earlier state.
 - **No secrets bundled into the client** — `APP_URL` is server-only, not `NEXT_PUBLIC_*`.
-- **Open-redirect closed** on Connect Express refresh links (account IDs are validated against a known seller list).
+- **Status-gated Connect onboarding**: `create-account` only binds a seller `acct_…` when the deal is still in DRAFT or AWAITING_SELLER state — once the deal advances to AGREED, the seller is locked in. Closes a fund-rerouting vector caught in the Day 4 review pass.
 
 Hackathon scope explicitly does NOT include session-based AuthN, rate limiting, or signed URLs for voice biometric data — these are roadmap items, each documented with the specific failure mode they close. The codebase is hackathon-safe (every CRITICAL finding from the audits was remediated); production-readiness adds those three layers plus a third-party penetration test.
 
