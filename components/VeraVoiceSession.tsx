@@ -61,6 +61,8 @@ export function VeraVoiceSession(props: VeraVoiceSessionProps) {
  * stop. The mic-mute toggle is available mid-session if the user needs to
  * pause without ending the conversation.
  */
+type CaptionLine = { role: "user" | "agent"; message: string; at: number };
+
 function VeraVoiceSessionInner({
   sessionType,
   userFirstName,
@@ -74,6 +76,11 @@ function VeraVoiceSessionInner({
 }: VeraVoiceSessionProps) {
   const [local, setLocal] = useState<LocalStatus>("idle");
   const [error, setError] = useState<string | null>(null);
+  // Rolling caption strip — last 2 lines. ConvAI v2.2 uses Scribe v2 Realtime
+  // as the ASR by default, so user transcripts arrive on every utterance.
+  // This is the Day 5 Beat 4 caption work — the Polish line that morphs to
+  // English in the demo video draws straight off this state.
+  const [captions, setCaptions] = useState<CaptionLine[]>([]);
 
   // Keep the latest onSessionEnd / onTranscript in refs so the conversation
   // callbacks can fire stable references without retriggering the hook.
@@ -88,7 +95,10 @@ function VeraVoiceSessionInner({
 
   const conversation = useConversation({
     onMessage: ({ source, message }: { source: string; message: string }) => {
-      const role = source === "user" ? "user" : "agent";
+      const role: "user" | "agent" = source === "user" ? "user" : "agent";
+      setCaptions((prev) =>
+        [...prev, { role, message, at: Date.now() }].slice(-2),
+      );
       onTranscriptRef.current?.(role, message);
     },
     onError: (msg: unknown) => {
@@ -107,6 +117,7 @@ function VeraVoiceSessionInner({
   const start = useCallback(async () => {
     if (disabled) return;
     setError(null);
+    setCaptions([]);
     setLocal("starting");
     try {
       // Browser must explicitly request mic — startSession will also do this
@@ -221,7 +232,8 @@ function VeraVoiceSessionInner({
       )}
 
       {live && (
-        <div className="flex items-center justify-between gap-3">
+        <div className="flex flex-col gap-3">
+          <div className="flex items-center justify-between gap-3">
           <div className="flex items-center gap-3">
             <span
               className={cn(
@@ -268,6 +280,32 @@ function VeraVoiceSessionInner({
               <Square className="h-3.5 w-3.5" /> End
             </button>
           </div>
+          </div>
+
+          {captions.length > 0 && (
+            <div
+              className="flex flex-col gap-1 rounded-md bg-[#fbfaf6] px-3 py-2 font-mono text-xs"
+              aria-live="polite"
+              data-testid="vera-caption-strip"
+            >
+              {captions.map((line) => (
+                <div
+                  key={line.at}
+                  className={cn(
+                    "flex gap-2",
+                    line.role === "user"
+                      ? "text-[#2a2924]"
+                      : "text-[#5266eb]",
+                  )}
+                >
+                  <span className="shrink-0 uppercase tracking-[0.14em] text-[10px] opacity-60">
+                    {line.role === "user" ? "you" : "vera"}
+                  </span>
+                  <span className="break-words">{line.message}</span>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       )}
 

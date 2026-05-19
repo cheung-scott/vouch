@@ -54,9 +54,17 @@ export default async function OnboardReturnPage({
   const status = await fetchStatus(accountId);
 
   // If a deal_id was carried through and onboarding succeeded, look up the
-  // deal's reference so we can offer a return-to-flow link. Belt-and-braces:
-  // if the seller.stripeAccountId isn't already set on the deal (shouldn't
-  // happen post-fix to create-account), persist it now.
+  // deal's reference so we can offer a return-to-flow link.
+  //
+  // SECURITY (T1 B-1, fixed): we previously wrote `accountId` from the URL
+  // onto the deal's `seller.stripeAccountId` here as "belt-and-braces
+  // persistence." That was an attacker-controlled write — anyone with a
+  // valid deal_id could craft `/onboard/return?account=acct_<attacker>&
+  // deal_id=<uuid>` and re-route the escrow destination before lock-escrow
+  // ran. The canonical persistence is in /api/connect/create-account (which
+  // requires the seller to actually start onboarding); this page is now
+  // read-only and only exposes the dealReference for the "Continue to the
+  // deal" link.
   let dealReference: string | null = null;
   if (
     dealId &&
@@ -64,13 +72,12 @@ export default async function OnboardReturnPage({
     status.charges_enabled
   ) {
     const deal = await dealStore.get(dealId);
-    if (deal) {
+    // Only offer the continue link if the deal's seller account ACTUALLY
+    // matches the URL account — i.e. create-account persisted this value
+    // properly. If they don't match, it's either an attacker probing or a
+    // stale URL; either way, don't reveal the deal.
+    if (deal && deal.seller.stripeAccountId === accountId) {
       dealReference = deal.reference;
-      if (deal.seller.stripeAccountId !== accountId) {
-        await dealStore.update(deal.id, {
-          seller: { ...deal.seller, stripeAccountId: accountId },
-        });
-      }
     }
   }
 

@@ -91,7 +91,11 @@ export async function POST(request: Request) {
       seller: {
         id: randomUUID(),
         role: "SELLER",
-        firstName: "the other party",
+        // Single-word placeholder until BUYER_ONBOARDING Q2 captures the
+        // real name via extract_terms. "Seller" reads as a generic role
+        // if it leaks into UI, unlike "the other party" which looked
+        // like literal natural-language text (T1 H-3).
+        firstName: "Seller",
         identityVerified: false,
       },
       terms: { item: "", quantity: 1, amountMinor: 0, currency: "GBP" },
