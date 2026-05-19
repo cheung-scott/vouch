@@ -21,7 +21,13 @@ export const maxDuration = 5;
 
 export async function POST(req: NextRequest) {
   const signature = req.headers.get("stripe-signature");
-  const secret = process.env.STRIPE_WEBHOOK_SECRET_PLATFORM; // platform-scope events
+  // Dedicated destination secret. The vouch-prod-issuing-auth Stripe webhook
+  // destination has its own whsec_ that's distinct from the main platform
+  // destination's secret. Prefer the dedicated one; fall back to the platform
+  // secret for backwards-compat if someone reuses an existing destination.
+  const secret =
+    process.env.STRIPE_WEBHOOK_SECRET_ISSUING ??
+    process.env.STRIPE_WEBHOOK_SECRET_PLATFORM;
 
   if (!signature || !secret) {
     // Fail-closed: if we can't verify, we decline. Stripe rejects unsigned anyway.
