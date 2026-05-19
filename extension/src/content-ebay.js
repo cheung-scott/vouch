@@ -3,7 +3,7 @@
  *
  * Injects a "Pay with Vouch" button onto eBay product listing pages.
  * Click → scrapes item title / price / currency / seller from the DOM
- * and opens vouch.app/new with those values pre-populated as query params.
+ * and opens vouch.fund/new with those values pre-populated as query params.
  *
  * eBay's DOM changes frequently. Selectors here target the canonical
  * `*.ebay.co.uk/itm/*` and `*.ebay.com/itm/*` product pages as of 2026-05.
@@ -18,7 +18,7 @@
 
   // Vouch destination — production points at the live app, dev points at localhost.
   // We pick by checking whether localhost:3000 is reachable; otherwise fall back to prod.
-  const VOUCH_URL_PROD = "https://vouch.app/new";
+  const VOUCH_URL_PROD = "https://vouch.fund/new";
   const VOUCH_URL_DEV = "http://localhost:3000/new";
 
   const SELECTORS = {

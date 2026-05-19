@@ -321,7 +321,7 @@ These exist on disk but are not used in the demo. Kept for archive / potential f
 
 | Beat | File | Source |
 |---|---|---|
-| 10 | `marcus-no-scratches-?.mp3` (5 takes available) | Marcus: *"No scratches, original box."* (~1s) — generated via EL TTS using the same Charlie voice ID as the Zgadzam clips. **Pick winner before Day 6 render.** |
+| 10 | `marcus-no-scratches-consistent-1.mp3` | Marcus: *"No scratches, original box."* (~1s) — generated via EL TTS using the same Charlie voice ID as the Zgadzam clips. Locked 2026-05-19. |
 
 ---
 

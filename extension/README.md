@@ -1,6 +1,6 @@
 # Vouch — Chrome extension
 
-Injects a **"Pay with Vouch"** button into eBay product listing pages. Click the button and the eBay listing's item title, price, currency, and seller username are scraped from the page DOM and passed via query params to `vouch.app/new`, which pre-populates the deal intake.
+Injects a **"Pay with Vouch"** button into eBay product listing pages. Click the button and the eBay listing's item title, price, currency, and seller username are scraped from the page DOM and passed via query params to `vouch.fund/new`, which pre-populates the deal intake.
 
 Result: the buyer (Sarah) only needs to confirm her name + email and answer two short questions (delivery method + extras) instead of five. The extension is the **entry point** for the Vouch demo flow.
 
@@ -15,7 +15,7 @@ eBay listing page
    │
    │  click → scrape DOM → build URL
    ▼
-vouch.app/new?source=ebay&item=...&price=...&currency=...&seller=...&ref=...
+vouch.fund/new?source=ebay&item=...&price=...&currency=...&seller=...&ref=...
    │
    │  /new page reads query params on mount, calls /api/vera/extract-terms
    │  for each pre-fill, then jumps to delivery question
@@ -51,7 +51,7 @@ Manifest V3, zero runtime permissions (only host permissions for eBay listing UR
 4. Click it → a new tab opens at `http://localhost:3000/new?source=ebay&item=...&price=...&currency=GBP&seller=...`
 5. The /new page should show the **"Continuing from eBay"** banner with the captured item, amount, and seller pre-filled
 
-The extension automatically picks between `localhost:3000` (if reachable, dev mode) and `https://vouch.app` (production fallback) — no config needed.
+The extension automatically picks between `localhost:3000` (if reachable, dev mode) and `https://vouch.fund` (production fallback) — no config needed.
 
 ## Selectors and resilience
 
@@ -60,7 +60,7 @@ eBay's DOM changes frequently. `content-ebay.js` uses **fallback selector chains
 ## What's intentionally NOT here
 
 - **No background service worker** — the button injection is purely page-local
-- **No telemetry / analytics** — privacy-by-default, no network calls except to vouch.app on click
+- **No telemetry / analytics** — privacy-by-default, no network calls except to vouch.fund on click
 - **No popup UI** — the action button in the toolbar has no popup; the integration lives in-page
 - **No options page** — no user-facing config; URL is hardcoded
 - **Not packaged as a .crx** for the hackathon — judges install via "Load unpacked" if they want to verify live. The README + repo demonstrates the production-shape design.

@@ -3,7 +3,7 @@
   "name": "Vouch — Pay safely with voice-recorded escrow",
   "short_name": "Vouch",
   "version": "0.1.0",
-  "description": "Buy on eBay with voice-recorded escrow. Your handshake, recorded. Click Pay with Vouch on any listing to hold your money safely until the item arrives.",
+  "description": "Buy on eBay with voice-recorded escrow. Pay with Vouch holds your money safely until the item arrives.",
   "icons": {
     "16": "icons/icon-16.png",
     "32": "icons/icon-32.png",
