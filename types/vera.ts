@@ -101,6 +101,16 @@ export const OpenDisputeOutputSchema = z.object({
 export const ReplayAgreementInputSchema = BaseToolInputSchema;
 export const ReplayAgreementOutputSchema = SpokenTextOutputSchema;
 
+export const RefundDealInputSchema = BaseToolInputSchema.extend({
+  reason: z.string().optional(),
+});
+export const RefundDealOutputSchema = z.object({
+  success: z.boolean(),
+  refund_id: z.string(),
+  deal_status: z.literal("REFUNDED"),
+  spoken_text: z.string(),
+});
+
 export const GatherDisputeEvidenceInputSchema = z.object({
   deal_id: z.string().min(1),
   session_id: z.string().optional(),
@@ -134,6 +144,8 @@ export type ReleaseEscrowOutput = z.infer<typeof ReleaseEscrowOutputSchema>;
 export type OpenDisputeInput = z.infer<typeof OpenDisputeInputSchema>;
 export type OpenDisputeOutput = z.infer<typeof OpenDisputeOutputSchema>;
 export type ReplayAgreementOutput = z.infer<typeof ReplayAgreementOutputSchema>;
+export type RefundDealInput = z.infer<typeof RefundDealInputSchema>;
+export type RefundDealOutput = z.infer<typeof RefundDealOutputSchema>;
 export type GatherDisputeEvidenceInput = z.infer<typeof GatherDisputeEvidenceInputSchema>;
 export type GatherDisputeEvidenceOutput = z.infer<typeof GatherDisputeEvidenceOutputSchema>;
 export type FlagForReviewInput = z.infer<typeof FlagForReviewInputSchema>;

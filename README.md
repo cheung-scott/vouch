@@ -47,7 +47,7 @@ The state machine is enforced server-side. Every transition (`DRAFT → AWAITING
 
 ## Why we built it the way we did
 
-### Multi-API depth — ElevenLabs (5 APIs, all structurally required)
+### Multi-API depth — ElevenLabs (6 APIs, all structurally required)
 
 | API | Role |
 |---|---|
@@ -56,10 +56,11 @@ The state machine is enforced server-side. Every transition (`DRAFT → AWAITING
 | **v3 Conversational** | Default TTS model — unlocks expressive audio tags (`[warmly]`, `[confidently]`, `[empathetically]`) at specific moments in the prompt for emotional adherence at money-movement + dispute beats |
 | **Scribe v2 Realtime** | ConvAI's default ASR. The user's voice becomes the legally-binding terms record in real time. Captions surface live in `<VeraVoiceSession>` |
 | **Multilingual TTS** (`eleven_v3`) | Cross-border deals — UK buyer, Polish seller. Vera reads buyer's terms in the seller's native language; the in-flight letter-by-letter language morph is the demo video's hero animation |
+| **Sound Generation** | Demo-video SFX — lock-thunk on escrow lock (Beat 5), release-bell on funds release (Beat 8), dispute-chime on dispute open (Beat 9/10). All generated from prompts via `/v1/sound-generation`; no Pixabay/stock dependency |
 
 None of these are decorative. Each one corresponds to a structural part of the product. Remove any and a flow breaks.
 
-### Multi-primitive depth — Stripe (5 primitives, all structurally required)
+### Multi-primitive depth — Stripe (6 primitives, all structurally required)
 
 | Primitive | Role |
 |---|---|
@@ -68,6 +69,7 @@ None of these are decorative. Each one corresponds to a structural part of the p
 | **Application fees** | The 2.9% platform fee, automatically retained at capture (zero markup on Stripe's own processing rate — Vera's mediation cost gets recovered via post-MVP volume tiers, not by gouging deals) |
 | **Issuing** | When escrow locks, Vouch mints a frozen virtual card sized to the escrow amount. Voice-confirmed receipt activates it. Aligns with Stripe's 2026 agentic-commerce thesis — except Vouch *inverts* the usual pattern: instead of the agent paying with a card, Vera mints one FOR the seller |
 | **Webhooks** | Signature-verified event handling for the entire lifecycle (`payment_intent.amount_capturable_updated` → IN_ESCROW, `payment_intent.succeeded` → RELEASED, `payment_intent.canceled` → CANCELLED, `account.updated`, `charge.dispute.created`). Webhook handler is the async source of truth for state mutations |
+| **Agent Toolkit** | Stripe's official 2026 agentic-commerce SDK (`@stripe/agent-toolkit`), wired through a restricted API key so Vera's blast radius is server-side enforced by Stripe itself — not just by our code. Exposed via `getVeraStripeToolkit()` for the post-ConvAI direct-API agent layer |
 
 ### Hybrid aesthetic — Stripe × A24 (marketing) + Mercury × Linear (app)
 

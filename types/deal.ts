@@ -13,6 +13,7 @@ export const DealStatusSchema = z.enum([
   "AGREED",
   "IN_ESCROW",
   "RELEASED",
+  "REFUNDED",
   "DISPUTED",
   "REVIEWING",
   "CANCELLED",
@@ -56,6 +57,10 @@ export const DealSchema = z.object({
   seller: PartySchema,
   stripePaymentIntentId: z.string().optional(),
   stripeTransferId: z.string().optional(),
+  // Set by /api/escrow/refund when a dispute resolves in the buyer's
+  // favour and the captured funds are reversed via Stripe's refunds
+  // API with reverse_transfer + refund_application_fee.
+  stripeRefundId: z.string().optional(),
   // Stripe Issuing — escrow virtual card lifecycle.
   // Per-seller cardholder is created on first IN_ESCROW transition; card is minted
   // frozen and activated on voice-confirmed receipt. Card status drives the
@@ -68,6 +73,21 @@ export const DealSchema = z.object({
   // Day 3+ implementation must generate signed URLs server-side per request after auth.
   voiceAgreementRecordingUrl: z.string().url().optional(),
   veraSessionIds: z.array(z.string()).default([]),
+  // Vera's post-call analysis (populated by ElevenLabs's post-call webhook on
+  // conversation end). All fields are optional — older deals from before this
+  // was wired will not have them. See app/api/vera/post-call-webhook/route.ts
+  // for the persistence path and components/VeraAnalysisCard.tsx for the
+  // display surface.
+  veraSummary: z.string().optional(),
+  veraEvalResults: z
+    .record(
+      z.string(),
+      z.object({
+        result: z.enum(["success", "failure", "unknown"]),
+        rationale: z.string(),
+      }),
+    )
+    .optional(),
   createdAt: z.string().datetime(),
   updatedAt: z.string().datetime(),
   lockedAt: z.string().datetime().optional(),

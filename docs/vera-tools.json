@@ -127,6 +127,16 @@
         "reason": { "type": "string", "description": "Why this needs a human." },
         "deal_id": { "type": "string", "description": "Deal ID.", "required": false }
       }
+    },
+    {
+      "name": "refund_deal",
+      "description": "Refund the deal back to the buyer. Use when a dispute resolves in the buyer's favour. Reverses both the original capture and the platform fee, clawing funds back from the seller's Connect balance. Only legal once the deal is IN_ESCROW or RELEASED.",
+      "url": "{BASE_URL}/api/vera/refund-deal",
+      "method": "POST",
+      "parameters": {
+        "deal_id": { "type": "string", "description": "Deal ID to refund." },
+        "reason": { "type": "string", "description": "Stripe refund reason — one of 'duplicate', 'fraudulent', or 'requested_by_customer'. Defaults to 'requested_by_customer'.", "required": false }
+      }
     }
   ]
 }

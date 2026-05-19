@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import crypto from "crypto";
 import { z } from "zod";
 import { dealStore } from "@/lib/deals";
 
@@ -48,10 +49,23 @@ const PostCallSchema = z.object({
           }),
         )
         .optional(),
-      // ConvAI may also send a single string summary
+      // ConvAI may also send a single string summary plus per-criterion
+      // evaluation results (configured in the ConvAI dashboard → Analysis).
+      // Each criterion returns { result, rationale } per EL's docs — we
+      // persist both onto the deal so the UI can surface "Vera grades
+      // herself" on /deal/[ref].
       analysis: z
         .object({
           transcript_summary: z.string().optional(),
+          evaluation_criteria_results: z
+            .record(
+              z.string(),
+              z.object({
+                result: z.enum(["success", "failure", "unknown"]),
+                rationale: z.string(),
+              }),
+            )
+            .optional(),
         })
         .optional(),
       // Total call duration in seconds
@@ -66,9 +80,54 @@ const PostCallSchema = z.object({
 });
 
 export async function POST(req: NextRequest) {
+  // Read the raw body once so we can verify the HMAC signature against the
+  // exact bytes ElevenLabs signed. Parsing+restringifying would risk subtle
+  // formatting drift breaking the signature.
+  const rawBody = await req.text();
+
+  // HMAC-SHA256 verification of the raw body using ELEVENLABS_WEBHOOK_SECRET.
+  // EL's signature header format is documented as "t=<unix>,v0=<hex>"; we
+  // accept either that or a plain hex/base64 digest defensively. If the env
+  // var isn't set we log + proceed (graceful no-op for dev), matching the
+  // Stripe webhook's local-degraded pattern.
+  const signature = req.headers.get("ElevenLabs-Signature");
+  const secret = process.env.ELEVENLABS_WEBHOOK_SECRET;
+  if (secret) {
+    if (!signature) {
+      console.warn("[post-call-webhook] missing ElevenLabs-Signature header");
+      return NextResponse.json({ error: "missing_signature" }, { status: 401 });
+    }
+    const expected = crypto
+      .createHmac("sha256", secret)
+      .update(rawBody)
+      .digest("hex");
+    // Pull the v0 value if EL uses "t=...,v0=..." form; otherwise compare
+    // against the whole header.
+    const candidate =
+      signature
+        .split(",")
+        .map((p) => p.trim())
+        .find((p) => p.startsWith("v0="))
+        ?.slice(3) ?? signature.trim();
+    const ok =
+      candidate.length === expected.length &&
+      crypto.timingSafeEqual(
+        Buffer.from(candidate),
+        Buffer.from(expected),
+      );
+    if (!ok) {
+      console.warn("[post-call-webhook] signature mismatch");
+      return NextResponse.json({ error: "bad_signature" }, { status: 401 });
+    }
+  } else {
+    console.warn(
+      "[post-call-webhook] ELEVENLABS_WEBHOOK_SECRET not set — proceeding without HMAC verification (dev mode)",
+    );
+  }
+
   let body: unknown;
   try {
-    body = await req.json();
+    body = JSON.parse(rawBody);
   } catch {
     return NextResponse.json({ error: "bad_request" }, { status: 400 });
   }
@@ -113,6 +172,26 @@ export async function POST(req: NextRequest) {
     } catch (err) {
       console.warn(
         "[post-call-webhook] appendVeraSession failed (non-fatal)",
+        err,
+      );
+    }
+  }
+
+  // Persist Vera's self-evaluation (transcript summary + per-criterion
+  // results) onto the deal. Surfaces on /deal/[ref] via <VeraAnalysisCard>.
+  // Purely additive — if either field is missing from this payload we
+  // preserve whatever's already there.
+  const veraSummary = data.analysis?.transcript_summary;
+  const veraEvalResults = data.analysis?.evaluation_criteria_results;
+  if (veraSummary || veraEvalResults) {
+    try {
+      await dealStore.update(deal.id, {
+        ...(veraSummary ? { veraSummary } : {}),
+        ...(veraEvalResults ? { veraEvalResults } : {}),
+      });
+    } catch (err) {
+      console.warn(
+        "[post-call-webhook] persist analysis failed (non-fatal)",
         err,
       );
     }

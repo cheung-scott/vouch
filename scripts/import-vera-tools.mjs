@@ -96,16 +96,21 @@ function buildToolBody(tool) {
   const longTimeoutTools = new Set(["lock_escrow", "release_escrow"]);
 
   // pre_tool_speech config per ConvAI audit (ElevenAgents-Full-Audit
-  // MUST ADD #4):
+  // MUST ADD #4) + EL Apr 27 feature scan:
   // - "off" for most tools — preserves Vera's "never explain that you
   //   used a tool" hard rule.
-  // - "auto" for money-movement tools (lock_escrow + release_escrow)
-  //   — hides the Stripe cold-start latency (~200-500ms) under a
-  //   natural narration like "let me lock that in for you" while the
-  //   tool fires in the background. Net feel: smoother for the user
-  //   even though total turnaround is the same.
-  const moneyMovementTools = new Set(["lock_escrow", "release_escrow"]);
-  const preToolSpeech = moneyMovementTools.has(tool.name) ? "auto" : "off";
+  // - "force" for money-movement tools (lock_escrow + release_escrow +
+  //   refund_deal) — guarantees Vera ALWAYS narrates before the tool
+  //   fires (never sits silent during the ~200-500ms Stripe cold-start).
+  //   Upgraded from "auto" 2026-05-19 per Tier 1 #7: "auto" left it to
+  //   the model to decide and produced variance; "force" removes the
+  //   variance and the silent-tool-call demo failure mode.
+  const moneyMovementTools = new Set([
+    "lock_escrow",
+    "release_escrow",
+    "refund_deal",
+  ]);
+  const preToolSpeech = moneyMovementTools.has(tool.name) ? "force" : "off";
 
   // Build the inner config; we'll wrap it in {tool_config: ...} for the
   // first attempt and fall back to flat on 422.

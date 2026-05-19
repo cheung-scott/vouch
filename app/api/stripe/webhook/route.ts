@@ -46,6 +46,45 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "bad_request" }, { status: 400 });
   }
 
+  // event.id idempotency — Stripe retries failed webhooks for up to 3 days.
+  // Without dedup, the same event would flip deal state twice (e.g. on a
+  // retry after a transient 500). Track processed event ids in KV with a
+  // 4-day TTL (covers Stripe's retry window + slack). Runs AFTER signature
+  // verification so we don't waste KV calls on bogus payloads. Wrapped in
+  // try/catch so local-dev (no KV bound) gracefully degrades to no-op.
+  const dedupKey = "stripe:processed_events";
+  let dedupActive = false;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let kvClient: any = null;
+  const hasKv =
+    !!process.env.KV_REST_API_URL ||
+    !!process.env.UPSTASH_REDIS_REST_URL ||
+    !!process.env.KV_URL;
+  if (hasKv) {
+    try {
+      const mod = await import("@vercel/kv");
+      kvClient = mod.kv;
+      const wasProcessed = await kvClient.sismember(dedupKey, event.id);
+      if (wasProcessed) {
+        console.log(
+          "[webhook] duplicate event, skipping:",
+          event.id,
+          event.type,
+        );
+        return NextResponse.json({
+          skipped: "duplicate",
+          event_id: event.id,
+        });
+      }
+      dedupActive = true;
+    } catch (err) {
+      console.warn(
+        "[webhook] dedup unavailable, processing without idempotency guard:",
+        err,
+      );
+    }
+  }
+
   // Helper: pull the deal_id from event.data.object.metadata.vouch_deal_id
   // and load the deal record. Returns null if metadata is missing or deal
   // doesn't exist (orphan events from test cards / other accounts).
@@ -185,6 +224,28 @@ export async function POST(req: NextRequest) {
       }
       break;
     }
+    case "charge.refunded": {
+      // /api/escrow/refund + /api/vera/refund-deal already flipped the
+      // deal to REFUNDED before this webhook fires. Defensive read-only:
+      // log the refund + confirm metadata, don't mutate state again.
+      const charge = event.data.object as Stripe.Charge;
+      const deal = await dealFromMetadata(charge);
+      console.log(
+        "[webhook] charge refunded",
+        charge.id,
+        "pi=",
+        typeof charge.payment_intent === "string"
+          ? charge.payment_intent
+          : charge.payment_intent?.id,
+        "amount_refunded=",
+        charge.amount_refunded,
+        "deal=",
+        deal?.reference,
+        "status=",
+        deal?.status,
+      );
+      break;
+    }
     case "payment_intent.payment_failed": {
       const pi = event.data.object as Stripe.PaymentIntent;
       console.log(
@@ -218,6 +279,19 @@ export async function POST(req: NextRequest) {
     default:
       console.log("[webhook] unhandled event type:", event.type);
       break;
+  }
+
+  // Mark this event.id as processed so a Stripe retry within the next 4
+  // days short-circuits at the top of the handler. expire() refreshes the
+  // TTL on every successful processing; the set itself is bounded by
+  // Stripe's 3-day retry window so unbounded growth isn't a concern.
+  if (dedupActive && kvClient) {
+    try {
+      await kvClient.sadd(dedupKey, event.id);
+      await kvClient.expire(dedupKey, 60 * 60 * 24 * 4);
+    } catch (err) {
+      console.warn("[webhook] failed to record processed event id:", err);
+    }
   }
 
   return NextResponse.json({ received: true, type: event.type });

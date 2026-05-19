@@ -33,6 +33,11 @@ export async function GET(
       committedAt: deal.seller.committedAt,
     },
     veraSessionIds: deal.veraSessionIds,
+    // Vera's post-call analysis. Not sensitive — same surface area as the
+    // public transcript pitch beat. Either may be undefined for deals
+    // created before the post-call webhook was wired.
+    veraSummary: deal.veraSummary,
+    veraEvalResults: deal.veraEvalResults,
     createdAt: deal.createdAt,
     updatedAt: deal.updatedAt,
     lockedAt: deal.lockedAt,

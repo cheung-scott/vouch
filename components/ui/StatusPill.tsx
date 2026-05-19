@@ -39,6 +39,12 @@ const STATUS_VARIANTS: Record<DealStatus, Variant> = {
     fg: "#2f7d57",
     label: "RELEASED",
   },
+  REFUNDED: {
+    dot: "#7a6a52",
+    bg: "rgba(122,106,82,0.12)",
+    fg: "#7a6a52",
+    label: "REFUNDED",
+  },
   DISPUTED: {
     dot: "#b54a3a",
     bg: "rgba(181,74,58,0.12)",

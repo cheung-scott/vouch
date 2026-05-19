@@ -15,6 +15,20 @@ export const stripe = new Stripe(apiKey ?? "sk_test_placeholder", {
   },
 });
 
+// Restricted Stripe client used by Vera's money-moving tools. Permissions are
+// scoped down to payment_intents + refunds + issuing.* in the Stripe dashboard
+// when the restricted key is generated. NOT `accounts:write` — Vera cannot
+// create new Connect accounts. Falls back to the main `stripe` client's
+// underlying key if the restricted key env var isn't set yet (dev convenience).
+const veraKey = process.env.STRIPE_VERA_KEY ?? apiKey ?? "sk_test_placeholder";
+export const stripeVera = new Stripe(veraKey, {
+  typescript: true,
+  appInfo: {
+    name: "Vouch (Vera)",
+    url: "https://github.com/cheung-scott/vouch",
+  },
+});
+
 // 290 bps = 2.9% — matches Stripe's processing rate. Pitch line:
 // "Vouch adds zero markup on Stripe — we cover Vera's mediation cost
 // from the spread on multi-currency + volume tiers post-MVP." Beats
@@ -87,7 +101,7 @@ export async function createEscrowPaymentIntent(params: {
   dealId: string;
 }) {
   const applicationFee = calculatePlatformFee(params.amountMinor);
-  return stripe.paymentIntents.create({
+  return stripeVera.paymentIntents.create({
     amount: params.amountMinor,
     currency: params.currency,
     customer: params.buyerCustomerId,
@@ -106,7 +120,7 @@ export async function captureEscrow(
   paymentIntentId: string,
   amountToCapture?: number,
 ) {
-  return stripe.paymentIntents.capture(
+  return stripeVera.paymentIntents.capture(
     paymentIntentId,
     amountToCapture ? { amount_to_capture: amountToCapture } : undefined,
   );
@@ -122,7 +136,7 @@ export async function releaseEscrow(params: {
   // never populated and the deal record kept stub IDs. Stripe-Full-Audit
   // caught this. Fix: capture WITHOUT expand, then retrieve with expand
   // to pull the populated charge.transfer chain.
-  const captured = await stripe.paymentIntents.capture(
+  const captured = await stripeVera.paymentIntents.capture(
     params.paymentIntentId,
     params.amountToCapture
       ? { amount_to_capture: params.amountToCapture }
@@ -130,7 +144,7 @@ export async function releaseEscrow(params: {
   );
 
   // Now hydrate latest_charge.transfer via a fresh retrieve with expand.
-  const pi = await stripe.paymentIntents.retrieve(captured.id, {
+  const pi = await stripeVera.paymentIntents.retrieve(captured.id, {
     expand: ["latest_charge.transfer"],
   });
 
@@ -150,7 +164,36 @@ export async function releaseEscrow(params: {
 }
 
 export async function cancelEscrow(paymentIntentId: string) {
-  return stripe.paymentIntents.cancel(paymentIntentId);
+  return stripeVera.paymentIntents.cancel(paymentIntentId);
+}
+
+/**
+ * Refund a captured (post-RELEASE) escrow payment back to the buyer.
+ *
+ * `reverse_transfer: true` claws the released funds back from the seller's
+ * Connect balance (or pushes the balance negative if already withdrawn) so
+ * the buyer is made whole. `refund_application_fee: true` also refunds the
+ * 2.9% Vouch platform fee — Vera only invokes this when a dispute resolves
+ * in the buyer's favour, in which case we shouldn't keep our cut either.
+ *
+ * Closes the gap flagged in Stripe-Full-Audit ("no refund route —
+ * cancel_escrow only works pre-capture").
+ */
+export async function refundCharge(params: {
+  paymentIntentId: string;
+  dealId: string;
+  reason?: Stripe.RefundCreateParams.Reason;
+}) {
+  return stripeVera.refunds.create({
+    payment_intent: params.paymentIntentId,
+    reverse_transfer: true,
+    refund_application_fee: true,
+    reason: params.reason ?? "requested_by_customer",
+    metadata: {
+      vouch_deal_id: params.dealId,
+      vouch_dispute_outcome: "refund_buyer",
+    },
+  });
 }
 
 export function constructWebhookEvent(params: {
@@ -195,7 +238,7 @@ export async function createIssuingCardholder(params: {
   };
   dealId: string;
 }) {
-  return stripe.issuing.cardholders.create({
+  return stripeVera.issuing.cardholders.create({
     type: "individual",
     name: params.fullName,
     email: params.email,
@@ -226,7 +269,7 @@ export async function mintEscrowCard(params: {
   currency: StripeCurrency;
   dealId: string;
 }) {
-  return stripe.issuing.cards.create({
+  return stripeVera.issuing.cards.create({
     cardholder: params.cardholderId,
     currency: params.currency,
     type: "virtual",
@@ -252,7 +295,7 @@ export async function mintEscrowCard(params: {
  * release_escrow tool route after voice-confirmed receipt.
  */
 export async function activateIssuingCard(cardId: string) {
-  return stripe.issuing.cards.update(cardId, {
+  return stripeVera.issuing.cards.update(cardId, {
     status: "active",
     metadata: {
       vouch_status_changed_at: new Date().toISOString(),
@@ -265,12 +308,53 @@ export async function activateIssuingCard(cardId: string) {
  * the deal is voided or refunded. Cancelled cards cannot be re-activated.
  */
 export async function cancelIssuingCard(cardId: string) {
-  return stripe.issuing.cards.update(cardId, {
+  return stripeVera.issuing.cards.update(cardId, {
     status: "canceled",
     metadata: {
       vouch_status_changed_at: new Date().toISOString(),
     },
   });
+}
+
+// ────────────────────────────────────────────────────────────────────────────
+// Stripe Agent Toolkit — official 2026 agentic-commerce SDK
+// (https://github.com/stripe/ai, v0.9.0).
+//
+// We surface a factory that lazily constructs the AI-SDK flavour of the
+// toolkit, scoped to the restricted Vera key. The toolkit connects to
+// `mcp.stripe.com` and the server filters which tools are exposed based on
+// the restricted key's permissions — so blast radius is contained at the
+// Stripe-API layer, not just our local code.
+//
+// Pitch line, literally true: "Vera uses Stripe's official agentic-commerce
+// toolkit, scoped to a restricted API key."
+//
+// We don't wire this through ConvAI's webhook-tool format here — the toolkit
+// emits AI-SDK / OpenAI / LangChain tool shapes via the MCP bridge, none of
+// which match ConvAI's `POST /v1/convai/tools` schema. The factory is
+// exported and ready for a future direct-API agent layer (e.g. an
+// Anthropic-SDK-driven `/api/vera/agent` route that picks up where ConvAI
+// hands off post-call). Vera's existing 13 ConvAI tools cover the demo flow.
+//
+// Lazy dynamic import keeps the @stripe/agent-toolkit/ai-sdk module (which
+// depends on the `ai` peer package) out of the default bundle. Only loaded
+// if a caller actually awaits the factory.
+// ────────────────────────────────────────────────────────────────────────────
+export async function getVeraStripeToolkit() {
+  const { StripeAgentToolkit } = await import("@stripe/agent-toolkit/ai-sdk");
+  const toolkit = new StripeAgentToolkit({
+    secretKey: process.env.STRIPE_VERA_KEY ?? process.env.STRIPE_SECRET_KEY ?? "sk_test_placeholder",
+    configuration: {
+      // v0.9.0 of the toolkit moved permission scoping server-side: the
+      // restricted key itself governs which tools mcp.stripe.com exposes
+      // (payment_intents:read, refunds:write, etc.). No client-side
+      // `actions: { ... }` block any more — the dashboard-issued key is
+      // the single source of truth.
+      context: {},
+    },
+  });
+  await toolkit.initialize();
+  return toolkit;
 }
 
 export function sanitizeStripeError(err: unknown): {

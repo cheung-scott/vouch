@@ -3,6 +3,7 @@
 import { use, useEffect, useState } from "react";
 import Link from "next/link";
 import { Card, Eyebrow, MoneyAmount } from "@/components/ui";
+import { VeraAnalysisCard } from "@/components/VeraAnalysisCard";
 
 type DealDetail = {
   id: string;
@@ -23,6 +24,11 @@ type DealDetail = {
   lockedAt?: string;
   releasedAt?: string;
   stripeIssuingCardStatus?: "frozen" | "active" | "canceled";
+  veraSummary?: string;
+  veraEvalResults?: Record<
+    string,
+    { result: "success" | "failure" | "unknown"; rationale: string }
+  >;
 };
 
 function fmtTimestamp(iso?: string): string {
@@ -144,6 +150,11 @@ export default function DealDetailPage({
         {deal.stripeIssuingCardStatus && (
           <IssuingCardBadge status={deal.stripeIssuingCardStatus} />
         )}
+
+        <VeraAnalysisCard
+          summary={deal.veraSummary}
+          evalResults={deal.veraEvalResults}
+        />
 
         <Card>
           <Eyebrow>Terms</Eyebrow>
