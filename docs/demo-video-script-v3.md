@@ -1,4 +1,6 @@
-# Vouch — Demo Video Script v3 (FINAL)
+# Vouch — Demo Video Script v3 (SUPERSEDED — historical reference only)
+
+> ⚠ **SUPERSEDED by `docs/demo-video-script-v4.md`** as of 2026-05-19 evening. v4 combines this doc with the motion-archetype spec (`Vault/.../Research/Motion-Script-v3-Combined-2026-05-19.md`) and bakes in the user's audio decisions (shortened Polish recital, dropped "escrow" jargon, 7-clip Vera narration scope, locked SFX takes). **Read v4 for the working spec; this file is kept only for git history + delta context.**
 
 **Length:** 65 seconds (Track 4 length, fade-out at ~60s, music tail to 65s, CapCut polishes the final fade)
 **Music:** Track 4 — `hitslab-product-launch-advertisement-commercial-music-301409.mp3`
