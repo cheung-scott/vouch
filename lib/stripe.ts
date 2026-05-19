@@ -357,6 +357,32 @@ export async function getVeraStripeToolkit() {
   return toolkit;
 }
 
+// ────────────────────────────────────────────────────────────────────────────
+// Embedded Connect Onboarding — Stripe's React components let us render the
+// onboarding UI inside Vouch's own React tree instead of redirecting sellers
+// to connect.stripe.com. The flow needs a short-lived AccountSession secret
+// (~30 min TTL) that authorises ONE component for ONE Connect account; the
+// secret is minted server-side here and consumed by `<ConnectAccountOnboarding/>`
+// on the client. Per-component permissions are scoped here, not on the client.
+//
+// Admin operation — uses the main `stripe` client (full secret) rather than
+// the restricted `stripeVera` key, since AccountSessions creation is a
+// platform-level action, not a money-movement tool.
+// ────────────────────────────────────────────────────────────────────────────
+export async function createAccountSession(params: { accountId: string }) {
+  return stripe.accountSessions.create({
+    account: params.accountId,
+    components: {
+      account_onboarding: {
+        enabled: true,
+        features: {
+          external_account_collection: true,
+        },
+      },
+    },
+  });
+}
+
 export function sanitizeStripeError(err: unknown): {
   code: string;
   type: string;

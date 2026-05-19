@@ -69,6 +69,14 @@ export const DealSchema = z.object({
   stripeIssuingCardholderId: z.string().optional(),
   stripeIssuingCardId: z.string().optional(),
   stripeIssuingCardStatus: z.enum(["frozen", "active", "canceled"]).optional(),
+  // Optional Issuing controls — populated by Vera if the deal agreed a
+  // merchant category and/or spending cap during onboarding. Consumed by
+  // app/api/stripe/issuing-auth/route.ts on every real-time authorization
+  // request. If unset, the handler falls back to approving anything
+  // ≤ terms.amountMinor in any category (existing per-card spending limit
+  // still applies as a backstop).
+  allowedMerchantCategory: z.string().optional(),
+  spendCap: z.number().int().optional(),
   // SECURITY: never include this raw URL in public API responses (GDPR Art. 9 biometric data).
   // Day 3+ implementation must generate signed URLs server-side per request after auth.
   voiceAgreementRecordingUrl: z.string().url().optional(),

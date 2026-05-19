@@ -19,7 +19,13 @@ importers:
         version: 1.6.0(@types/dom-mediacapture-record@1.0.22)(react@19.2.4)
       '@stripe/agent-toolkit':
         specifier: ^0.9.0
-        version: 0.9.0(@cfworker/json-schema@4.1.1)(@langchain/core@0.3.80(@opentelemetry/api@1.9.0)(openai@4.104.0(ws@8.20.1)(zod@4.4.3)))(agents@0.0.84(@cfworker/json-schema@4.1.1)(@cloudflare/workers-types@4.20260519.1)(react@19.2.4))(ai@5.0.188(zod@4.4.3))(openai@4.104.0(ws@8.20.1)(zod@4.4.3))
+        version: 0.9.0(@cfworker/json-schema@4.1.1)(@langchain/core@0.3.80(@opentelemetry/api@1.9.0)(openai@4.104.0(ws@8.20.1)(zod@3.25.76)))(agents@0.0.84(@cfworker/json-schema@4.1.1)(@cloudflare/workers-types@4.20260519.1)(react@19.2.4))(ai@5.0.188(zod@3.25.76))(openai@4.104.0(ws@8.20.1)(zod@3.25.76))
+      '@stripe/connect-js':
+        specifier: ^3.4.4
+        version: 3.4.4
+      '@stripe/react-connect-js':
+        specifier: ^3.4.2
+        version: 3.4.2(@stripe/connect-js@3.4.4)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       '@stripe/stripe-js':
         specifier: ^9.5.0
         version: 9.5.0
@@ -55,7 +61,7 @@ importers:
         version: 3.6.0
       zod:
         specifier: ^4.4.3
-        version: 4.4.3
+        version: 3.25.76
     devDependencies:
       '@tailwindcss/postcss':
         specifier: ^4
@@ -584,6 +590,16 @@ packages:
       agents: ^0.0.84
       ai: ^5.0.89
       openai: ^4.86.1
+
+  '@stripe/connect-js@3.4.4':
+    resolution: {integrity: sha512-IhY2hjgs+QrQeEHMmdI1PHb/lc65wVKXbOuSTcsTEP46ntzb/13T9Cv9PXHBfox+GbyMKwc0N/RNvAcBLasm5w==}
+
+  '@stripe/react-connect-js@3.4.2':
+    resolution: {integrity: sha512-XaXvFGmoOsKPVcdN15JqBy5lVFyzcVvZW7cy3WYj1nRQRuTR6EfLA7uvcPLdRO8AD3CQ/e8pAy0cCDu06ClOrw==}
+    peerDependencies:
+      '@stripe/connect-js': '>=3.4.3'
+      react: '>=16.8.0'
+      react-dom: '>=16.8.0'
 
   '@stripe/stripe-js@9.5.0':
     resolution: {integrity: sha512-dTQWkJRw5lhcQipPuw6qZRBK2zY5eWWZ1Srw9mSjhIXSLdsNYO3uaIV+YRMkI0/tB/D7yQdHYStrcZrbeHI5Jg==}
@@ -2790,12 +2806,12 @@ packages:
 
 snapshots:
 
-  '@ai-sdk/gateway@2.0.89(zod@4.4.3)':
+  '@ai-sdk/gateway@2.0.89(zod@3.25.76)':
     dependencies:
       '@ai-sdk/provider': 2.0.3
-      '@ai-sdk/provider-utils': 3.0.25(zod@4.4.3)
+      '@ai-sdk/provider-utils': 3.0.25(zod@3.25.76)
       '@vercel/oidc': 3.1.0
-      zod: 4.4.3
+      zod: 3.25.76
 
   '@ai-sdk/provider-utils@2.2.8(zod@3.25.76)':
     dependencies:
@@ -2804,12 +2820,12 @@ snapshots:
       secure-json-parse: 2.7.0
       zod: 3.25.76
 
-  '@ai-sdk/provider-utils@3.0.25(zod@4.4.3)':
+  '@ai-sdk/provider-utils@3.0.25(zod@3.25.76)':
     dependencies:
       '@ai-sdk/provider': 2.0.3
       '@standard-schema/spec': 1.1.0
       eventsource-parser: 3.0.8
-      zod: 4.4.3
+      zod: 3.25.76
 
   '@ai-sdk/provider@1.1.3':
     dependencies:
@@ -3168,14 +3184,14 @@ snapshots:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.5
 
-  '@langchain/core@0.3.80(@opentelemetry/api@1.9.0)(openai@4.104.0(ws@8.20.1)(zod@4.4.3))':
+  '@langchain/core@0.3.80(@opentelemetry/api@1.9.0)(openai@4.104.0(ws@8.20.1)(zod@3.25.76))':
     dependencies:
       '@cfworker/json-schema': 4.1.1
       ansi-styles: 5.2.0
       camelcase: 6.3.0
       decamelize: 1.2.0
       js-tiktoken: 1.0.21
-      langsmith: 0.3.87(@opentelemetry/api@1.9.0)(openai@4.104.0(ws@8.20.1)(zod@4.4.3))
+      langsmith: 0.3.87(@opentelemetry/api@1.9.0)(openai@4.104.0(ws@8.20.1)(zod@3.25.76))
       mustache: 4.2.0
       p-queue: 6.6.2
       p-retry: 4.6.2
@@ -3275,20 +3291,28 @@ snapshots:
 
   '@standard-schema/spec@1.1.0': {}
 
-  '@stripe/agent-toolkit@0.9.0(@cfworker/json-schema@4.1.1)(@langchain/core@0.3.80(@opentelemetry/api@1.9.0)(openai@4.104.0(ws@8.20.1)(zod@4.4.3)))(agents@0.0.84(@cfworker/json-schema@4.1.1)(@cloudflare/workers-types@4.20260519.1)(react@19.2.4))(ai@5.0.188(zod@4.4.3))(openai@4.104.0(ws@8.20.1)(zod@4.4.3))':
+  '@stripe/agent-toolkit@0.9.0(@cfworker/json-schema@4.1.1)(@langchain/core@0.3.80(@opentelemetry/api@1.9.0)(openai@4.104.0(ws@8.20.1)(zod@3.25.76)))(agents@0.0.84(@cfworker/json-schema@4.1.1)(@cloudflare/workers-types@4.20260519.1)(react@19.2.4))(ai@5.0.188(zod@3.25.76))(openai@4.104.0(ws@8.20.1)(zod@3.25.76))':
     dependencies:
       '@ai-sdk/provider': 2.0.3
-      '@langchain/core': 0.3.80(@opentelemetry/api@1.9.0)(openai@4.104.0(ws@8.20.1)(zod@4.4.3))
+      '@langchain/core': 0.3.80(@opentelemetry/api@1.9.0)(openai@4.104.0(ws@8.20.1)(zod@3.25.76))
       '@modelcontextprotocol/sdk': 1.29.0(@cfworker/json-schema@4.1.1)(zod@3.25.76)
       agents: 0.0.84(@cfworker/json-schema@4.1.1)(@cloudflare/workers-types@4.20260519.1)(react@19.2.4)
-      ai: 5.0.188(zod@4.4.3)
-      openai: 4.104.0(ws@8.20.1)(zod@4.4.3)
+      ai: 5.0.188(zod@3.25.76)
+      openai: 4.104.0(ws@8.20.1)(zod@3.25.76)
       stripe: 17.7.0
       zod: 3.25.76
       zod-to-json-schema: 3.25.2(zod@3.25.76)
     transitivePeerDependencies:
       - '@cfworker/json-schema'
       - supports-color
+
+  '@stripe/connect-js@3.4.4': {}
+
+  '@stripe/react-connect-js@3.4.2(@stripe/connect-js@3.4.4)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)':
+    dependencies:
+      '@stripe/connect-js': 3.4.4
+      react: 19.2.4
+      react-dom: 19.2.4(react@19.2.4)
 
   '@stripe/stripe-js@9.5.0': {}
 
@@ -3611,13 +3635,13 @@ snapshots:
     optionalDependencies:
       react: 19.2.4
 
-  ai@5.0.188(zod@4.4.3):
+  ai@5.0.188(zod@3.25.76):
     dependencies:
-      '@ai-sdk/gateway': 2.0.89(zod@4.4.3)
+      '@ai-sdk/gateway': 2.0.89(zod@3.25.76)
       '@ai-sdk/provider': 2.0.3
-      '@ai-sdk/provider-utils': 3.0.25(zod@4.4.3)
+      '@ai-sdk/provider-utils': 3.0.25(zod@3.25.76)
       '@opentelemetry/api': 1.9.0
-      zod: 4.4.3
+      zod: 3.25.76
 
   ajv-formats@3.0.1(ajv@8.20.0):
     optionalDependencies:
@@ -4699,7 +4723,7 @@ snapshots:
     dependencies:
       json-buffer: 3.0.1
 
-  langsmith@0.3.87(@opentelemetry/api@1.9.0)(openai@4.104.0(ws@8.20.1)(zod@4.4.3)):
+  langsmith@0.3.87(@opentelemetry/api@1.9.0)(openai@4.104.0(ws@8.20.1)(zod@3.25.76)):
     dependencies:
       '@types/uuid': 10.0.0
       chalk: 4.1.2
@@ -4709,7 +4733,7 @@ snapshots:
       uuid: 10.0.0
     optionalDependencies:
       '@opentelemetry/api': 1.9.0
-      openai: 4.104.0(ws@8.20.1)(zod@4.4.3)
+      openai: 4.104.0(ws@8.20.1)(zod@3.25.76)
 
   language-subtag-registry@0.3.23: {}
 
@@ -4961,7 +4985,7 @@ snapshots:
     dependencies:
       wrappy: 1.0.2
 
-  openai@4.104.0(ws@8.20.1)(zod@4.4.3):
+  openai@4.104.0(ws@8.20.1)(zod@3.25.76):
     dependencies:
       '@types/node': 18.19.130
       '@types/node-fetch': 2.6.13
@@ -4972,7 +4996,7 @@ snapshots:
       node-fetch: 2.7.0
     optionalDependencies:
       ws: 8.20.1
-      zod: 4.4.3
+      zod: 3.25.76
     transitivePeerDependencies:
       - encoding
 

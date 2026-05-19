@@ -60,7 +60,7 @@ The state machine is enforced server-side. Every transition (`DRAFT → AWAITING
 
 None of these are decorative. Each one corresponds to a structural part of the product. Remove any and a flow breaks.
 
-### Multi-primitive depth — Stripe (6 primitives, all structurally required)
+### Multi-primitive depth — Stripe (7 primitives, all structurally required)
 
 | Primitive | Role |
 |---|---|
@@ -68,6 +68,7 @@ None of these are decorative. Each one corresponds to a structural part of the p
 | **PaymentIntents (manual capture)** | The escrow mechanic itself — authorize the buyer's card, hold the amount, capture (release) or cancel (refund) on resolution. Destination charges route to the seller's Connect account at capture time |
 | **Application fees** | The 2.9% platform fee, automatically retained at capture (zero markup on Stripe's own processing rate — Vera's mediation cost gets recovered via post-MVP volume tiers, not by gouging deals) |
 | **Issuing** | When escrow locks, Vouch mints a frozen virtual card sized to the escrow amount. Voice-confirmed receipt activates it. Aligns with Stripe's 2026 agentic-commerce thesis — except Vouch *inverts* the usual pattern: instead of the agent paying with a card, Vera mints one FOR the seller |
+| **Issuing realtime authorization** | Vera approves card spend per deal-agreed merchant category, sub-2s decision. Stripe sends `issuing_authorization.request`; a dedicated hot-path endpoint compares the authorisation's merchant category + amount against the deal's `allowedMerchantCategory` / `spendCap` and responds within the 2-second window. Vera doesn't just hold the money — she gatekeeps how the released card gets spent |
 | **Webhooks** | Signature-verified event handling for the entire lifecycle (`payment_intent.amount_capturable_updated` → IN_ESCROW, `payment_intent.succeeded` → RELEASED, `payment_intent.canceled` → CANCELLED, `account.updated`, `charge.dispute.created`). Webhook handler is the async source of truth for state mutations |
 | **Agent Toolkit** | Stripe's official 2026 agentic-commerce SDK (`@stripe/agent-toolkit`), wired through a restricted API key so Vera's blast radius is server-side enforced by Stripe itself — not just by our code. Exposed via `getVeraStripeToolkit()` for the post-ConvAI direct-API agent layer |
 
