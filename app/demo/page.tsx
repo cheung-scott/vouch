@@ -5,7 +5,6 @@ import Link from "next/link";
 import {
   Card,
   DemoModeBanner,
-  DesignPendingPlaceholder,
   Eyebrow,
   MoneyAmount,
 } from "@/components/ui";
@@ -97,18 +96,6 @@ export default function DemoLandingPage() {
             </p>
           )}
         </Card>
-
-        <DesignPendingPlaceholder
-          surface="Mock eBay listing + Pay-with-Vouch overlay"
-          intent="The demo should open with what looks like an eBay listing for the iPhone, with the Vouch browser-extension button overlaid in the corner."
-          notes={[
-            "Mock browser chrome (URL bar showing ebay.co.uk/itm/...)",
-            "Realistic listing card: photo, title, price, seller name, shipping",
-            "Vouch extension overlay button — branded, visible, clickable",
-            "Click → seeds the deal + redirects to /new with the scenario pre-loaded",
-            "Sets up the 'where Vouch shows up in the real world' framing",
-          ]}
-        />
 
         <Card>
           <Eyebrow>The deal you&rsquo;ll set up</Eyebrow>

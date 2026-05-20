@@ -5,7 +5,6 @@ import Link from "next/link";
 import {
   Card,
   DemoModeBanner,
-  DesignPendingPlaceholder,
   Eyebrow,
 } from "@/components/ui";
 
@@ -46,19 +45,6 @@ export default function DemoTimeSkipPage({
         </header>
 
         <DemoModeBanner />
-
-        <DesignPendingPlaceholder
-          surface="Time-skip animation between escrow lock and receipt"
-          intent="A 2-3 second cinematic beat signalling '5 days later' without literally waiting."
-          notes={[
-            "Calendar page fanning forward, or day counter ticking",
-            "Background subtly darkens then re-lights",
-            "Subtle sound design — clock-tick whoosh, ~600ms",
-            "Subtitle text: '5 days later…' fading in then out",
-            "Auto-advances to receipt confirmation when complete",
-            "Should feel like a film cut, not a loading spinner",
-          ]}
-        />
 
         <Card padding="loose">
           <Eyebrow>Placeholder time-skip · 3 second auto-advance</Eyebrow>

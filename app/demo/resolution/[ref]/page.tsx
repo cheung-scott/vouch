@@ -5,7 +5,6 @@ import Link from "next/link";
 import {
   Card,
   DemoModeBanner,
-  DesignPendingPlaceholder,
   Eyebrow,
   MoneyAmount,
 } from "@/components/ui";
@@ -85,20 +84,6 @@ export default function DemoResolutionPage({
 
         {deal && (
           <>
-            <DesignPendingPlaceholder
-              surface="Vera issues the verdict (the demo's climax frame)"
-              intent="Vera presents the case and rules in Sarah's favour — the moment that justifies the whole product."
-              notes={[
-                "Vera's verdict in display serif, framed as her speaking",
-                "Three-point evidence summary: (1) recorded statement 'no scratches', (2) photo at delivery shows crack, (3) Marcus's denial without counter-evidence",
-                "Visual: split-screen of the original commitment audio + the photo",
-                "Outcome panel: refund animation showing £400 flowing from escrow back to Sarah",
-                "Marcus's account: 'flagged for review' indicator",
-                "Tone: authoritative but not theatrical — the system worked, no celebration",
-                "End-state CTA: 'Try the live product →' + 'Watch the demo video →'",
-              ]}
-            />
-
             <Card>
               <Eyebrow>Case summary (the structured data Vera reasons over)</Eyebrow>
               <dl className="mt-4 grid grid-cols-[180px_1fr] gap-y-3 text-sm">
