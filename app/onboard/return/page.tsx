@@ -127,10 +127,10 @@ export default async function OnboardReturnPage({
         <div className="mt-8 flex flex-col gap-3">
           {dealReference && (
             <Link
-              href={`/deal/${dealReference}/seller`}
+              href={`/deal/${dealReference}/signoff`}
               className="rounded-md bg-[#635bff] px-5 py-3 text-center text-sm font-medium text-white transition-colors hover:bg-[#5048e5]"
             >
-              Continue to your deal →
+              Continue to joint sign-off →
             </Link>
           )}
           {!dealReference && isVerified && (

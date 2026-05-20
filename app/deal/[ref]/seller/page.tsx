@@ -20,7 +20,7 @@ type DealSummary = {
   reference: string;
   status: string;
   buyer: { firstName: string };
-  seller: { firstName: string };
+  seller: { firstName: string; stripeAccountId?: string };
   terms: { item: string; amountMinor: number; currency: string };
 };
 
@@ -328,7 +328,28 @@ export default function SellerPage({
           </Card>
         )}
 
-        {stage === "committed" && deal && (
+        {stage === "committed" && deal && !deal.seller.stripeAccountId && (
+          <Card tone="indigo" padding="loose">
+            <Eyebrow tone="indigo">Connect your bank · 1 step left</Eyebrow>
+            <h2 className="mt-3 font-display text-2xl font-semibold leading-tight">
+              Almost there{deal.seller.firstName ? `, ${deal.seller.firstName}` : ""}.
+            </h2>
+            <p className="mt-3 text-sm text-[#5a5548]">
+              Connect your bank to receive payments. Stripe Express setup takes
+              about 30 seconds — the same flow you&rsquo;d use for any marketplace.
+              No signup needed before this point; it&rsquo;s how Vouch keeps the
+              extension working on any eBay listing.
+            </p>
+            <a
+              href={`/onboard?deal_id=${deal.id}`}
+              className="mt-6 inline-block rounded-md bg-[#635bff] px-5 py-2 text-sm font-medium text-white transition-colors hover:bg-[#5048e5]"
+            >
+              Connect bank with Stripe →
+            </a>
+          </Card>
+        )}
+
+        {stage === "committed" && deal && deal.seller.stripeAccountId && (
           <Card tone="success" padding="loose">
             <Eyebrow tone="success">AGREED · joint sign-off pending</Eyebrow>
             <h2 className="mt-3 font-display text-2xl font-semibold leading-tight">

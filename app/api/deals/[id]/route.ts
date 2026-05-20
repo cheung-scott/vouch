@@ -31,6 +31,11 @@ export async function GET(
       firstName: deal.seller.firstName,
       identityVerified: deal.seller.identityVerified,
       committedAt: deal.seller.committedAt,
+      // Surfaced (presence only — the acct_… ID itself is fine to expose
+      // since it's not actionable without the platform's API key) so the
+      // seller page can branch between "Connect bank" CTA and "Go to
+      // sign-off" CTA when status is AGREED.
+      stripeAccountId: deal.seller.stripeAccountId,
     },
     veraSessionIds: deal.veraSessionIds,
     // Vera's post-call analysis. Not sensitive — same surface area as the
