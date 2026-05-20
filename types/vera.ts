@@ -48,7 +48,12 @@ export const CommitBuyerSideOutputSchema = z.object({
   deal_id: z.string(),
 });
 
-export const CommitSellerSideInputSchema = BaseToolInputSchema;
+export const CommitSellerSideInputSchema = BaseToolInputSchema.extend({
+  // Optional. Vera passes {{user_first_name}} through so the deal record
+  // gets the seller's actual first name (not the placeholder carried over
+  // from buyer onboarding). Server validates + rejects placeholder/day names.
+  seller_first_name: z.string().min(1).max(80).optional(),
+});
 export const CommitSellerSideOutputSchema = z.object({
   success: z.boolean(),
   deal_id: z.string(),

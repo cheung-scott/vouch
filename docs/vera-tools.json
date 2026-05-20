@@ -53,11 +53,12 @@
     },
     {
       "name": "commit_seller_side",
-      "description": "Commit the seller's agreement to the buyer's terms. Advances to AGREED, scheduling JOINT_SIGNOFF.",
+      "description": "Commit the seller's agreement to the buyer's terms. Advances to AGREED, scheduling JOINT_SIGNOFF. Always pass seller_first_name = {{user_first_name}} so the deal record persists the seller's actual name.",
       "url": "{BASE_URL}/api/vera/commit-seller-side",
       "method": "POST",
       "parameters": {
-        "deal_id": { "type": "string", "description": "Deal ID being committed." }
+        "deal_id": { "type": "string", "description": "Deal ID being committed." },
+        "seller_first_name": { "type": "string", "description": "The seller's first name — pass {{user_first_name}} verbatim so the deal record gets persisted with their actual name (not the placeholder from buyer onboarding).", "required": false }
       }
     },
     {

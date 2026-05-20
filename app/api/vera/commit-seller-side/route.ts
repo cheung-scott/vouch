@@ -30,9 +30,39 @@ export async function POST(req: NextRequest) {
     );
   }
 
+  // Persist the seller's first name if Vera passed one through (the seller
+  // typed it on the intake page → flows in via {{user_first_name}} → into
+  // the tool call body as seller_first_name). Without this, the deal
+  // record keeps the placeholder name from buyer onboarding and the
+  // signoff page renders "the other party" instead of e.g. "Marcus".
+  // Don't accept placeholder / day-of-week / month strings (defence in
+  // depth — extract-terms already guards but Vera could send a weird value).
+  const PLACEHOLDER_NAMES = new Set([
+    "", "seller", "buyer", "the seller", "the buyer", "the other party",
+  ]);
+  const DAY_OR_MONTH = new Set([
+    "monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday",
+    "january", "february", "march", "april", "may", "june",
+    "july", "august", "september", "october", "november", "december",
+  ]);
+  const candidateName = parsed.data.seller_first_name?.trim() ?? "";
+  const candidateLower = candidateName.toLowerCase();
+  const candidateIsBad =
+    PLACEHOLDER_NAMES.has(candidateLower) || DAY_OR_MONTH.has(candidateLower);
+  const currentLower = (deal.seller.firstName ?? "").toLowerCase().trim();
+  const currentIsPlaceholder =
+    PLACEHOLDER_NAMES.has(currentLower) ||
+    /^[a-z0-9_-]{4,}$/.test(currentLower); // marketplace handles count as placeholder
+  const acceptName =
+    !!candidateName && !candidateIsBad && currentIsPlaceholder;
+
   const committedAt = new Date().toISOString();
   const updated = await dealStore.update(deal.id, {
-    seller: { ...deal.seller, committedAt },
+    seller: {
+      ...deal.seller,
+      committedAt,
+      ...(acceptName ? { firstName: candidateName } : {}),
+    },
     status: "AGREED",
   });
 
