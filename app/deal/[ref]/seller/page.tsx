@@ -361,6 +361,28 @@ export default function SellerPage({
             >
               Go to joint sign-off →
             </a>
+            <div className="mt-6 rounded-md border border-[#5266eb]/40 bg-[#5266eb]/8 p-3">
+              <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-[#5266eb]">
+                ⚠ Bookmark this deal
+              </p>
+              <p className="mt-1 text-xs leading-relaxed text-[#5a5548]">
+                Save your deal URL (
+                <span className="font-mono">/deal/{deal.reference}</span>) — it&rsquo;s
+                how you&rsquo;ll come back to track delivery and receive
+                payout. When {deal.buyer.firstName} confirms receipt, the
+                money lands in your Stripe Express account automatically.
+                View payouts at{" "}
+                <a
+                  href="https://dashboard.stripe.com/test/connect/accounts"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-[#5266eb] underline"
+                >
+                  Stripe Express dashboard
+                </a>
+                .
+              </p>
+            </div>
           </Card>
         )}
 

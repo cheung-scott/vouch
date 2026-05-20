@@ -145,6 +145,19 @@ export default function DealDetailPage({
           </span>
         </header>
 
+        {/* Persistent reminder: deal URLs are bearer tokens in v1. If the
+            user loses this URL, they can't recover it. */}
+        {!["RELEASED", "REFUNDED", "CANCELLED"].includes(deal.status) && (
+          <div className="rounded-md border border-[#5266eb]/30 bg-[#5266eb]/6 px-4 py-2 text-xs leading-relaxed text-[#5a5548]">
+            <span className="font-mono uppercase tracking-[0.14em] text-[#5266eb]">
+              Keep this URL
+            </span>
+            <span className="mx-2 text-[#8a8478]">·</span>
+            Bookmark or email yourself this page — it&rsquo;s your access to
+            this deal until it&rsquo;s complete.
+          </div>
+        )}
+
         <ActionPanel deal={deal} />
 
         {deal.stripeIssuingCardStatus && (

@@ -566,6 +566,23 @@ export default function NewDealPage() {
                   ? `${window.location.origin}/deal/${reference}/seller`
                   : `/deal/${reference}/seller`}
               </a>
+              <div className="rounded-md border border-[#5266eb]/40 bg-[#5266eb]/8 p-3">
+                <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-[#5266eb]">
+                  ⚠ Keep this link
+                </p>
+                <p className="mt-1 text-xs leading-relaxed text-[#5a5548]">
+                  Bookmark this URL or email it to yourself — it&rsquo;s how
+                  you&rsquo;ll come back to confirm delivery once the item
+                  arrives, or open a dispute if something&rsquo;s wrong. You
+                  won&rsquo;t be able to recover it from anywhere else in v1.
+                </p>
+                <a
+                  href={`/deal/${reference}`}
+                  className="mt-2 inline-block font-mono text-[10px] uppercase tracking-[0.14em] text-[#5266eb] underline"
+                >
+                  Your deal page → /deal/{reference}
+                </a>
+              </div>
               <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-[#8a8478]">
                 {notifyMethod === "email"
                   ? "Notification stub: server logged an email-send to the other party. Real provider wires in Day 4+."
