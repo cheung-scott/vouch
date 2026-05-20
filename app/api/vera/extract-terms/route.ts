@@ -35,15 +35,42 @@ export async function POST(req: NextRequest) {
           ? `${nextTerms.notes}; ${extracted.notes}`
           : extracted.notes;
 
+      // Guard against Vera's LLM misclassifying parts of the user utterance
+      // as a counterparty name. The two common failure modes (seen 2026-05-20):
+      //   1. Day-of-week mentions like "by Friday" → seller named "Friday"
+      //   2. Overwriting an already-set seller (e.g. from extension prefill
+      //      `mrclearances`) with a guess from later in the conversation
+      // Filter both cases out here — Vera can still be wrong upstream, but
+      // the deal record stays clean.
+      const DAY_OF_WEEK = new Set([
+        "monday", "tuesday", "wednesday", "thursday",
+        "friday", "saturday", "sunday",
+      ]);
+      const MONTH = new Set([
+        "january", "february", "march", "april", "may", "june",
+        "july", "august", "september", "october", "november", "december",
+      ]);
+      const PLACEHOLDER_NAMES = new Set([
+        "", "seller", "buyer", "the seller", "the buyer", "the other party",
+      ]);
+      const candidateName = extracted.counterparty_name?.split(" ")[0];
+      const candidateLower = candidateName?.toLowerCase().trim() ?? "";
+      const currentLower = (deal.seller.firstName ?? "").toLowerCase().trim();
+      const candidateIsDateWord =
+        DAY_OF_WEEK.has(candidateLower) || MONTH.has(candidateLower);
+      const currentIsPlaceholder = PLACEHOLDER_NAMES.has(currentLower);
+      const acceptNameUpdate =
+        !!candidateName && !candidateIsDateWord && currentIsPlaceholder;
+
       const sellerUpdate =
         extracted.counterparty_name ||
         extracted.counterparty_email ||
         extracted.counterparty_phone
           ? {
               ...deal.seller,
-              firstName:
-                extracted.counterparty_name?.split(" ")[0] ??
-                deal.seller.firstName,
+              firstName: acceptNameUpdate
+                ? candidateName
+                : deal.seller.firstName,
               email: extracted.counterparty_email ?? deal.seller.email,
               phone: extracted.counterparty_phone ?? deal.seller.phone,
             }
