@@ -85,11 +85,18 @@ export async function POST(req: NextRequest) {
   // formatting drift breaking the signature.
   const rawBody = await req.text();
 
-  // HMAC-SHA256 verification of the raw body using ELEVENLABS_WEBHOOK_SECRET.
-  // EL's signature header format is documented as "t=<unix>,v0=<hex>"; we
-  // accept either that or a plain hex/base64 digest defensively. If the env
-  // var isn't set we log + proceed (graceful no-op for dev), matching the
-  // Stripe webhook's local-degraded pattern.
+  // HMAC-SHA256 verification per ElevenLabs ConvAI webhook spec.
+  //
+  // Header format:   ElevenLabs-Signature: t=<unix_seconds>,v0=<hex_hmac>
+  // Signed payload:  `${t}.${rawBody}`   (Stripe-pattern — NOT bare body)
+  // Algorithm:       HMAC-SHA256, hex-encoded, compared timing-safe
+  //
+  // PRIOR BUG: signed only rawBody (no timestamp prefix), so every
+  // comparison failed → 401 → ElevenLabs auto-disabled the destination.
+  // Fixed 2026-05-20.
+  //
+  // If ELEVENLABS_WEBHOOK_SECRET is unset we log + proceed (local-dev mode,
+  // matches Stripe webhook's graceful-degrade pattern).
   const signature = req.headers.get("ElevenLabs-Signature");
   const secret = process.env.ELEVENLABS_WEBHOOK_SECRET;
   if (secret) {
@@ -97,27 +104,44 @@ export async function POST(req: NextRequest) {
       console.warn("[post-call-webhook] missing ElevenLabs-Signature header");
       return NextResponse.json({ error: "missing_signature" }, { status: 401 });
     }
+
+    // Parse "t=<unix>,v0=<hex>" into parts. Defensive: accept missing t
+    // (some webhook tests send v0 only) and fall back to signing bare body.
+    const parts = signature.split(",").map((p) => p.trim());
+    const timestamp = parts.find((p) => p.startsWith("t="))?.slice(2);
+    const sentDigest =
+      parts.find((p) => p.startsWith("v0="))?.slice(3) ?? signature.trim();
+
+    const signedPayload = timestamp ? `${timestamp}.${rawBody}` : rawBody;
     const expected = crypto
       .createHmac("sha256", secret)
-      .update(rawBody)
+      .update(signedPayload)
       .digest("hex");
-    // Pull the v0 value if EL uses "t=...,v0=..." form; otherwise compare
-    // against the whole header.
-    const candidate =
-      signature
-        .split(",")
-        .map((p) => p.trim())
-        .find((p) => p.startsWith("v0="))
-        ?.slice(3) ?? signature.trim();
+
     const ok =
-      candidate.length === expected.length &&
+      sentDigest.length === expected.length &&
       crypto.timingSafeEqual(
-        Buffer.from(candidate),
+        Buffer.from(sentDigest),
         Buffer.from(expected),
       );
     if (!ok) {
-      console.warn("[post-call-webhook] signature mismatch");
+      // Log shape (not values) so we can diagnose without leaking the secret.
+      console.warn("[post-call-webhook] signature mismatch", {
+        hasTimestamp: !!timestamp,
+        sentDigestLen: sentDigest.length,
+        expectedLen: expected.length,
+      });
       return NextResponse.json({ error: "bad_signature" }, { status: 401 });
+    }
+
+    // Reject stale signatures (replay-attack defence). 5-min tolerance
+    // matches Stripe's default. Skip if no timestamp was sent.
+    if (timestamp) {
+      const ageSecs = Math.abs(Date.now() / 1000 - Number(timestamp));
+      if (ageSecs > 300) {
+        console.warn("[post-call-webhook] timestamp too old", { ageSecs });
+        return NextResponse.json({ error: "stale_signature" }, { status: 401 });
+      }
     }
   } else {
     console.warn(
