@@ -38,6 +38,15 @@ export interface VeraVoiceSessionProps {
   /** Extension-provided pre-fill (eBay listing capture etc.). */
   prefilledTerms?: PrefilledTerms;
   /**
+   * Auto-start the session once on mount, provided !disabled, status is idle,
+   * and userFirstName is non-empty. Use on voice-first pages (seller intake,
+   * joint sign-off) where the user has no reason to tap before Vera speaks.
+   * Mic permission persists per-origin, so first-time visitors will see the
+   * browser permission prompt fire automatically. Do NOT use on /new — the
+   * name+email form must be filled first.
+   */
+  autoStart?: boolean;
+  /**
    * Fired after the session ends. The page should refetch the deal to pick
    * up any state changes Vera made via her server tools (extract_terms,
    * commit_buyer_side, lock_escrow, etc.).
@@ -86,6 +95,7 @@ function VeraVoiceSessionInner({
   disabled = false,
   startLabel = "Talk to Vera",
   prefilledTerms,
+  autoStart = false,
   onSessionEnd,
   onTranscript,
   className,
@@ -214,6 +224,28 @@ function VeraVoiceSessionInner({
       if (status === "connected") void endSession();
     };
   }, [endSession, status]);
+
+  // Auto-start on mount for voice-first pages. Guarded by a ref so it only
+  // fires once — after the user ends the session, they're back to a manual
+  // TAP if they want another round (avoids loops if endSession → idle → fire
+  // → endSession). Waits for userFirstName because SELLER_ONBOARDING reads
+  // the name into Vera's opener.
+  const autoStartedRef = useRef(false);
+  useEffect(() => {
+    if (autoStartedRef.current) return;
+    if (!autoStart) return;
+    if (disabled) return;
+    if (local !== "idle") return;
+    if (!userFirstName.trim()) return;
+    autoStartedRef.current = true;
+    // Defer to a microtask so React doesn't see a synchronous setState
+    // inside the effect body (react-hooks/set-state-in-effect). start()
+    // itself flips local → "starting" immediately, which would otherwise
+    // trip the cascading-render lint rule.
+    queueMicrotask(() => {
+      void start();
+    });
+  }, [autoStart, disabled, local, userFirstName, start]);
 
   const live = local === "live" || status === "connected";
   const starting = local === "starting" || status === "connecting";

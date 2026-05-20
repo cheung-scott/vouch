@@ -93,6 +93,11 @@ export type VeraDynamicVariables = {
   // One of "Q1_item" | "Q2_counterparty" | "Q3_amount" | "Q4_delivery" — Vera's
   // prompt branches on this to skip already-captured questions.
   start_question: string;
+  // Per-session-type opener injected into the agent's "First Message" field
+  // (set the dashboard First Message to literally `{{first_message}}`). Lets
+  // Vera hit the ground running on voice-first pages (seller intake, joint
+  // sign-off) instead of waiting silently for the user to prompt her.
+  first_message: string;
 };
 
 export function buildVeraDynamicVariables(params: {
@@ -106,16 +111,34 @@ export function buildVeraDynamicVariables(params: {
   prefilledSummary?: string;
   startQuestion?: string;
 }): VeraDynamicVariables {
+  const userFirstName = params.userFirstName;
+  const counterpartyName = params.counterpartyName ?? "";
+  const prefilledSummary = params.prefilledSummary ?? "";
+  const isPrefilled = !!params.prefilled;
+
+  // Computed server-side so the client cannot inject a mismatched opener
+  // and Vera reads back the same buyer/seller/amount the deal record holds.
+  const firstMessageBySession: Record<VeraSessionType, string> = {
+    BUYER_ONBOARDING: isPrefilled
+      ? `[warmly] Hi ${userFirstName}. I've got your deal: ${prefilledSummary}. When and how is it being delivered?`
+      : `[warmly] Hi ${userFirstName}, I'm Vera — your mediator for this deal. Let's lock the terms. What are you buying or paying for?`,
+    SELLER_ONBOARDING: `[warmly] Hi ${userFirstName} — ${counterpartyName || "the buyer"} set up a deal they'd like to do with you. Let me read their terms back to you now.`,
+    JOINT_SIGNOFF: `[warmly] OK ${userFirstName} and ${counterpartyName || "the other party"} — both of you are here. Let me read the final agreement back, then both of you confirm.`,
+    VOICE_RECEIPT: `[warmly] Hi ${userFirstName}, the tracking shows your item arrived. Did it come and does it match what ${counterpartyName || "the seller"} described?`,
+    DISPUTE: `[empathetically] Hi ${userFirstName}, I'm here to help sort this out. Tell me what's wrong — take your time.`,
+  };
+
   return {
     session_type: params.sessionType,
-    user_first_name: params.userFirstName,
+    user_first_name: userFirstName,
     deal_id: params.dealId ?? "",
-    counterparty_name: params.counterpartyName ?? "",
+    counterparty_name: counterpartyName,
     amount_spoken: params.amountSpoken ?? "",
     locale: params.locale ?? "en",
-    prefilled: params.prefilled ? "true" : "false",
-    prefilled_summary: params.prefilledSummary ?? "",
+    prefilled: isPrefilled ? "true" : "false",
+    prefilled_summary: prefilledSummary,
     start_question: params.startQuestion ?? "Q1_item",
+    first_message: firstMessageBySession[params.sessionType],
   };
 }
 

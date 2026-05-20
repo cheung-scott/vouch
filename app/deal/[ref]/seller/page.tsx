@@ -208,6 +208,7 @@ export default function SellerPage({
                 dealId={deal.id}
                 disabled={!sellerName.trim()}
                 startLabel="Have Vera read the terms to you"
+                autoStart
                 onSessionEnd={() => loadDeal({ silent: true })}
               />
               <p className="text-center font-mono text-[10px] uppercase tracking-[0.14em] text-[#8a8478]">

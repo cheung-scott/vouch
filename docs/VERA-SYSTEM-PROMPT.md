@@ -2,7 +2,9 @@
 
 > **The persistent system prompt for Vera, the AI mediator in Vouch.** Paste into the ElevenLabs ConvAI agent configuration (everything from `# Current session` below through Example 5, stopping before `# Implementation notes`).
 >
-> **Dynamic variables (interpolated at session start by ConvAI):** `{{session_type}}`, `{{user_first_name}}`, `{{deal_id}}`, `{{counterparty_name}}`, `{{amount_spoken}}`, `{{locale}}`, `{{prefilled}}`, `{{prefilled_summary}}`, `{{start_question}}`. The platform substitutes these before each turn's LLM call.
+> **Dynamic variables (interpolated at session start by ConvAI):** `{{session_type}}`, `{{user_first_name}}`, `{{deal_id}}`, `{{counterparty_name}}`, `{{amount_spoken}}`, `{{locale}}`, `{{prefilled}}`, `{{prefilled_summary}}`, `{{start_question}}`, `{{first_message}}`. The platform substitutes these before each turn's LLM call.
+>
+> **First Message field in ConvAI dashboard**: set this to literally `{{first_message}}` so the per-session opener is injected by the conversation-token route. The opener is computed server-side based on `session_type` + `prefilled` state + `counterparty_name` (see `buildVeraDynamicVariables` in `lib/elevenlabs.ts`). This is what makes voice-first pages (seller intake, joint sign-off, voice receipt) hit the ground running instead of waiting silently for the user to prompt Vera.
 >
 > **Locale-specific first messages live in `language_presets` on the agent**, not in this prompt — when `locale != en` the platform serves the localised first message + (optional) localised voice automatically.
 

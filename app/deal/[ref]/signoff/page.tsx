@@ -217,6 +217,7 @@ export default function SignoffPage({
                   }
                   dealId={deal.id}
                   startLabel="Have Vera mediate the joint sign-off"
+                  autoStart
                   onSessionEnd={refreshAndReflectStage}
                 />
                 <p className="text-center font-mono text-[10px] uppercase tracking-[0.14em] text-[#8a8478]">
@@ -326,6 +327,7 @@ export default function SignoffPage({
                 userFirstName={deal.buyer.firstName}
                 dealId={deal.id}
                 startLabel={`${deal.buyer.firstName} — confirm receipt by voice`}
+                autoStart
                 onSessionEnd={refreshAndReflectStage}
               />
               <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-[#8a8478]">
