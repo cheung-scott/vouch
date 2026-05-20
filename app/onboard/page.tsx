@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { Eyebrow } from "@/components/ui";
 import { EmbeddedConnectOnboarding } from "@/components/EmbeddedConnectOnboarding";
 
@@ -16,6 +17,9 @@ type Status =
   | { kind: "error"; what: string; message: string };
 
 export default function OnboardPage() {
+  const searchParams = useSearchParams();
+  const dealId = searchParams.get("deal_id") || undefined;
+
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<Status>({ kind: "idle" });
 
@@ -25,7 +29,7 @@ export default function OnboardPage() {
       const res = await fetch("/api/connect/create-account", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ email, country: "GB" }),
+        body: JSON.stringify({ email, country: "GB", deal_id: dealId }),
       });
       const json = await res.json();
       if (!res.ok) throw new Error(json.message ?? json.error ?? "failed");
@@ -97,7 +101,36 @@ export default function OnboardPage() {
               <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-[#8a8478]">
                 Verification · {status.accountId}
               </p>
-              <EmbeddedConnectOnboarding accountId={status.accountId} />
+              <EmbeddedConnectOnboarding
+                accountId={status.accountId}
+                onExit={() => {
+                  // Stripe Connect emits onExit when the seller finishes (or
+                  // cancels) the embedded flow. Route to /onboard/return —
+                  // it'll detect deal_id, write seller.stripeAccountId, and
+                  // forward to the deal's signoff page.
+                  const params = new URLSearchParams({
+                    account: status.accountId,
+                  });
+                  if (dealId) params.set("deal_id", dealId);
+                  window.location.href = `/onboard/return?${params.toString()}`;
+                }}
+              />
+              {/* Manual escape hatch — Stripe's embedded onExit doesn't
+                  always fire predictably on "Information submitted" screens
+                  (the post-verification confirmation state). Visible button
+                  lets the seller advance once they see Stripe say done. */}
+              <a
+                href={
+                  dealId
+                    ? `/onboard/return?account=${status.accountId}&deal_id=${dealId}`
+                    : `/onboard/return?account=${status.accountId}`
+                }
+                className="mt-2 inline-block w-full rounded-md border border-[#5266eb] bg-white px-5 py-3 text-center text-sm font-medium text-[#5266eb] transition-colors hover:bg-[#5266eb] hover:text-white"
+              >
+                {dealId
+                  ? "I'm done — continue to sign-off →"
+                  : "I'm done — continue →"}
+              </a>
               {status.onboardingUrl && (
                 <a
                   href={status.onboardingUrl}

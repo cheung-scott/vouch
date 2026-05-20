@@ -337,17 +337,104 @@ function ActionPanel({ deal }: { deal: DealDetail }) {
         <h2 className="mt-2 font-display text-2xl font-semibold">
           Money stays in escrow until resolved.
         </h2>
-        <Link
-          href={`/deal/${reference}/dispute`}
-          className="mt-4 inline-block rounded-md border border-[rgba(50,30,5,0.18)] bg-white px-4 py-2 text-sm font-medium transition-colors hover:bg-[#fbfaf6]"
-        >
-          View dispute →
-        </Link>
+        <p className="mt-3 text-sm text-[#5a5548]">
+          In v1, disputes are escalated to human review after Vera gathers
+          evidence (typically resolved within an hour). For the demo, use the
+          button below to issue the verdict directly.
+        </p>
+        <div className="mt-4 flex flex-wrap gap-3">
+          <Link
+            href={`/deal/${reference}/dispute`}
+            className="rounded-md border border-[rgba(50,30,5,0.18)] bg-white px-4 py-2 text-sm font-medium transition-colors hover:bg-[#fbfaf6]"
+          >
+            View dispute →
+          </Link>
+          <DemoVerdictButton dealId={deal.id} />
+        </div>
       </Card>
     );
   }
 
   return null;
+}
+
+/**
+ * Demo-only verdict button — calls /api/vera/refund-deal to issue the
+ * "refund to buyer" verdict on a disputed deal. In a real product the
+ * verdict would come from human review after the seller's side is
+ * collected; for the hackathon demo this lets judges see the full
+ * dispute → refund visual chain without waiting for off-screen review.
+ */
+function DemoVerdictButton({ dealId }: { dealId: string }) {
+  const [busy, setBusy] = useState(false);
+  const [result, setResult] = useState<
+    | { kind: "idle" }
+    | { kind: "ok"; refundId: string }
+    | { kind: "error"; message: string }
+  >({ kind: "idle" });
+
+  async function issueVerdict() {
+    if (
+      !confirm(
+        "Issue verdict: refund the buyer in full?\n\nThis is a demo-only override that simulates human review concluding in the buyer's favour. The deal status will flip to REFUNDED and the buyer's money will be reversed from Stripe.",
+      )
+    ) {
+      return;
+    }
+    setBusy(true);
+    setResult({ kind: "idle" });
+    try {
+      const res = await fetch("/api/vera/refund-deal", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          deal_id: dealId,
+          reason: "demo_verdict_refund_buyer",
+        }),
+      });
+      const json = await res.json();
+      if (!res.ok) {
+        throw new Error(json.error ?? json.message ?? "verdict_failed");
+      }
+      setResult({ kind: "ok", refundId: json.refund_id ?? "ok" });
+      // Hard reload so the deal page re-renders the REFUNDED state cleanly.
+      window.location.reload();
+    } catch (err) {
+      setResult({
+        kind: "error",
+        message: err instanceof Error ? err.message : "unknown",
+      });
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  if (result.kind === "ok") {
+    return (
+      <span className="rounded-md bg-[#2f7a4e] px-4 py-2 text-sm font-medium text-white">
+        Refunded · reloading…
+      </span>
+    );
+  }
+
+  return (
+    <>
+      <button
+        type="button"
+        onClick={issueVerdict}
+        disabled={busy}
+        className="rounded-md bg-[#b54a3a] px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-[#9d3e2f] disabled:opacity-60"
+        title="Demo: simulate human review concluding in buyer's favour"
+      >
+        {busy ? "Issuing verdict…" : "Demo: Issue verdict (refund buyer)"}
+      </button>
+      {result.kind === "error" && (
+        <p className="basis-full font-mono text-xs text-[#b54a3a]">
+          {result.message}
+        </p>
+      )}
+    </>
+  );
 }
 
 function CounterReconfirmPanel({ deal }: { deal: DealDetail }) {
