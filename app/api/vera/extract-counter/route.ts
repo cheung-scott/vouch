@@ -21,7 +21,13 @@ export async function POST(req: NextRequest) {
   if (parsed.data.deal_id) {
     const deal = await dealStore.get(parsed.data.deal_id);
     if (deal) {
-      if (deal.status !== "AWAITING_SELLER") {
+      // Accept AWAITING_SELLER (true counter-offer) AND DRAFT (the SELLER_
+      // ONBOARDING fulfilment-capture flow can call this multiple times in
+      // sequence for delivery_method → dispatch deadline → acceptance window,
+      // and the first call used to downgrade to DRAFT, blocking subsequent
+      // calls with 409 invalid_state. Both states are now valid entry points.
+      const allowedStates = ["AWAITING_SELLER", "DRAFT"];
+      if (!allowedStates.includes(deal.status)) {
         return NextResponse.json(
           { error: "invalid_state", current_status: deal.status },
           { status: 409 },
@@ -37,9 +43,15 @@ export async function POST(req: NextRequest) {
         counterTerms.notes = counterTerms.notes
           ? `${counterTerms.notes}; counter: ${extracted.notes}`
           : `counter: ${extracted.notes}`;
+      // Only downgrade to DRAFT if the change actually affects buyer-visible
+      // terms (amount/currency). Pure fulfilment additions (delivery_method,
+      // notes-only acceptance window) shouldn't downgrade — the seller is
+      // ADDING required logistics, not countering financial terms.
+      const isCounterOfferOnFinancials =
+        extracted.amount_minor || extracted.currency;
       await dealStore.update(deal.id, {
         terms: counterTerms,
-        status: "DRAFT",
+        ...(isCounterOfferOnFinancials ? { status: "DRAFT" as const } : {}),
       });
     }
   }
