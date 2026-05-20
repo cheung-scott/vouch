@@ -51,7 +51,13 @@ export async function POST(req: NextRequest) {
   const seller: Party = {
     id: randomUUID(),
     role: "SELLER",
-    firstName: parsed.data.counterparty?.firstName ?? "the other party",
+    // Default to "Seller" (treated as a placeholder by isPlaceholderName in
+    // lib/utils.ts) when no counterparty info is supplied yet. We used to
+    // default to "the other party" but that literal string leaked into deal
+    // page UI ("the other party committed"). isPlaceholderName recognises
+    // both, so existing deals keep behaving the same — new deals just store
+    // a tighter sentinel.
+    firstName: parsed.data.counterparty?.firstName ?? "Seller",
     email: parsed.data.counterparty?.email,
     phone: parsed.data.counterparty?.phone,
     identityVerified: false,

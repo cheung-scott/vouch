@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Card, Eyebrow, MoneyAmount } from "@/components/ui";
 import { VeraAnalysisCard } from "@/components/VeraAnalysisCard";
 import { SellerRepBadge } from "@/components/SellerRepBadge";
+import { displayPartyName } from "@/lib/utils";
 
 type DealDetail = {
   id: string;
@@ -95,15 +96,17 @@ export default function DealDetailPage({
   }
 
   const status = deal.status;
+  const buyerDisplay = displayPartyName(deal.buyer.firstName, "Buyer");
+  const sellerDisplay = displayPartyName(deal.seller.firstName, "Seller");
   const events: { label: string; at?: string; tone: "muted" | "active" }[] = [
     { label: "Deal drafted", at: deal.createdAt, tone: "active" },
     {
-      label: `${deal.buyer.firstName} committed`,
+      label: `${buyerDisplay} committed`,
       at: deal.buyer.committedAt,
       tone: deal.buyer.committedAt ? "active" : "muted",
     },
     {
-      label: `${deal.seller.firstName} committed`,
+      label: `${sellerDisplay} committed`,
       at: deal.seller.committedAt,
       tone: deal.seller.committedAt ? "active" : "muted",
     },
@@ -134,7 +137,7 @@ export default function DealDetailPage({
               {deal.reference}
             </h1>
             <p className="mt-1 text-sm text-[#5a5548]">
-              {deal.buyer.firstName} → {deal.seller.firstName} ·{" "}
+              {buyerDisplay} → {sellerDisplay} ·{" "}
               <MoneyAmount
                 amountMinor={deal.terms.amountMinor}
                 currency={deal.terms.currency}
@@ -511,7 +514,7 @@ function CounterReconfirmPanel({ deal }: { deal: DealDetail }) {
       <Card tone="success">
         <Eyebrow tone="success">Re-confirmed · AWAITING_SELLER</Eyebrow>
         <h2 className="mt-2 font-display text-2xl font-semibold leading-tight">
-          Sent back to {deal.seller.firstName} for final agreement.
+          Sent back to {displayPartyName(deal.seller.firstName, "Seller")} for final agreement.
         </h2>
         <p className="mt-3 text-sm text-[#5a5548]">
           Refresh this page to see the updated state.
@@ -522,7 +525,7 @@ function CounterReconfirmPanel({ deal }: { deal: DealDetail }) {
 
   return (
     <Card tone="warning">
-      <Eyebrow tone="warning">{deal.seller.firstName} proposed changes</Eyebrow>
+      <Eyebrow tone="warning">{displayPartyName(deal.seller.firstName, "Seller")} proposed changes</Eyebrow>
       <h2 className="mt-2 font-display text-2xl font-semibold leading-tight">
         Review the updated terms below — re-confirm or push back.
       </h2>

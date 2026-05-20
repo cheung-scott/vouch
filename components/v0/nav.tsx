@@ -26,22 +26,22 @@ export function Nav() {
 
         {/* Nav Links */}
         <div className="hidden md:flex items-center gap-8">
-          <Link 
-            href="#how-it-works" 
+          <Link
+            href="/how-it-works"
             className="text-[14px] text-white/48 hover:text-white transition-colors duration-200"
             style={{ fontFamily: 'var(--font-inter), sans-serif' }}
           >
             How it works
           </Link>
-          <Link 
-            href="#pricing" 
+          <Link
+            href="/#pricing"
             className="text-[14px] text-white/48 hover:text-white transition-colors duration-200"
             style={{ fontFamily: 'var(--font-inter), sans-serif' }}
           >
             Pricing
           </Link>
-          <Link 
-            href="#trust" 
+          <Link
+            href="/#trust"
             className="text-[14px] text-white/48 hover:text-white transition-colors duration-200"
             style={{ fontFamily: 'var(--font-inter), sans-serif' }}
           >
@@ -50,17 +50,22 @@ export function Nav() {
         </div>
 
         {/* CTA */}
-        <motion.button
-          className="px-5 py-2.5 bg-[#635bff] text-white text-[14px] font-medium rounded-full"
-          style={{ fontFamily: 'var(--font-inter), sans-serif' }}
-          whileHover={{ 
+        <motion.div
+          whileHover={{
             boxShadow: '0 0 20px 4px rgba(99, 91, 255, 0.3)',
           }}
           whileTap={{ scale: 0.98 }}
           transition={{ duration: 0.2, ease: easeOutQuart }}
+          className="rounded-full"
         >
-          Start a deal
-        </motion.button>
+          <Link
+            href="/new"
+            className="inline-block rounded-full bg-[#635bff] px-5 py-2.5 text-[14px] font-medium text-white"
+            style={{ fontFamily: 'var(--font-inter), sans-serif' }}
+          >
+            Start a deal
+          </Link>
+        </motion.div>
       </div>
     </nav>
   )

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import { Card, Eyebrow } from "@/components/ui";
 import {
   VeraVoiceSession,
@@ -307,8 +307,11 @@ export default function NewDealPage() {
   }
 
   // Pull the latest deal state and reflect any progress Vera made via her
-  // server tools (extract_terms, commit_buyer_side, etc.). Called after a
-  // voice session ends.
+  // server tools (extract_terms, commit_buyer_side, etc.). Called after every
+  // Vera transcript message and once more after the voice session ends — so
+  // the step indicator + answers strip track what Vera has already captured
+  // server-side. Without this, the page header stays on "Question 1 of 5"
+  // even after Vera has captured all five answers by voice.
   const refreshFromServer = useCallback(async () => {
     if (!dealId) return;
     try {
@@ -317,7 +320,13 @@ export default function NewDealPage() {
       const { deal } = (await res.json()) as {
         deal: {
           status: string;
-          terms: { item?: string; amountMinor?: number; currency?: string };
+          terms: {
+            item?: string;
+            amountMinor?: number;
+            currency?: string;
+            deadline?: string;
+            notes?: string;
+          };
           seller: { firstName?: string };
         };
       };
@@ -325,24 +334,67 @@ export default function NewDealPage() {
         setStage("committed");
         return;
       }
-      // Re-hydrate the answers strip from server terms so the next typed
-      // answer continues from whatever Vera already captured.
-      setAnswers((prev) => ({
-        ...prev,
-        item: deal.terms.item ?? prev.item,
-        counterparty: deal.seller.firstName ?? prev.counterparty,
+
+      // Treat the persisted seller name as captured only if it's a real
+      // name — `isPlaceholderName` filters out the sentinel "Seller" / "the
+      // other party" defaults so Q2 stays unanswered when Vera hasn't yet
+      // heard the counterparty.
+      const sellerName = deal.seller.firstName ?? "";
+      const sellerIsReal =
+        sellerName.trim() !== "" &&
+        !["seller", "buyer", "the seller", "the buyer", "the other party"].includes(
+          sellerName.toLowerCase().trim(),
+        );
+      // extract-terms stores Q4 (delivery deadline) inside terms.notes as
+      // "deadline: <hint>" because there's no dedicated date field. Detect
+      // that prefix to know Q4 was captured.
+      const hasDeadline =
+        !!deal.terms.deadline ||
+        /(^|;\s*)deadline:/i.test(deal.terms.notes ?? "");
+
+      const nextAnswers: Record<QuestionId, string> = {
+        item: deal.terms.item || answers.item,
+        counterparty: sellerIsReal ? sellerName : answers.counterparty,
         amount:
           deal.terms.amountMinor && deal.terms.currency
             ? formatAmount(
                 (deal.terms.amountMinor / 100).toString(),
                 deal.terms.currency,
               )
-            : prev.amount,
-      }));
+            : answers.amount,
+        delivery: hasDeadline ? (answers.delivery || "captured") : answers.delivery,
+        extras: answers.extras,
+      };
+      setAnswers(nextAnswers);
+
+      // Bump step forward to the first question that still has no captured
+      // value. If everything's filled, park on the last question (extras) so
+      // the user can decide what's optional. Never step backwards.
+      const order: QuestionId[] = ["item", "counterparty", "amount", "delivery", "extras"];
+      let nextStep = order.findIndex((id) => !nextAnswers[id]);
+      if (nextStep === -1) nextStep = QUESTIONS.length - 1;
+      setStep((prev) => Math.max(prev, nextStep));
     } catch {
       // Best-effort refresh — failure is non-fatal, the user can keep typing.
     }
-  }, [dealId]);
+  }, [dealId, answers]);
+
+  // Debounced trigger fired from the Vera transcript callback. Each new
+  // message (user or agent) bumps the timer; the actual fetch only runs
+  // ~600ms after the last message lands. Without the debounce, a chatty
+  // turn (Vera + user + Vera) would fire 3 overlapping GETs.
+  const refreshTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const scheduleRefresh = useCallback(() => {
+    if (refreshTimerRef.current) clearTimeout(refreshTimerRef.current);
+    refreshTimerRef.current = setTimeout(() => {
+      void refreshFromServer();
+    }, 600);
+  }, [refreshFromServer]);
+  useEffect(() => {
+    return () => {
+      if (refreshTimerRef.current) clearTimeout(refreshTimerRef.current);
+    };
+  }, []);
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-[#f6f5f2] px-6 py-12 text-[#2a2924]">
@@ -355,7 +407,7 @@ export default function NewDealPage() {
             {stage === "questions"
               ? `Question ${step + 1} of ${QUESTIONS.length}`
               : stage === "preflight"
-                ? "Pre-flight"
+                ? "Step 1 of 2"
                 : stage === "recitation"
                   ? "Read-back"
                   : "Committed"}
@@ -474,6 +526,7 @@ export default function NewDealPage() {
                   startLabel={`Talk to Vera about question ${step + 1}`}
                   prefilledTerms={prefilledTerms}
                   onSessionEnd={refreshFromServer}
+                  onTranscript={scheduleRefresh}
                 />
               </div>
 

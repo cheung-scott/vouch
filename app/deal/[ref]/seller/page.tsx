@@ -4,6 +4,7 @@ import { use, useCallback, useEffect, useState } from "react";
 import { Card, Eyebrow } from "@/components/ui";
 import { VeraVoiceSession } from "@/components/VeraVoiceSession";
 import { SellerRepBadge } from "@/components/SellerRepBadge";
+import { displayPartyName, isPlaceholderName } from "@/lib/utils";
 
 type Stage =
   | "loading"
@@ -34,6 +35,12 @@ export default function SellerPage({
   const [stage, setStage] = useState<Stage>("loading");
   const [deal, setDeal] = useState<DealSummary | null>(null);
   const [sellerName, setSellerName] = useState("");
+  // Two-step gate on the intake screen: the seller types their name into the
+  // input, then presses Continue (or Enter) to lock it in. Only AFTER that
+  // does Vera auto-start. Without this, autoStart used to fire the instant
+  // `sellerName.trim()` became truthy — i.e. after the first keystroke —
+  // and Vera began greeting the seller before they'd finished typing.
+  const [nameConfirmed, setNameConfirmed] = useState(false);
   const [recitation, setRecitation] = useState<string | null>(null);
   const [counter, setCounter] = useState("");
   const [busy, setBusy] = useState(false);
@@ -72,7 +79,7 @@ export default function SellerPage({
           !json.deal.terms?.amountMinor
         ) {
           setError(
-            `${json.deal.buyer.firstName} hasn't captured any terms yet. Check back once they begin the deal.`,
+            `${displayPartyName(json.deal.buyer.firstName, "The buyer")} hasn't captured any terms yet. Check back once they begin the deal.`,
           );
           setStage("error");
         } else if (
@@ -211,7 +218,7 @@ export default function SellerPage({
           <Card padding="loose" shadow>
             <Eyebrow tone="indigo">Vera · seller intake</Eyebrow>
             <h1 className="mt-3 font-display text-3xl font-semibold leading-tight">
-              Hi — {deal.buyer.firstName} set up a deal{" "}
+              Hi — {displayPartyName(deal.buyer.firstName, "the buyer")} set up a deal{" "}
               <span className="italic text-[#5266eb]">they&rsquo;d like to do with you</span>.
             </h1>
             <p className="mt-3 text-sm text-[#5a5548]">
@@ -222,29 +229,49 @@ export default function SellerPage({
                 type="text"
                 value={sellerName}
                 onChange={(e) => setSellerName(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && sellerName.trim()) {
+                    e.preventDefault();
+                    setNameConfirmed(true);
+                  }
+                }}
                 placeholder="Your first name"
-                className="rounded-md border border-[rgba(50,30,5,0.18)] bg-[#fbfaf6] px-4 py-3 text-[15px] outline-none focus:border-[#5266eb] focus:ring-2 focus:ring-[#5266eb]/30"
+                disabled={nameConfirmed}
+                className="rounded-md border border-[rgba(50,30,5,0.18)] bg-[#fbfaf6] px-4 py-3 text-[15px] outline-none focus:border-[#5266eb] focus:ring-2 focus:ring-[#5266eb]/30 disabled:opacity-60"
               />
-              <VeraVoiceSession
-                sessionType="SELLER_ONBOARDING"
-                userFirstName={sellerName}
-                dealId={deal.id}
-                disabled={!sellerName.trim()}
-                startLabel="Have Vera read the terms to you"
-                autoStart
-                onSessionEnd={() => loadDeal({ silent: true })}
-              />
-              <p className="text-center font-mono text-[10px] uppercase tracking-[0.14em] text-[#8a8478]">
-                or
-              </p>
-              <button
-                type="button"
-                onClick={listenToTerms}
-                disabled={busy || !sellerName.trim()}
-                className="rounded-md bg-[#635bff] px-5 py-3 text-sm font-medium text-white transition-colors hover:bg-[#5048e5] disabled:opacity-40"
-              >
-                {busy ? "Loading terms…" : "Read the terms on-screen →"}
-              </button>
+              {!nameConfirmed && (
+                <button
+                  type="button"
+                  onClick={() => setNameConfirmed(true)}
+                  disabled={!sellerName.trim()}
+                  className="rounded-md bg-[#635bff] px-5 py-3 text-sm font-medium text-white transition-colors hover:bg-[#5048e5] disabled:opacity-40"
+                >
+                  Continue →
+                </button>
+              )}
+              {nameConfirmed && (
+                <>
+                  <VeraVoiceSession
+                    sessionType="SELLER_ONBOARDING"
+                    userFirstName={sellerName}
+                    dealId={deal.id}
+                    startLabel="Have Vera read the terms to you"
+                    autoStart
+                    onSessionEnd={() => loadDeal({ silent: true })}
+                  />
+                  <p className="text-center font-mono text-[10px] uppercase tracking-[0.14em] text-[#8a8478]">
+                    or
+                  </p>
+                  <button
+                    type="button"
+                    onClick={listenToTerms}
+                    disabled={busy}
+                    className="rounded-md border border-[rgba(50,30,5,0.18)] bg-white px-5 py-3 text-sm font-medium text-[#5266eb] transition-colors hover:bg-[#fbfaf6] disabled:opacity-40"
+                  >
+                    {busy ? "Loading terms…" : "Read the terms on-screen →"}
+                  </button>
+                </>
+              )}
               {error && (
                 <p className="font-mono text-xs text-[#b54a3a]">{error}</p>
               )}
@@ -255,7 +282,7 @@ export default function SellerPage({
         {stage === "recitation" && recitation && deal && (
           <Card tone="indigo" padding="loose" shadow>
             <Eyebrow tone="indigo">
-              Vera reads {deal.buyer.firstName}&rsquo;s terms
+              Vera reads {displayPartyName(deal.buyer.firstName, "the buyer")}&rsquo;s terms
             </Eyebrow>
             <p className="mt-5 font-display text-xl font-medium leading-relaxed">
               &ldquo;{recitation}&rdquo;
@@ -333,7 +360,7 @@ export default function SellerPage({
           <Card tone="indigo" padding="loose">
             <Eyebrow tone="indigo">Connect your bank · 1 step left</Eyebrow>
             <h2 className="mt-3 font-display text-2xl font-semibold leading-tight">
-              Almost there{deal.seller.firstName ? `, ${deal.seller.firstName}` : ""}.
+              Almost there{!isPlaceholderName(deal.seller.firstName) ? `, ${deal.seller.firstName}` : ""}.
             </h2>
             <p className="mt-3 text-sm text-[#5a5548]">
               Connect your bank to receive payments. Stripe Express setup takes
@@ -377,7 +404,7 @@ export default function SellerPage({
                 Save your deal URL (
                 <span className="font-mono">/deal/{deal.reference}</span>) — it&rsquo;s
                 how you&rsquo;ll come back to track delivery and receive
-                payout. When {deal.buyer.firstName} confirms receipt, the
+                payout. When {displayPartyName(deal.buyer.firstName, "the buyer")} confirms receipt, the
                 money lands in your Stripe Express account automatically.
                 View payouts at{" "}
                 <a
@@ -398,7 +425,7 @@ export default function SellerPage({
           <Card tone="warning" padding="loose">
             <Eyebrow tone="warning">Counter sent</Eyebrow>
             <p className="mt-3 text-base text-[#2a2924]">
-              I&rsquo;ll send the updated terms back to {deal?.buyer.firstName}. They&rsquo;ll confirm or come back to you.
+              I&rsquo;ll send the updated terms back to {displayPartyName(deal?.buyer.firstName, "the buyer")}. They&rsquo;ll confirm or come back to you.
             </p>
           </Card>
         )}

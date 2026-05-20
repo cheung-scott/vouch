@@ -32,3 +32,32 @@ export function dealReference(id: string): string {
   const hash = id.replace(/[^A-Za-z0-9]/g, "").slice(0, 6).toUpperCase();
   return `VCH_${hash}`;
 }
+
+/**
+ * Render a party's first name for UI surfaces, swapping any persisted
+ * placeholder string ("the other party", "Seller", "") for a clean role
+ * label. The placeholders leak into the deal record when a deal is
+ * created before Vera knows the counterparty's name (e.g. /new with no
+ * extension prefill) — without this guard, the timeline reads "the other
+ * party committed" instead of "Seller committed".
+ */
+const PARTY_PLACEHOLDER_NAMES = new Set([
+  "",
+  "seller",
+  "buyer",
+  "the seller",
+  "the buyer",
+  "the other party",
+]);
+
+export function isPlaceholderName(name?: string | null): boolean {
+  if (!name) return true;
+  return PARTY_PLACEHOLDER_NAMES.has(name.toLowerCase().trim());
+}
+
+export function displayPartyName(
+  name: string | undefined | null,
+  fallback: string = "Seller",
+): string {
+  return isPlaceholderName(name) ? fallback : (name as string);
+}

@@ -104,6 +104,12 @@ function MergedHero() {
               >
                 Start a deal →
               </Link>
+              {/* TODO(demo-video): once the final cut lands (post-21 May Stripe
+                  submission), embed the demo video on this page. Two viable spots:
+                  (1) replace RecordWidget on the right side of the hero (line ~124)
+                  with an autoplay-muted MP4 loop; (2) add a dedicated section
+                  between MergedHero and MergedPainPivot with a full-width video.
+                  Until then this CTA scrolls to a placeholder. */}
               <Link
                 href="/demo"
                 className="rounded-md border border-white/18 bg-transparent px-7 py-3.5 text-[14px] font-medium text-white transition-colors hover:bg-white/[0.06]"
@@ -934,7 +940,10 @@ function CompCellRender({ value, accent }: { value: CompCell; accent: boolean })
 
 function MergedPricing() {
   return (
-    <section className="relative border-t border-[var(--border-warm)] bg-[var(--cream-alt)] px-6 py-24 text-[var(--ink)] md:py-32">
+    <section
+      id="pricing"
+      className="relative scroll-mt-24 border-t border-[var(--border-warm)] bg-[var(--cream-alt)] px-6 py-24 text-[var(--ink)] md:py-32"
+    >
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0 z-0"
@@ -1034,7 +1043,10 @@ function CheckBubble() {
 
 function MergedBuiltOn() {
   return (
-    <section className="relative border-t border-[var(--border-warm)] bg-[var(--cream)] px-6 py-20 text-[var(--ink)]">
+    <section
+      id="trust"
+      className="relative scroll-mt-24 border-t border-[var(--border-warm)] bg-[var(--cream)] px-6 py-20 text-[var(--ink)]"
+    >
       <div className="mx-auto flex w-full max-w-5xl flex-col gap-10">
         <div className="flex flex-col items-center gap-3 text-center">
           <div className="flex items-center gap-3">

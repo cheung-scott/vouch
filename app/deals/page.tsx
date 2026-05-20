@@ -37,7 +37,15 @@ export default function DealsPage() {
       try {
         const res = await fetch("/api/deals", { cache: "no-store" });
         const json = await res.json();
-        if (!res.ok) throw new Error(json.error ?? "failed");
+        if (!res.ok) {
+          // 401/403 from /api/deals GET is expected for end-users — the
+          // endpoint is OWNER_TOKEN-gated (S-107 fail-closed enumeration
+          // protection). v1 has no per-user accounts, so the deals list
+          // is admin-only. Surface the no-deals empty state instead of a
+          // scary error.
+          if (res.status === 401 || res.status === 403) return;
+          throw new Error(json.error ?? "failed");
+        }
         if (cancelled) return;
         setDeals(json.deals);
       } catch (err) {

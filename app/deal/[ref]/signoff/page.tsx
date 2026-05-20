@@ -3,6 +3,7 @@
 import { use, useCallback, useEffect, useState } from "react";
 import { Card, Eyebrow, MoneyAmount } from "@/components/ui";
 import { VeraVoiceSession } from "@/components/VeraVoiceSession";
+import { displayPartyName } from "@/lib/utils";
 
 type DealView = {
   id: string;
@@ -53,15 +54,47 @@ export default function SignoffPage({
 
   // After a voice session ends, pull fresh deal state and let any escrow
   // advancement (Vera called lock_escrow / release_escrow) reflect in the UI.
+  // If Vera ended the call WITHOUT advancing escrow (e.g. she hung up after
+  // reading the contract without the user's confirmation phrase landing
+  // clearly), drop the user into the on-screen recitation flow so they have
+  // a visible "tick + lock" path forward — otherwise the page just sits
+  // there with no apparent next step. Same for VOICE_RECEIPT in IN_ESCROW
+  // stage: if release didn't fire, the manual "Tap to release" button is
+  // already on-screen so we just leave the stage as-is.
   const refreshAndReflectStage = useCallback(async () => {
     try {
       const d = await refreshDeal();
-      if (d.status === "IN_ESCROW") setStage("in_escrow");
-      else if (d.status === "RELEASED") setStage("released");
+      if (d.status === "IN_ESCROW") {
+        setStage("in_escrow");
+        return;
+      }
+      if (d.status === "RELEASED") {
+        setStage("released");
+        return;
+      }
+      if (d.status === "AGREED" && stage === "ready") {
+        // Vera ended the joint sign-off without lock_escrow firing. Pre-load
+        // the recitation text and surface the tickbox + manual lock UI so
+        // the parties can finish manually.
+        try {
+          const res = await fetch("/api/vera/read-contract-back", {
+            method: "POST",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify({ deal_id: d.id }),
+          });
+          const json = await res.json();
+          if (res.ok && json.spoken_text) {
+            setRecitation(json.spoken_text);
+            setStage("recitation");
+          }
+        } catch {
+          // Non-fatal — user can tap "Read the agreement on-screen" manually.
+        }
+      }
     } catch {
       // Non-fatal: leave the page on its current stage.
     }
-  }, [refreshDeal]);
+  }, [refreshDeal, stage]);
 
   useEffect(() => {
     let cancelled = false;
@@ -74,7 +107,7 @@ export default function SignoffPage({
         else if (d.status === "AGREED") setStage("ready");
         else if (d.status === "AWAITING_SELLER") {
           setError(
-            `${d.seller.firstName} hasn't agreed to the terms yet. Share the seller invitation link with them first — once they say "I agree", come back here for the joint sign-off.`,
+            `${displayPartyName(d.seller.firstName, "the seller")} hasn't agreed to the terms yet. Share the seller invitation link with them first — once they say "I agree", come back here for the joint sign-off.`,
           );
           setStage("error");
         } else if (d.status === "DRAFT") {
@@ -135,7 +168,25 @@ export default function SignoffPage({
         body: JSON.stringify({ deal_id: deal.id }),
       });
       const json = await res.json();
-      if (!res.ok) throw new Error(json.error ?? "lock_failed");
+      if (!res.ok) {
+        // 409 invalid_state is expected when Vera already locked the deal
+        // via voice (the page didn't refresh in time) — refresh and, if
+        // the deal really is IN_ESCROW, treat the click as a no-op and
+        // advance the UI rather than surfacing a scary "invalid_state"
+        // error to the user.
+        if (res.status === 409) {
+          const d = await refreshDeal();
+          if (d.status === "IN_ESCROW") {
+            setStage("in_escrow");
+            return;
+          }
+          if (d.status === "RELEASED") {
+            setStage("released");
+            return;
+          }
+        }
+        throw new Error(json.error ?? "lock_failed");
+      }
       await refreshDeal();
       setStage("in_escrow");
     } catch (err) {
@@ -190,7 +241,7 @@ export default function SignoffPage({
           <Card padding="loose" shadow>
             <Eyebrow tone="indigo">Vera · final agreement</Eyebrow>
             <h1 className="mt-3 font-display text-3xl font-semibold leading-tight">
-              {deal.buyer.firstName} and {deal.seller.firstName}, here it is.
+              {displayPartyName(deal.buyer.firstName, "Buyer")} and {displayPartyName(deal.seller.firstName, "Seller")}, here it is.
             </h1>
             <p className="mt-2 font-mono text-sm text-[#5a5548]">
               <MoneyAmount
@@ -203,8 +254,8 @@ export default function SignoffPage({
             {stage === "ready" && (
               <div className="mt-8 flex flex-col gap-3">
                 <SpeakerPicker
-                  buyerName={deal.buyer.firstName}
-                  sellerName={deal.seller.firstName}
+                  buyerName={displayPartyName(deal.buyer.firstName, "Buyer")}
+                  sellerName={displayPartyName(deal.seller.firstName, "Seller")}
                   value={speaker}
                   onChange={setSpeaker}
                 />
@@ -212,8 +263,8 @@ export default function SignoffPage({
                   sessionType="JOINT_SIGNOFF"
                   userFirstName={
                     speaker === "buyer"
-                      ? deal.buyer.firstName
-                      : deal.seller.firstName
+                      ? displayPartyName(deal.buyer.firstName, "Buyer")
+                      : displayPartyName(deal.seller.firstName, "Seller")
                   }
                   dealId={deal.id}
                   startLabel="Have Vera mediate the joint sign-off"
@@ -258,7 +309,7 @@ export default function SignoffPage({
                         className="h-4 w-4"
                       />
                       <span className="text-sm font-medium">
-                        {deal.buyer.firstName} agrees
+                        {displayPartyName(deal.buyer.firstName, "Buyer")} agrees
                       </span>
                     </label>
                     <label
@@ -275,7 +326,7 @@ export default function SignoffPage({
                         className="h-4 w-4"
                       />
                       <span className="text-sm font-medium">
-                        {deal.seller.firstName} agrees
+                        {displayPartyName(deal.seller.firstName, "Seller")} agrees
                       </span>
                     </label>
                   </div>
@@ -318,15 +369,15 @@ export default function SignoffPage({
               <span className="italic text-[#7a6ce8]">is locked</span>.
             </h1>
             <p className="mt-3 text-sm text-[#5a5548]">
-              {deal.seller.firstName}, ship the item or do the work. {deal.buyer.firstName},
+              {displayPartyName(deal.seller.firstName, "Seller")}, ship the item or do the work. {displayPartyName(deal.buyer.firstName, "Buyer")},
               I&rsquo;ll be here when it&rsquo;s time to release the money.
             </p>
             <div className="mt-6 flex flex-col gap-3">
               <VeraVoiceSession
                 sessionType="VOICE_RECEIPT"
-                userFirstName={deal.buyer.firstName}
+                userFirstName={displayPartyName(deal.buyer.firstName, "Buyer")}
                 dealId={deal.id}
-                startLabel={`${deal.buyer.firstName} — confirm receipt by voice`}
+                startLabel={`${displayPartyName(deal.buyer.firstName, "Buyer")} — confirm receipt by voice`}
                 autoStart
                 onSessionEnd={refreshAndReflectStage}
               />
@@ -357,7 +408,7 @@ export default function SignoffPage({
         {stage === "released" && deal && (
           <Card tone="success" padding="loose">
             <Eyebrow tone="success">
-              RELEASED · {deal.seller.firstName} paid
+              RELEASED · {displayPartyName(deal.seller.firstName, "Seller")} paid
             </Eyebrow>
             <h1 className="mt-3 font-display text-3xl font-semibold leading-tight">
               <MoneyAmount
@@ -365,7 +416,7 @@ export default function SignoffPage({
                 currency={deal.terms.currency}
               />{" "}
               <span className="italic text-[#2f7d57]">released</span> to{" "}
-              {deal.seller.firstName}.
+              {displayPartyName(deal.seller.firstName, "Seller")}.
             </h1>
             <p className="mt-3 text-sm text-[#5a5548]">Thanks for using Vouch.</p>
           </Card>
