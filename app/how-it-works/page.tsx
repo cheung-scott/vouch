@@ -7,7 +7,7 @@ import { Eyebrow } from "@/components/ui";
 export const metadata = {
   title: "How Vouch works",
   description:
-    "Voice-recorded escrow that holds the buyer's money safe until the item arrives — and proves the seller's commitment in their own voice.",
+    "Voice-recorded payments that hold the buyer's money safely until the item arrives — and prove the seller's commitment in their own voice.",
 };
 
 /**
@@ -38,9 +38,9 @@ export default function HowItWorksPage() {
             How <span className="italic text-[#5266eb]">Vouch</span> works.
           </h1>
           <p className="mt-5 max-w-2xl text-base leading-relaxed text-[#5a5548]">
-            Voice-recorded escrow that holds the buyer&rsquo;s money safe until
-            the item arrives — and proves the seller&rsquo;s commitment in their
-            own voice. No upfront signup. No leaving the marketplace.
+            Voice-recorded payments that hold the buyer&rsquo;s money safely
+            until the item arrives — and prove the seller&rsquo;s commitment in
+            their own voice. No upfront signup. No leaving the marketplace.
           </p>
         </header>
 
@@ -125,11 +125,11 @@ export default function HowItWorksPage() {
             />
             <Step
               number="04"
-              title="Both of you sign off. Money locks in escrow."
+              title="Both of you sign off. The money is held safely."
               body="The buyer's money sits with Stripe until they confirm the item arrived. Once they do, funds release to your bank automatically."
               image={{
                 src: "/images/how-it-works/seller-04-signoff.png",
-                alt: "Joint sign-off complete; money locked in escrow",
+                alt: "Joint sign-off complete; money held safely",
               }}
               hint="/deal/[ref]/signoff in IN_ESCROW — green locked card with £400 amount"
             />
@@ -170,7 +170,7 @@ export default function HowItWorksPage() {
             />
             <Faq
               q="Where does the money go?"
-              a="Stripe holds it in escrow. We never touch buyer payment details — Stripe is PCI-compliant infrastructure built for marketplaces."
+              a="Stripe holds it safely on their PCI-compliant infrastructure. We never touch buyer payment details — Stripe is the same provider built for marketplaces like eBay, Etsy, and Shopify."
             />
             <Faq
               q="What if the seller never delivers?"

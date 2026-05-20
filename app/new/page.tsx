@@ -603,7 +603,7 @@ export default function NewDealPage() {
 
         {stage === "committed" && reference && (
           <Card tone="success" padding="loose" shadow>
-            <Eyebrow tone="success">Locked in · AWAITING_SELLER</Eyebrow>
+            <Eyebrow tone="success">Locked in · awaiting seller</Eyebrow>
             <h2 className="mt-3 font-display text-2xl font-semibold leading-tight">
               Now <span className="italic text-[#5266eb]">share this link</span> with the other party.
             </h2>

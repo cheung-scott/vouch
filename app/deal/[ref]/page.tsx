@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Card, Eyebrow, MoneyAmount } from "@/components/ui";
 import { VeraAnalysisCard } from "@/components/VeraAnalysisCard";
 import { SellerRepBadge } from "@/components/SellerRepBadge";
-import { displayPartyName } from "@/lib/utils";
+import { displayPartyName, statusDisplay } from "@/lib/utils";
 
 type DealDetail = {
   id: string;
@@ -111,7 +111,7 @@ export default function DealDetailPage({
       tone: deal.seller.committedAt ? "active" : "muted",
     },
     {
-      label: "Money locked in escrow",
+      label: "Money held safely",
       at: deal.lockedAt,
       tone: deal.lockedAt ? "active" : "muted",
     },
@@ -156,7 +156,7 @@ export default function DealDetailPage({
             )}
           </div>
           <span className="font-mono text-[11px] uppercase tracking-[0.14em] text-[#8a8478]">
-            {status}
+            {statusDisplay(status)}
           </span>
         </header>
 
@@ -323,7 +323,7 @@ function ActionPanel({ deal }: { deal: DealDetail }) {
   if (status === "IN_ESCROW") {
     return (
       <Card tone="locked">
-        <Eyebrow tone="locked">Money is in escrow</Eyebrow>
+        <Eyebrow tone="locked">Money is held</Eyebrow>
         <h2 className="mt-2 font-display text-2xl font-semibold">
           Confirm receipt to release — or open a dispute.
         </h2>
@@ -363,7 +363,7 @@ function ActionPanel({ deal }: { deal: DealDetail }) {
           {status === "DISPUTED" ? "Dispute open" : "Under review"}
         </Eyebrow>
         <h2 className="mt-2 font-display text-2xl font-semibold">
-          Money stays in escrow until resolved.
+          Money stays held safely until resolved.
         </h2>
         <p className="mt-3 text-sm text-[#5a5548]">
           In v1, disputes are escalated to human review after Vera gathers

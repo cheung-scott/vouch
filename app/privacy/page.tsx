@@ -22,7 +22,7 @@ export default function PrivacyPage() {
 
         <section className="space-y-3 text-sm leading-relaxed text-[#3d3a32]">
           <p>
-            Vouch is a voice-recorded escrow service for peer-to-peer sales. This
+            Vouch is a voice-recorded payment-protection service for peer-to-peer sales. This
             policy explains what data Vouch collects, why, and how it&rsquo;s
             used. It covers three surfaces: the Chrome extension, the Vouch web
             app at <span className="font-mono">vouch.fund</span>, and the
@@ -189,7 +189,7 @@ export default function PrivacyPage() {
         </Section>
 
         <footer className="border-t border-[rgba(50,30,5,0.12)] pt-6 font-mono text-[11px] uppercase tracking-[0.14em] text-[#8a8478]">
-          Vouch &middot; Voice-recorded escrow &middot; Built for ElevenHacks
+          Vouch &middot; Voice-recorded payments &middot; Built for ElevenHacks
           2026
         </footer>
       </article>

@@ -61,3 +61,29 @@ export function displayPartyName(
 ): string {
   return isPlaceholderName(name) ? fallback : (name as string);
 }
+
+/**
+ * Friendly display label for a deal status. The internal enum keeps
+ * developer-friendly SHOUTY_SNAKE_CASE (DRAFT, AWAITING_SELLER, IN_ESCROW,
+ * etc.) but those leak into UI surfaces and look engineered. This helper
+ * maps the enum to short copy we actually want users to read.
+ *
+ * In particular: "IN_ESCROW" becomes "MONEY HELD" everywhere — the word
+ * "escrow" is a US-finance jargon term that doesn't add clarity for the
+ * marketplace buyer/seller persona.
+ */
+const STATUS_DISPLAY_LABELS: Record<string, string> = {
+  DRAFT: "DRAFT",
+  AWAITING_SELLER: "AWAITING SELLER",
+  AGREED: "AGREED",
+  IN_ESCROW: "MONEY HELD",
+  RELEASED: "RELEASED",
+  REFUNDED: "REFUNDED",
+  DISPUTED: "DISPUTED",
+  REVIEWING: "REVIEWING",
+  CANCELLED: "CANCELLED",
+};
+
+export function statusDisplay(status: string): string {
+  return STATUS_DISPLAY_LABELS[status] ?? status;
+}

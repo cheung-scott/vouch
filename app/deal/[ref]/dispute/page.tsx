@@ -135,7 +135,7 @@ export default function DisputePage({
               I understand there&rsquo;s a problem.
             </h1>
             <p className="mt-3 text-sm text-[#5a5548]">
-              Tell me what happened in your own words. I won&rsquo;t take sides — I&rsquo;ll gather your version, then reach out to {deal.buyer.firstName === deal.seller.firstName ? "the other party" : "the other party"} for theirs. The money stays in escrow until we&rsquo;re done.
+              Tell me what happened in your own words. I won&rsquo;t take sides — I&rsquo;ll gather your version, then reach out to {deal.buyer.firstName === deal.seller.firstName ? "the other party" : "the other party"} for theirs. The money stays held safely until we&rsquo;re done.
             </p>
             <textarea
               value={reason}
@@ -208,7 +208,7 @@ export default function DisputePage({
                 amountMinor={deal.terms.amountMinor}
                 currency={deal.terms.currency}
               />{" "}
-              stays in escrow.
+              stays held safely.
             </p>
             <Link
               href={`/deal/${deal.reference}`}

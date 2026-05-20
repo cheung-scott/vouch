@@ -3,7 +3,7 @@
 import { use, useCallback, useEffect, useState } from "react";
 import { Card, Eyebrow, MoneyAmount } from "@/components/ui";
 import { VeraVoiceSession } from "@/components/VeraVoiceSession";
-import { displayPartyName } from "@/lib/utils";
+import { displayPartyName, statusDisplay } from "@/lib/utils";
 
 type DealView = {
   id: string;
@@ -223,7 +223,7 @@ export default function SignoffPage({
         <header className="flex items-center justify-between">
           <Eyebrow>Vouch · Joint sign-off · {ref}</Eyebrow>
           <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-[#8a8478]">
-            {deal?.status ?? stage}
+            {deal?.status ? statusDisplay(deal.status) : stage}
           </p>
         </header>
 
@@ -337,7 +337,7 @@ export default function SignoffPage({
                     className="rounded-md bg-[#635bff] px-5 py-3 text-sm font-medium text-white transition-colors hover:bg-[#5048e5] disabled:opacity-40"
                   >
                     {busy ? (
-                      "Locking escrow…"
+                      "Locking funds…"
                     ) : (
                       <>
                         Lock{" "}
@@ -345,7 +345,7 @@ export default function SignoffPage({
                           amountMinor={deal.terms.amountMinor}
                           currency={deal.terms.currency}
                         />{" "}
-                        in escrow →
+                        safely →
                       </>
                     )}
                   </button>
@@ -360,7 +360,7 @@ export default function SignoffPage({
 
         {stage === "in_escrow" && deal && (
           <Card tone="locked" padding="loose">
-            <Eyebrow tone="locked">IN_ESCROW · money is held</Eyebrow>
+            <Eyebrow tone="locked">Money held · awaiting receipt</Eyebrow>
             <h1 className="mt-3 font-display text-3xl font-semibold leading-tight">
               <MoneyAmount
                 amountMinor={deal.terms.amountMinor}
@@ -383,7 +383,7 @@ export default function SignoffPage({
               />
               <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-[#8a8478]">
                 Receipt confirmation is buyer-only by design — Vera releases
-                escrow only when the buyer says so.
+                the money only when the buyer says so.
               </p>
               <p className="text-center font-mono text-[10px] uppercase tracking-[0.14em] text-[#8a8478]">
                 or

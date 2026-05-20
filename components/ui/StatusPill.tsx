@@ -19,7 +19,7 @@ const STATUS_VARIANTS: Record<DealStatus, Variant> = {
     dot: "#c98a42",
     bg: "rgba(201,138,66,0.14)",
     fg: "#c98a42",
-    label: "AWAITING_SELLER",
+    label: "AWAITING SELLER",
   },
   AGREED: {
     dot: "#c98a42",
@@ -31,7 +31,7 @@ const STATUS_VARIANTS: Record<DealStatus, Variant> = {
     dot: "#7a6ce8",
     bg: "rgba(122,108,232,0.12)",
     fg: "#7a6ce8",
-    label: "IN_ESCROW",
+    label: "MONEY HELD",
   },
   RELEASED: {
     dot: "#2f7d57",

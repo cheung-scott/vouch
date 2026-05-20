@@ -4,7 +4,7 @@ import { use, useCallback, useEffect, useState } from "react";
 import { Card, Eyebrow } from "@/components/ui";
 import { VeraVoiceSession } from "@/components/VeraVoiceSession";
 import { SellerRepBadge } from "@/components/SellerRepBadge";
-import { displayPartyName, isPlaceholderName } from "@/lib/utils";
+import { displayPartyName, isPlaceholderName, statusDisplay } from "@/lib/utils";
 
 type Stage =
   | "loading"
@@ -200,7 +200,7 @@ export default function SellerPage({
         <header className="flex items-center justify-between">
           <Eyebrow>Vouch · Seller invitation · {ref}</Eyebrow>
           <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-[#8a8478]">
-            {deal?.status ?? stage}
+            {deal?.status ? statusDisplay(deal.status) : stage}
           </p>
         </header>
 
