@@ -120,7 +120,7 @@ const words = ["Receive", "your", "money,", "on", "time."];
 | **Music** | First main groove. Ducks -3dB during VO. Captured-field chimes on off-beats (4 chimes — feel them not count them). |
 | **Tagline** | (off-screen — captured-terms cards have the slot) |
 | **On-screen** | `/new` page (Sarah's flow). Pre-filled from extension: item, price, currency, seller already populated. Sarah only needs to confirm + answer Q4 (delivery) + Q5 (extras). Vera asks Q4 → Sarah's voice waveform animates. Captured term cards fly into right panel. |
-| **Audio** | **Vera (mediating):** *"When and how is it being delivered?"* (~1.5s) · **Sarah (real human voice clip):** *"Royal Mail tracked, by Friday."* (~1.5s) · Soft chime per captured field. |
+| **Audio** | **Vera (mediating):** *"When do you expect it to arrive by?"* (~1.5s) · **Sarah (real human voice clip):** *"By Friday."* (~1s) · Soft chime per captured field. (Q4 now captures expected arrival date only — the shipping method comes from the seller in SELLER_ONBOARDING.) |
 | **Animation** | Reactive voice waveform (Remotion `useAudioData()` + `visualizeAudio()`). Captured terms fly in via `motion.div layoutId` + AnimatePresence, `x: 200 → 0, opacity: 0 → 1`, 450ms easeOutQuart, triggered on Vera's TTS `onTimeUpdate` hitting field-mention timestamps. |
 | **Transition out** | Whip-pan to Marcus's view: parent `translateX(-100%)` in 250ms easeInOut + 30px motion blur (only during move) |
 | **Zelios archetype** | ⭐ Chaos-to-stack collapse INVERTED (Jobster 0:03) — fields fly INTO order |
@@ -294,7 +294,7 @@ The script's beat numbering (1-12) and the audio file prefix (beat-3, beat-4, be
 
 | Beat | File | Preset | Text |
 |---|---|---|---|
-| 3 | `beat-3-q4-tight.mp3` | mediating | *"When and how is it being delivered?"* |
+| 3 | `beat-3-q4-tight.mp3` | mediating | *"When do you expect it to arrive by?"* ⚠ Re-render required — original took uses old wording |
 | 4 | `beat-4-polish-recital-default.mp3` | contract | *"[confidently] iPhone piętnaście, czterysta funtów, do piątku. Zgadzasz się?"* |
 | 7 | `beat-7-receipt-ask-loose.mp3` | mediating | *"It's arrived. Does it match?"* |
 
@@ -313,7 +313,7 @@ These exist on disk but are not used in the demo. Kept for archive / potential f
 
 | Beat | File | Source |
 |---|---|---|
-| 3 | `sarah-delivery-consistent-1.mp3` | Sarah: *"Royal Mail tracked, by Friday."* (~1.5s) |
+| 3 | `sarah-delivery-consistent-1.mp3` | Sarah: *"Royal Mail tracked, by Friday."* (~1.5s) ⚠ Re-render to *"By Friday."* (~1s) to match Q4's new "expected arrival" framing — old line conflates buyer/seller domains |
 | 4 | `marcus-zgadzam-balanced.mp3` | Marcus (Polish): *"Zgadzam się."* (~1s) |
 | 7 | `sarah-yes-expressive-1.mp3` | Sarah: *"Yes."* (~0.5s) |
 

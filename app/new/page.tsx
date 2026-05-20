@@ -66,9 +66,9 @@ const QUESTIONS: Question[] = [
   },
   {
     id: "delivery",
-    prompt: "Delivery",
-    veraLine: "When and how is it being delivered?",
-    placeholder: "Royal Mail tracked, by Friday",
+    prompt: "Expected by",
+    veraLine: "When do you expect it to arrive by?",
+    placeholder: "By Friday",
   },
   {
     id: "extras",
