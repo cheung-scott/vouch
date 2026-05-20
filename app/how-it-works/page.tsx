@@ -1,3 +1,5 @@
+import fs from "node:fs";
+import path from "node:path";
 import Image from "next/image";
 import Link from "next/link";
 import { Eyebrow } from "@/components/ui";
@@ -7,6 +9,23 @@ export const metadata = {
   description:
     "Voice-recorded escrow that holds the buyer's money safe until the item arrives — and proves the seller's commitment in their own voice.",
 };
+
+/**
+ * Server-side check that the screenshot referenced by `src` actually exists
+ * under /public. While the demo stills are still being captured, missing
+ * images render as an on-brand cream placeholder card with a hint about
+ * what should land here. Once a real PNG is dropped at the same path, the
+ * placeholder is replaced automatically — no page edits required.
+ */
+function publicAssetExists(src: string): boolean {
+  if (!src.startsWith("/")) return false;
+  const abs = path.join(process.cwd(), "public", src.slice(1));
+  try {
+    return fs.statSync(abs).isFile();
+  } catch {
+    return false;
+  }
+}
 
 export default function HowItWorksPage() {
   return (
@@ -41,6 +60,7 @@ export default function HowItWorksPage() {
                 src: "/images/how-it-works/buyer-01-ebay.png",
                 alt: "eBay listing with the Pay with Vouch button injected",
               }}
+              hint="eBay listing with the Pay with Vouch button injected next to Buy It Now"
             />
             <Step
               number="02"
@@ -50,6 +70,7 @@ export default function HowItWorksPage() {
                 src: "/images/how-it-works/buyer-02-new.png",
                 alt: "Vouch deal-intake page with Vera asking when delivery is expected",
               }}
+              hint="/new page with Vera asking 'When do you expect it to arrive by?'"
             />
             <Step
               number="03"
@@ -59,6 +80,7 @@ export default function HowItWorksPage() {
                 src: "/images/how-it-works/buyer-03-signoff.png",
                 alt: "Joint sign-off screen showing buyer and seller about to confirm",
               }}
+              hint="Joint sign-off page in 'ready' stage — both parties about to confirm"
             />
           </ol>
         </section>
@@ -79,6 +101,7 @@ export default function HowItWorksPage() {
                 src: "/images/how-it-works/seller-01-link.png",
                 alt: "Seller receiving a Vouch deal link in a chat",
               }}
+              hint="Phone chat (iMessage/WhatsApp) showing a vouch.fund deal link"
             />
             <Step
               number="02"
@@ -88,6 +111,7 @@ export default function HowItWorksPage() {
                 src: "/images/how-it-works/seller-02-intake.png",
                 alt: "Seller intake page with Vera reading the buyer's terms",
               }}
+              hint="/deal/[ref]/seller — name entered, Vera reading buyer's terms"
             />
             <Step
               number="03"
@@ -97,6 +121,7 @@ export default function HowItWorksPage() {
                 src: "/images/how-it-works/seller-03-onboard.png",
                 alt: "Stripe Connect Express onboarding embedded in Vouch",
               }}
+              hint="/onboard?deal_id=… with embedded Stripe Connect Express iframe"
             />
             <Step
               number="04"
@@ -106,6 +131,7 @@ export default function HowItWorksPage() {
                 src: "/images/how-it-works/seller-04-signoff.png",
                 alt: "Joint sign-off complete; money locked in escrow",
               }}
+              hint="/deal/[ref]/signoff in IN_ESCROW — green locked card with £400 amount"
             />
           </ol>
         </section>
@@ -123,15 +149,11 @@ export default function HowItWorksPage() {
             recording is the evidence. Most disputes resolve in under an hour —
             no &ldquo;he-said-she-said&rdquo; over messenger.
           </p>
-          <div className="mt-8 overflow-hidden rounded-lg border border-[rgba(50,30,5,0.10)] bg-white">
-            <Image
-              src="/images/how-it-works/dispute-replay.png"
-              alt="Vera replaying the seller's voice commitment during a dispute"
-              width={1200}
-              height={750}
-              className="h-auto w-full"
-            />
-          </div>
+          <ScreenshotOrPlaceholder
+            src="/images/how-it-works/dispute-replay.png"
+            alt="Vera replaying the seller's voice commitment during a dispute"
+            hint="Dispute · Vera replay UI (mock — Figma spec in docs/dispute-card-spec.md)"
+          />
         </section>
 
         {/* FAQ */}
@@ -184,11 +206,13 @@ function Step({
   title,
   body,
   image,
+  hint,
 }: {
   number: string;
   title: string;
   body: string;
   image: { src: string; alt: string };
+  hint: string;
 }) {
   return (
     <li className="grid items-start gap-6 sm:grid-cols-[80px_1fr]">
@@ -200,17 +224,74 @@ function Step({
           {title}
         </h3>
         <p className="mt-3 text-base leading-relaxed text-[#5a5548]">{body}</p>
-        <div className="mt-5 overflow-hidden rounded-lg border border-[rgba(50,30,5,0.10)] bg-white">
-          <Image
+        <div className="mt-5">
+          <ScreenshotOrPlaceholder
             src={image.src}
             alt={image.alt}
-            width={1200}
-            height={750}
-            className="h-auto w-full"
+            hint={hint}
           />
         </div>
       </div>
     </li>
+  );
+}
+
+/**
+ * Renders next/image if the file exists under /public; otherwise renders an
+ * on-brand cream placeholder card with a short hint. Used so the page looks
+ * intentional while demo stills are being captured — when a real PNG lands
+ * at the same path, Next.js picks it up on the next request.
+ */
+function ScreenshotOrPlaceholder({
+  src,
+  alt,
+  hint,
+}: {
+  src: string;
+  alt: string;
+  hint: string;
+}) {
+  const exists = publicAssetExists(src);
+  if (exists) {
+    return (
+      <div className="overflow-hidden rounded-lg border border-[rgba(50,30,5,0.10)] bg-white">
+        <Image
+          src={src}
+          alt={alt}
+          width={1200}
+          height={750}
+          className="h-auto w-full"
+        />
+      </div>
+    );
+  }
+  return (
+    <div
+      role="img"
+      aria-label={alt}
+      className="relative flex aspect-[1200/750] w-full items-center justify-center overflow-hidden rounded-lg border border-dashed border-[rgba(50,30,5,0.18)] bg-[#fbfaf6]"
+    >
+      {/* Soft indigo glow corner — keeps placeholder on-brand */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0"
+        style={{
+          background:
+            "radial-gradient(ellipse 40% 30% at 80% 20%, rgba(82,102,235,0.10) 0%, transparent 60%)",
+        }}
+      />
+      <div className="relative z-10 flex max-w-md flex-col items-center gap-3 px-6 text-center">
+        <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-[#8a8478]">
+          Screenshot coming
+        </span>
+        <p className="font-display text-lg font-medium leading-snug text-[#2a2924]">
+          {hint}
+        </p>
+        <code className="rounded bg-white px-2 py-1 font-mono text-[10px] text-[#5a5548]">
+          {src}
+        </code>
+      </div>
+    </div>
   );
 }
 
