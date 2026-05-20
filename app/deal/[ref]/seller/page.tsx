@@ -3,6 +3,7 @@
 import { use, useCallback, useEffect, useState } from "react";
 import { Card, Eyebrow } from "@/components/ui";
 import { VeraVoiceSession } from "@/components/VeraVoiceSession";
+import { SellerRepBadge } from "@/components/SellerRepBadge";
 
 type Stage =
   | "loading"
@@ -355,6 +356,13 @@ export default function SellerPage({
             <h2 className="mt-3 font-display text-2xl font-semibold leading-tight">
               Locked in. Both of you do the joint sign-off together.
             </h2>
+            <div className="mt-4">
+              <SellerRepBadge
+                accountId={deal.seller.stripeAccountId}
+                sellerFirstName={deal.seller.firstName}
+                variant="card"
+              />
+            </div>
             <a
               href={`/deal/${deal.reference}/signoff`}
               className="mt-6 inline-block rounded-md bg-[#635bff] px-5 py-2 text-sm font-medium text-white transition-colors hover:bg-[#5048e5]"

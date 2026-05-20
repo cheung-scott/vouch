@@ -4,13 +4,14 @@ import { use, useEffect, useState } from "react";
 import Link from "next/link";
 import { Card, Eyebrow, MoneyAmount } from "@/components/ui";
 import { VeraAnalysisCard } from "@/components/VeraAnalysisCard";
+import { SellerRepBadge } from "@/components/SellerRepBadge";
 
 type DealDetail = {
   id: string;
   reference: string;
   status: string;
   buyer: { firstName: string; committedAt?: string };
-  seller: { firstName: string; committedAt?: string };
+  seller: { firstName: string; committedAt?: string; stripeAccountId?: string };
   terms: {
     item: string;
     quantity: number;
@@ -139,6 +140,17 @@ export default function DealDetailPage({
                 currency={deal.terms.currency}
               />
             </p>
+            {deal.seller.stripeAccountId && (
+              <div className="mt-2 flex items-center gap-2">
+                <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-[#8a8478]">
+                  Seller rep
+                </span>
+                <SellerRepBadge
+                  accountId={deal.seller.stripeAccountId}
+                  sellerFirstName={deal.seller.firstName}
+                />
+              </div>
+            )}
           </div>
           <span className="font-mono text-[11px] uppercase tracking-[0.14em] text-[#8a8478]">
             {status}
