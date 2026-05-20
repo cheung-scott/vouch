@@ -375,7 +375,7 @@ function ActionPanel({ deal }: { deal: DealDetail }) {
             href={`/deal/${reference}/dispute`}
             className="rounded-md border border-[rgba(50,30,5,0.18)] bg-white px-4 py-2 text-sm font-medium transition-colors hover:bg-[#fbfaf6]"
           >
-            View dispute →
+            Open dispute →
           </Link>
           <DemoVerdictButton dealId={deal.id} />
         </div>
