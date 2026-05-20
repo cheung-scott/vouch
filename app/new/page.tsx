@@ -1,8 +1,11 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { Card, Eyebrow } from "@/components/ui";
-import { VeraVoiceSession } from "@/components/VeraVoiceSession";
+import {
+  VeraVoiceSession,
+  type PrefilledTerms,
+} from "@/components/VeraVoiceSession";
 
 type Prefill = {
   source: string;
@@ -10,6 +13,12 @@ type Prefill = {
   counterparty?: string;
   amount?: string;
   ref?: string;
+  // Raw values forwarded to /api/vera/conversation-token so the server-side
+  // auto-created deal is seeded non-blank and Vera can skip to Q4.
+  rawPrice?: string;
+  rawCurrency?: string;
+  rawSeller?: string;
+  rawItem?: string;
 };
 
 const CURRENCY_SYMBOL: Record<string, string> = {
@@ -123,6 +132,10 @@ export default function NewDealPage() {
       counterparty: seller || undefined,
       amount: amount || undefined,
       ref,
+      rawPrice: price || undefined,
+      rawCurrency: currency || undefined,
+      rawSeller: seller || undefined,
+      rawItem: item || undefined,
     });
 
     setAnswers((prev) => ({
@@ -136,6 +149,35 @@ export default function NewDealPage() {
 
   const current = QUESTIONS[step];
   const isLast = step === QUESTIONS.length - 1;
+
+  // Build the structured `prefilled_terms` payload forwarded to the
+  // conversation-token mint endpoint. The server seeds the auto-created
+  // deal with these values and emits dynamic-variable hints
+  // (prefilled, prefilled_summary, start_question) so Vera's prompt
+  // skips Q1–Q3 and jumps to Q4 (delivery).
+  const prefilledTerms = useMemo<PrefilledTerms | undefined>(() => {
+    if (!prefill) return undefined;
+    const amountMinor = prefill.rawPrice
+      ? Math.round(parseFloat(prefill.rawPrice) * 100)
+      : undefined;
+    const currency =
+      prefill.rawCurrency === "GBP" ||
+      prefill.rawCurrency === "USD" ||
+      prefill.rawCurrency === "EUR"
+        ? prefill.rawCurrency
+        : undefined;
+    const source = prefill.source === "ebay" ? "ebay" : "direct";
+    return {
+      source,
+      item: prefill.rawItem,
+      amount_minor:
+        amountMinor !== undefined && Number.isFinite(amountMinor)
+          ? amountMinor
+          : undefined,
+      currency,
+      seller_name: prefill.rawSeller,
+    };
+  }, [prefill]);
 
   async function startDeal() {
     if (!buyerName.trim()) return;
@@ -430,6 +472,7 @@ export default function NewDealPage() {
                   dealId={dealId ?? undefined}
                   disabled={!buyerName.trim()}
                   startLabel={`Talk to Vera about question ${step + 1}`}
+                  prefilledTerms={prefilledTerms}
                   onSessionEnd={refreshFromServer}
                 />
               </div>

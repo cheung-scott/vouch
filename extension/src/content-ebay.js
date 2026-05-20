@@ -155,7 +155,6 @@
         </svg>
       </span>
       <span class="vouch-pay-button__label">Pay with <strong>Vouch</strong></span>
-      <span class="vouch-pay-button__sub">Voice-recorded escrow · Held until delivered</span>
     `;
 
     btn.addEventListener("click", async (e) => {

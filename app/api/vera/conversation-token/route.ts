@@ -15,6 +15,23 @@ const SessionTypeEnum = z.enum([
   "DISPUTE",
 ]);
 
+// Pre-filled terms forwarded by the /new page when the buyer arrives via the
+// Chrome extension (e.g. eBay listing → ?source=ebay&item=…&price=…). Lets the
+// BUYER_ONBOARDING auto-create branch seed a non-blank deal so Vera can skip
+// the already-captured questions and jump straight to Q4 (delivery).
+const PrefilledTermsSchema = z
+  .object({
+    item: z.string().max(500).optional(),
+    amount_minor: z.number().int().nonnegative().optional(),
+    currency: z.enum(["GBP", "USD", "EUR"]).optional(),
+    // Seller "name" from a marketplace is usually a username/handle (e.g.
+    // "mrclearances"). Stays as a placeholder until SELLER_ONBOARDING captures
+    // the real first name. Looser regex than user_first_name on purpose.
+    seller_name: z.string().max(120).optional(),
+    source: z.enum(["ebay", "direct"]).optional(),
+  })
+  .optional();
+
 const RequestSchema = z.object({
   session_type: SessionTypeEnum,
   // Tightened (Sec-Review S-108): only allow letters, spaces, hyphens,
@@ -31,6 +48,7 @@ const RequestSchema = z.object({
     .string()
     .regex(/^[a-z]{2}(-[A-Z]{2})?$/)
     .optional(),
+  prefilled_terms: PrefilledTermsSchema,
 });
 
 /**
@@ -62,17 +80,27 @@ export async function POST(request: Request) {
     user_first_name: userFirstName,
     deal_id: dealId,
     locale,
+    prefilled_terms: prefilledTerms,
   } = parsed.data;
 
   // BUYER_ONBOARDING is allowed without a deal_id — we auto-create a
-  // blank deal here so Vera has a deal_id from turn 1. Without this,
+  // deal here so Vera has a deal_id from turn 1. Without this,
   // extract_terms calls don't persist (no deal to update) and the
   // subsequent read_contract_back fails with 400 missing_deal_id —
   // exactly the failure mode the dashboard Test panel hit.
+  //
+  // Two flavours of auto-create:
+  //   (a) blank deal — the cold-start /new flow, terms fill in turn-by-turn
+  //   (b) pre-filled deal — buyer arrived via the Chrome extension with
+  //       ?source=ebay&item=…&price=…; we seed item/amount/currency/seller
+  //       up front and tell Vera (via dynamic vars) to skip to Q4 (delivery).
   // For all other session types, an existing deal_id is required.
   let counterpartyName = "";
   let amountSpoken = "";
   let effectiveDealId = dealId;
+  let isPrefilled = false;
+  let prefilledSummary = "";
+  let startQuestion = "Q1_item";
 
   if (dealId) {
     const deal = await dealStore.get(dealId);
@@ -85,10 +113,21 @@ export async function POST(request: Request) {
       deal.terms.currency,
     );
   } else if (sessionType === "BUYER_ONBOARDING") {
-    // Auto-create a blank deal seeded with the buyer's first name. Terms
-    // get filled in turn-by-turn as Vera calls extract_terms with this
-    // deal_id. The seller party is a placeholder until SELLER_ONBOARDING.
+    // Auto-create a deal seeded with the buyer's first name + any
+    // extension-provided terms. Anything not provided stays blank and
+    // gets filled turn-by-turn as Vera calls extract_terms with this
+    // deal_id. The seller party stays a placeholder until SELLER_ONBOARDING
+    // unless the extension supplied a seller handle (e.g. eBay username).
     const { randomUUID } = await import("node:crypto");
+    const t = prefilledTerms;
+    isPrefilled = !!(t && (t.item || t.amount_minor || t.seller_name));
+    const sellerFirstName = t?.seller_name ?? "Seller";
+    const seededTerms = {
+      item: t?.item ?? "",
+      quantity: 1,
+      amountMinor: t?.amount_minor ?? 0,
+      currency: t?.currency ?? ("GBP" as const),
+    };
     const created = await dealStore.create({
       buyer: {
         id: randomUUID(),
@@ -102,13 +141,24 @@ export async function POST(request: Request) {
         // Single-word placeholder until BUYER_ONBOARDING Q2 captures the
         // real name via extract_terms. "Seller" reads as a generic role
         // if it leaks into UI, unlike "the other party" which looked
-        // like literal natural-language text (T1 H-3).
-        firstName: "Seller",
+        // like literal natural-language text (T1 H-3). When the extension
+        // provides a marketplace handle (e.g. "mrclearances"), use that
+        // as the placeholder so Vera can reference it in Q4.
+        firstName: sellerFirstName,
         identityVerified: false,
       },
-      terms: { item: "", quantity: 1, amountMinor: 0, currency: "GBP" },
+      terms: seededTerms,
     });
     effectiveDealId = created.id;
+    if (isPrefilled) {
+      counterpartyName = sellerFirstName;
+      amountSpoken = formatAmountSpoken(
+        seededTerms.amountMinor,
+        seededTerms.currency,
+      );
+      prefilledSummary = formatPrefilledSummary(t);
+      startQuestion = "Q4_delivery";
+    }
   } else {
     return NextResponse.json({ error: "deal_id_required" }, { status: 400 });
   }
@@ -128,9 +178,32 @@ export async function POST(request: Request) {
     counterpartyName,
     amountSpoken,
     locale,
+    prefilled: isPrefilled,
+    prefilledSummary,
+    startQuestion,
   });
 
   return NextResponse.json({ token, dynamic_variables: dynamicVariables });
+}
+
+function formatPrefilledSummary(
+  t:
+    | {
+        item?: string;
+        amount_minor?: number;
+        currency?: string;
+        seller_name?: string;
+      }
+    | undefined,
+): string {
+  if (!t) return "";
+  const parts: string[] = [];
+  if (t.item) parts.push(t.item);
+  if (t.amount_minor && t.currency) {
+    parts.push(formatAmountSpoken(t.amount_minor, t.currency));
+  }
+  if (t.seller_name) parts.push(`from seller ${t.seller_name}`);
+  return parts.join(", ");
 }
 
 function inferCounterpartyName(

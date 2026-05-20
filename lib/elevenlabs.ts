@@ -86,6 +86,13 @@ export type VeraDynamicVariables = {
   counterparty_name: string;
   amount_spoken: string;
   locale: string;
+  // Context-aware question-flow hints (BUYER_ONBOARDING with extension prefill).
+  // "true"/"false" strings because ConvAI dynamic variables serialise to text.
+  prefilled: string;
+  prefilled_summary: string;
+  // One of "Q1_item" | "Q2_counterparty" | "Q3_amount" | "Q4_delivery" — Vera's
+  // prompt branches on this to skip already-captured questions.
+  start_question: string;
 };
 
 export function buildVeraDynamicVariables(params: {
@@ -95,6 +102,9 @@ export function buildVeraDynamicVariables(params: {
   counterpartyName?: string;
   amountSpoken?: string;
   locale?: string;
+  prefilled?: boolean;
+  prefilledSummary?: string;
+  startQuestion?: string;
 }): VeraDynamicVariables {
   return {
     session_type: params.sessionType,
@@ -103,6 +113,9 @@ export function buildVeraDynamicVariables(params: {
     counterparty_name: params.counterpartyName ?? "",
     amount_spoken: params.amountSpoken ?? "",
     locale: params.locale ?? "en",
+    prefilled: params.prefilled ? "true" : "false",
+    prefilled_summary: params.prefilledSummary ?? "",
+    start_question: params.startQuestion ?? "Q1_item",
   };
 }
 

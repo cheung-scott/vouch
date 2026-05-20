@@ -13,6 +13,19 @@ type SessionType =
   | "VOICE_RECEIPT"
   | "DISPUTE";
 
+/**
+ * Extension-supplied terms forwarded to the conversation-token mint endpoint
+ * so the auto-created deal is seeded non-blank and Vera can skip to Q4.
+ * Mirrors the server-side `PrefilledTermsSchema`.
+ */
+export interface PrefilledTerms {
+  item?: string;
+  amount_minor?: number;
+  currency?: "GBP" | "USD" | "EUR";
+  seller_name?: string;
+  source?: "ebay" | "direct";
+}
+
 export interface VeraVoiceSessionProps {
   sessionType: SessionType;
   userFirstName: string;
@@ -22,6 +35,8 @@ export interface VeraVoiceSessionProps {
   disabled?: boolean;
   /** Optional copy override for the cold-start CTA. */
   startLabel?: string;
+  /** Extension-provided pre-fill (eBay listing capture etc.). */
+  prefilledTerms?: PrefilledTerms;
   /**
    * Fired after the session ends. The page should refetch the deal to pick
    * up any state changes Vera made via her server tools (extract_terms,
@@ -70,6 +85,7 @@ function VeraVoiceSessionInner({
   locale,
   disabled = false,
   startLabel = "Talk to Vera",
+  prefilledTerms,
   onSessionEnd,
   onTranscript,
   className,
@@ -96,10 +112,17 @@ function VeraVoiceSessionInner({
   const conversation = useConversation({
     onMessage: ({ source, message }: { source: string; message: string }) => {
       const role: "user" | "agent" = source === "user" ? "user" : "agent";
+      // Strip EL audio tags like [warmly], [Patiently], [confidently] —
+      // they're prosody hints for the TTS engine, not user-visible text.
+      // Collapse the resulting double-spaces.
+      const cleaned = message
+        .replace(/\[[^\]]+\]/g, "")
+        .replace(/\s+/g, " ")
+        .trim();
       setCaptions((prev) =>
-        [...prev, { role, message, at: Date.now() }].slice(-2),
+        [...prev, { role, message: cleaned, at: Date.now() }].slice(-2),
       );
-      onTranscriptRef.current?.(role, message);
+      onTranscriptRef.current?.(role, cleaned);
     },
     onError: (msg: unknown) => {
       const text = typeof msg === "string" ? msg : "conversation_error";
@@ -137,6 +160,7 @@ function VeraVoiceSessionInner({
           user_first_name: userFirstName,
           deal_id: dealId,
           locale,
+          prefilled_terms: prefilledTerms,
         }),
       });
       const json = (await res.json()) as {
@@ -164,7 +188,15 @@ function VeraVoiceSessionInner({
       setError(text);
       setLocal("error");
     }
-  }, [conversation, dealId, disabled, locale, sessionType, userFirstName]);
+  }, [
+    conversation,
+    dealId,
+    disabled,
+    locale,
+    prefilledTerms,
+    sessionType,
+    userFirstName,
+  ]);
 
   const stop = useCallback(() => {
     // Don't optimistically flip to "idle" here — let onDisconnect own
@@ -212,12 +244,12 @@ function VeraVoiceSessionInner({
             <span className="flex flex-col">
               <span className="text-sm font-medium">{startLabel}</span>
               <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-white/70">
-                Push-to-talk · powered by ElevenLabs ConvAI
+                Powered by ElevenLabs ConvAI
               </span>
             </span>
           </span>
           <kbd className="rounded border border-white/30 bg-white/10 px-2 py-1 font-mono text-[10px]">
-            HOLD
+            TAP
           </kbd>
         </button>
       )}
