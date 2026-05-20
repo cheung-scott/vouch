@@ -42,15 +42,16 @@ const presets = {
 };
 
 const lines = [
-  // Re-render of Beat 10 ONLY — Beat 4 + Beat 8 picks already locked.
-  // 10s with contract preset was still too long; switched to mediating +
-  // dropped "256 gigs" (visuals show it).
+  // Re-render of Beat 3 Q4 ONLY — buyer→seller flow restructure reworded
+  // the question from "When and how is it being delivered?" to
+  // "When do you expect it to arrive by?" (Sarah is now buyer asking
+  // Marcus the seller for an arrival ETA).
   {
-    beat: "beat-10-dispute-replay",
+    beat: "beat-3-q4",
     preset: "mediating",
-    text: '[confidently] Marcus said: "iPhone 15, no scratches, original box." That was the deal.',
-    description: "Beat 10: Vera replays the original agreement during dispute (v3 — mediating preset, ~4s target)",
-    duration: "~4s",
+    text: "When do you expect it to arrive by?",
+    description: "Beat 3: Vera asks Sarah Q4 (expected arrival, post-Option-A rewrite)",
+    duration: "~1.5s",
   },
 ];
 
