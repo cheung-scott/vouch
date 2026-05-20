@@ -53,14 +53,27 @@ export async function POST(req: NextRequest) {
       const PLACEHOLDER_NAMES = new Set([
         "", "seller", "buyer", "the seller", "the buyer", "the other party",
       ]);
-      const candidateName = extracted.counterparty_name?.split(" ")[0];
-      const candidateLower = candidateName?.toLowerCase().trim() ?? "";
+      // Use the full extracted name (not just first word) for placeholder
+      // detection — "the other party" and "the seller" are multi-word.
+      const candidateFull = extracted.counterparty_name?.trim() ?? "";
+      const candidateFirst = candidateFull.split(" ")[0];
+      const candidateFullLower = candidateFull.toLowerCase();
+      const candidateFirstLower = candidateFirst.toLowerCase();
       const currentLower = (deal.seller.firstName ?? "").toLowerCase().trim();
       const candidateIsDateWord =
-        DAY_OF_WEEK.has(candidateLower) || MONTH.has(candidateLower);
+        DAY_OF_WEEK.has(candidateFirstLower) ||
+        MONTH.has(candidateFirstLower);
+      // Reject the candidate if it's itself a placeholder string the LLM
+      // echoed back from Vera's own speech ("the other party", "the seller").
+      const candidateIsPlaceholder =
+        PLACEHOLDER_NAMES.has(candidateFullLower) ||
+        PLACEHOLDER_NAMES.has(candidateFirstLower);
       const currentIsPlaceholder = PLACEHOLDER_NAMES.has(currentLower);
       const acceptNameUpdate =
-        !!candidateName && !candidateIsDateWord && currentIsPlaceholder;
+        !!candidateFirst &&
+        !candidateIsDateWord &&
+        !candidateIsPlaceholder &&
+        currentIsPlaceholder;
 
       const sellerUpdate =
         extracted.counterparty_name ||
@@ -69,7 +82,7 @@ export async function POST(req: NextRequest) {
           ? {
               ...deal.seller,
               firstName: acceptNameUpdate
-                ? candidateName
+                ? candidateFirst
                 : deal.seller.firstName,
               email: extracted.counterparty_email ?? deal.seller.email,
               phone: extracted.counterparty_phone ?? deal.seller.phone,
