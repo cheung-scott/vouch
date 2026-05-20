@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 /**
  * Dev-only mock page that renders the b10 dispute replay UI per
  * `docs/dispute-card-spec.md`. The dispute UI doesn't ship in product v1
@@ -116,19 +118,26 @@ export default function DisputeReplayMockPage() {
             </h2>
 
             <div className="mt-5 flex items-center gap-5">
-              {/* Photo placeholder — cracked iPhone glyph */}
+              {/* Real cracked-iPhone photo — same asset used by demo-video
+                  Beat 9. Stored at /public/images/cracked-iphone.png so
+                  both surfaces reference the single source. */}
               <div
-                className="flex shrink-0 items-center justify-center overflow-hidden rounded-lg"
+                className="relative shrink-0 overflow-hidden rounded-lg"
                 style={{
                   width: 280,
                   height: 180,
                   border: "1px solid rgba(50, 30, 5, 0.10)",
-                  background:
-                    "linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%)",
                   boxShadow: "0 4px 12px rgba(0, 0, 0, 0.06)",
                 }}
               >
-                <CrackedPhoneGlyph />
+                <Image
+                  src="/images/cracked-iphone.png"
+                  alt="Cracked iPhone screen, photo evidence from Sarah"
+                  fill
+                  sizes="280px"
+                  className="object-cover"
+                  priority
+                />
               </div>
 
               <div
@@ -233,54 +242,3 @@ function PlayButton() {
   );
 }
 
-/**
- * Inline SVG glyph standing in for the cracked-iPhone photo. Keeps the
- * mock fully self-contained (no asset to bundle) and renders crisply at
- * any zoom level. For the real demo render, swap with the Unsplash photo
- * used in Beat 9 of demo-video-script-v4.md.
- */
-function CrackedPhoneGlyph() {
-  return (
-    <svg width="120" height="140" viewBox="0 0 120 140" fill="none">
-      {/* Phone outline */}
-      <rect
-        x="10"
-        y="6"
-        width="100"
-        height="128"
-        rx="14"
-        ry="14"
-        stroke="rgba(255,255,255,0.4)"
-        strokeWidth="1.5"
-        fill="rgba(255,255,255,0.04)"
-      />
-      <rect
-        x="14"
-        y="14"
-        width="92"
-        height="112"
-        rx="6"
-        ry="6"
-        fill="rgba(255,255,255,0.06)"
-      />
-      {/* Crack lines */}
-      <g stroke="rgba(255,255,255,0.7)" strokeWidth="0.8" fill="none">
-        <path d="M 30 24 L 60 60 L 50 90 L 80 110" />
-        <path d="M 60 60 L 85 50" />
-        <path d="M 60 60 L 40 80" />
-        <path d="M 60 60 L 75 80" />
-        <path d="M 50 90 L 30 95" />
-        <path d="M 75 80 L 95 100" />
-      </g>
-      {/* Notch */}
-      <rect
-        x="48"
-        y="18"
-        width="24"
-        height="4"
-        rx="2"
-        fill="rgba(0,0,0,0.5)"
-      />
-    </svg>
-  );
-}

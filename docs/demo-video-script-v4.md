@@ -26,7 +26,7 @@ It bakes in the user's audio-pick decisions made 2026-05-19 evening.
 | Motion direction | Reference clips needed per beat | **Zelios archetypes + Framer Motion / Remotion / GSAP recipes per beat** | Day 5 motion synthesis added implementation detail |
 | Beat numbering (audio) | Audio file names didn't match script beats | **Renumbering deferred** (see Audio file map below) | Three audio files misnumbered in old script; mapping documented; rename post-submission |
 | Marcus "no scratches" clip | Reused from Beat 4 (didn't exist) | **Generated fresh via EL TTS using Marcus's voice ID, 5 takes** | Beat 10 needs a dedicated "no scratches" clip; reusing Beat 4 wasn't viable |
-| Cracked iPhone visual (Beat 9) | Stock photo recommended | **Real-life photograph from Unsplash** | "broken iPhone screen on table" search; gut-punch realism trumps illustration |
+| Cracked iPhone visual (Beat 9) | Stock photo recommended | **Real-life photograph supplied by Scott — `public/images/cracked-iphone.png`** | Originally planned for Unsplash "broken iPhone screen on table"; replaced 2026-05-20 with Scott's own shot. Gut-punch realism trumps illustration. Same asset reused by the `/dev/mock/dispute-replay` page (Beat 10 evidence card). |
 
 ### Design tension — RESOLVED 2026-05-19
 
@@ -380,7 +380,7 @@ These exist on disk but are not used in the demo. Kept for archive / potential f
 
 1. ✅ **Marcus's "no scratches" diegetic clip** — generated via EL TTS, 5 takes in `public/audio/personas/marcus-no-scratches-*.mp3`. Pick winner before render.
 2. ✅ **Audio file renumbering** — deferred to post-submission. Mapping documented in "Audio file → demo beat mapping" section above.
-3. ✅ **Cracked iPhone visual (Beat 9)** — real-life photograph from Unsplash ("broken iPhone screen on table" search). Stock realism > illustration for the gut-punch.
+3. ✅ **Cracked iPhone visual (Beat 9)** — real photograph at `public/images/cracked-iphone.png` (Scott's own shot, supplied 2026-05-20). Shared asset: also used as the evidence-card photo in the `/dev/mock/dispute-replay` page for Beat 10.
 4. ✅ **Vera narration trade-off** — REVERTED to v3's 3-clip silent-lock-release thesis. Less is more. Archived 4 unused Vera clips noted above.
 
 ### Still pending (decide before Day 6 render)
