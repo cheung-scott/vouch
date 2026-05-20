@@ -45,11 +45,33 @@ export default function SellerPage({
         const json = await res.json();
         if (!res.ok) throw new Error(json.error ?? "deal_not_found");
         setDeal(json.deal);
-        // Don't clobber a name the seller just typed.
-        setSellerName((prev) => prev || (json.deal.seller.firstName ?? ""));
-        if (json.deal.status === "DRAFT") {
+        // Don't clobber a name the seller just typed. Also don't pre-fill
+        // with placeholder strings ("Seller", "the other party") or
+        // marketplace handles (e.g. "mrclearances") — those signal "no real
+        // name yet" and we want the seller to type their actual first name.
+        const PLACEHOLDER_NAMES = new Set([
+          "", "seller", "buyer", "the seller", "the buyer", "the other party",
+        ]);
+        const incomingName = json.deal.seller.firstName ?? "";
+        const incomingLower = incomingName.toLowerCase().trim();
+        const incomingIsPlaceholder = PLACEHOLDER_NAMES.has(incomingLower);
+        const looksLikeMarketplaceHandle =
+          /^[a-z0-9_-]{4,}$/.test(incomingName) && !/\s/.test(incomingName);
+        const isPrefillable =
+          !incomingIsPlaceholder && !looksLikeMarketplaceHandle;
+        setSellerName(
+          (prev) => prev || (isPrefillable ? incomingName : ""),
+        );
+        // DRAFT deals are now allowed through to the seller flow — Vera can
+        // read whatever buyer terms were captured even before commit_buyer_side
+        // fires. Only block if the deal has nothing captured at all.
+        if (
+          json.deal.status === "DRAFT" &&
+          !json.deal.terms?.item &&
+          !json.deal.terms?.amountMinor
+        ) {
           setError(
-            `${json.deal.buyer.firstName} hasn't finished capturing terms yet. Check back once they confirm.`,
+            `${json.deal.buyer.firstName} hasn't captured any terms yet. Check back once they begin the deal.`,
           );
           setStage("error");
         } else if (

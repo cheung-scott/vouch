@@ -28,9 +28,12 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "deal_not_found" }, { status: 404 });
   }
 
-  if (deal.status === "DRAFT") {
+  // Allow DRAFT deals (buyer's commit_buyer_side may not have fired if the
+  // session ended early). The seller can still review whatever was captured.
+  // Reject only if the deal has no captured item AND no amount — nothing to read.
+  if (!deal.terms.item && !deal.terms.amountMinor) {
     return NextResponse.json(
-      { error: "buyer_not_yet_committed" },
+      { error: "no_terms_captured" },
       { status: 409 },
     );
   }

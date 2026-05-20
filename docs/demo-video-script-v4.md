@@ -294,7 +294,7 @@ The script's beat numbering (1-12) and the audio file prefix (beat-3, beat-4, be
 
 | Beat | File | Preset | Text |
 |---|---|---|---|
-| 3 | `beat-3-q4-tight.mp3` | mediating | *"When do you expect it to arrive by?"* ⚠ Re-render required — original took uses old wording |
+| 3 | `beat-3-q4-tight.mp3` | mediating | *"When do you expect it to arrive by?"* (locked 2026-05-20 after Option A re-render) |
 | 4 | `beat-4-polish-recital-default.mp3` | contract | *"[confidently] iPhone piętnaście, czterysta funtów, do piątku. Zgadzasz się?"* |
 | 7 | `beat-7-receipt-ask-loose.mp3` | mediating | *"It's arrived. Does it match?"* |
 
@@ -313,7 +313,7 @@ These exist on disk but are not used in the demo. Kept for archive / potential f
 
 | Beat | File | Source |
 |---|---|---|
-| 3 | `sarah-delivery-consistent-1.mp3` | Sarah: *"Royal Mail tracked, by Friday."* (~1.5s) ⚠ Re-render to *"By Friday."* (~1s) to match Q4's new "expected arrival" framing — old line conflates buyer/seller domains |
+| 3 | `sarah-delivery-expressive-1.mp3` | Sarah: *"By Friday."* (~1s) (locked 2026-05-20 after Option A re-render — winner picked from new takes; old winner `sarah-delivery-consistent-1` is now stale) |
 | 4 | `marcus-zgadzam-balanced.mp3` | Marcus (Polish): *"Zgadzam się."* (~1s) |
 | 7 | `sarah-yes-expressive-1.mp3` | Sarah: *"Yes."* (~0.5s) |
 

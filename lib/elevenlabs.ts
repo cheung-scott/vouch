@@ -120,9 +120,13 @@ export function buildVeraDynamicVariables(params: {
   // and Vera reads back the same buyer/seller/amount the deal record holds.
   const firstMessageBySession: Record<VeraSessionType, string> = {
     BUYER_ONBOARDING: isPrefilled
-      ? `[warmly] Hi ${userFirstName}. I've got your deal: ${prefilledSummary}. When and how is it being delivered?`
+      ? `[warmly] Hi ${userFirstName}. I've got your deal: ${prefilledSummary}. When do you expect it to arrive by?`
       : `[warmly] Hi ${userFirstName}, I'm Vera — your mediator for this deal. Let's lock the terms. What are you buying or paying for?`,
-    SELLER_ONBOARDING: `[warmly] Hi ${userFirstName} — ${counterpartyName || "the buyer"} set up a deal they'd like to do with you. Let me read their terms back to you now.`,
+    // SELLER_ONBOARDING opener is intentionally short — system prompt
+    // instructs Vera to call read_buyer_terms IN THE SAME TURN as the
+    // greeting (no waiting for user input). Requires "Skip turn" system
+    // tool enabled on the agent.
+    SELLER_ONBOARDING: `[warmly] Hi ${userFirstName} — ${counterpartyName || "the buyer"} set up a deal they'd like to do with you. One moment — pulling up their terms now.`,
     JOINT_SIGNOFF: `[warmly] OK ${userFirstName} and ${counterpartyName || "the other party"} — both of you are here. Let me read the final agreement back, then both of you confirm.`,
     VOICE_RECEIPT: `[warmly] Hi ${userFirstName}, the tracking shows your item arrived. Did it come and does it match what ${counterpartyName || "the seller"} described?`,
     DISPUTE: `[empathetically] Hi ${userFirstName}, I'm here to help sort this out. Tell me what's wrong — take your time.`,
