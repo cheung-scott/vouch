@@ -282,7 +282,7 @@ function VeraVoiceSessionInner({
                 {mode}
               </span>
               <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-[#8a8478]">
-                Live · tap End when you&rsquo;re done
+                Live · tap End to continue when Vera&rsquo;s finished
               </span>
             </div>
           </div>
@@ -307,9 +307,10 @@ function VeraVoiceSessionInner({
             <button
               type="button"
               onClick={stop}
-              className="flex items-center gap-2 rounded-md border border-[rgba(50,30,5,0.18)] bg-white px-3 py-2 text-sm font-medium text-[#2a2924] transition-colors hover:bg-[#fbfaf6]"
+              className="flex items-center gap-2 rounded-md border border-[#5266eb] bg-[#5266eb] px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-[#4253d4]"
+              title="End the conversation and continue"
             >
-              <Square className="h-3.5 w-3.5" /> End
+              <Square className="h-3.5 w-3.5" /> End &amp; continue
             </button>
           </div>
           </div>

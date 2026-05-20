@@ -345,7 +345,7 @@ export default function NewDealPage() {
   }, [dealId]);
 
   return (
-    <main className="min-h-screen bg-[#f6f5f2] px-6 py-12 text-[#2a2924]">
+    <main className="flex min-h-screen items-center justify-center bg-[#f6f5f2] px-6 py-12 text-[#2a2924]">
       <div className="mx-auto flex w-full max-w-2xl flex-col gap-10">
         <header className="flex items-center justify-between">
           <Eyebrow>
