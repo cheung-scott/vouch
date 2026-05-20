@@ -72,6 +72,8 @@ Render the full Vouch demo video as a single continuous 65-second scene at 1920�
 
 ### Beat 1 — Hook (0:00–0:05) · dark canvas
 
+**Assets used:** `b1-ebay-no-button.png`, `b1-ebay-with-button.png`, `b1-button-only.png`
+
 Open on dark canvas `#0c0c14`. From 0:00–0:01.5, reveal the tagline "Receive your money, on time." word-by-word — each word fades up `y=24 → 0, opacity=0 → 1` with 120ms stagger, 400ms transition. "on time." is in italic Fraunces with linear indigo gradient text-fill. First word "Receive" lands on the music kick at 0:01.
 
 From 0:01.5–0:02, cream surface `#f6f5f2` wipes up from below via clip-path inset `inset(100% 0 0 0) → inset(0)`, 400ms, masking the dark tagline.
@@ -90,6 +92,8 @@ From 0:04.5–0:05.0, radial cream wipe expands from the button outward (`clip-p
 
 ### Beat 2 — Brand reveal (0:05–0:09) · cream canvas
 
+**Assets used:** `b12-vouch-wordmark-light.png`
+
 Continuous from Beat 1's cream surface. From 0:05–0:06, radial bloom completes (`clip-path: circle(150%)` already set; cream holds 400ms).
 
 At 0:06 (music downbeat), the Vouch wordmark `b12-vouch-wordmark-light.png` scale-ins centred: `scale: 0 → 1.06 → 1`, opacity `0 → 1`, total 500ms with overshoot at 70% timeline.
@@ -101,6 +105,8 @@ From 0:08.5–0:09, hold the composition. **No fade-out — directly cross-fade 
 ---
 
 ### Beat 3 — Vera buyer intake (0:09–0:18) · cream canvas
+
+**Assets used:** `b3-new-q4-vera-speaking.png`, `b3-captured-card-item.png`, `b3-captured-card-seller.png`, `b3-captured-card-amount.png`, `b3-captured-card-delivery.png`
 
 200ms cross-fade from Beat 2's wordmark composition into `b3-new-q4-vera-speaking.png` full-frame. The /new page sits with Vera question card top, captured-summary strip on the right.
 
@@ -123,6 +129,8 @@ From 0:17–0:18, hold the composition. Vera waveform fades to ambient breathing
 ---
 
 ### Beat 4 — Multilingual seller agreement (0:18–0:28) · cream canvas ⭐ HERO
+
+**Assets used:** `b4-seller-vera-reading.png`, `b4-marcus-avatar-warsaw.png`, `b4-polish-text.png`, `b4-english-text.png`, `b4-i-agree-button-default.png`, `b4-i-agree-button-tapped.png`
 
 After the whip-pan, `b4-seller-vera-reading.png` sits left-of-centre with 3D perspective tilt: `perspective(2000px) rotateY(7deg) rotateX(2deg)`. Trust-blue radial halo behind it.
 
@@ -147,6 +155,8 @@ From 0:27–0:28, the radial wipe deepens, cream dims slightly. **Directly conti
 ---
 
 ### Beat 5 — Money locks in escrow (0:28–0:33) · cream canvas ⭐ ACT 1 HERO
+
+**Assets used:** `b5-pill-awaiting-seller.png`, `b5-pill-agreed.png`, `b5-pill-in-escrow.png`
 
 **Peak motion MUST land on the drum hit at 0:28.7.**
 
@@ -177,6 +187,8 @@ From 0:31–0:33, hold composition. Vault centred, indigo MONEY HELD pill at bot
 
 ### Beat 6 — Time skip (0:33–0:37) · cream canvas
 
+**Assets used:** none — pure typography + abstract calendar pages rendered from design system Card component
+
 Continuous cream from Beat 5. From 0:33–0:34, render 6 stylised calendar pages stacked centre-frame at slight angles (±2°). Each is a design-system Card (180×220px) with a Fraunces semibold date number (56px) top-centred: 21, 22, 23, 24, 25, 26.
 
 From 0:34–0:36, pages flip forward one at a time, 80ms apart. Each flip: `rotate3d(1, 0, 0, 0° → 90° → 0°)` + `scale: 1 → 0.95 → 1` + `opacity: 0.7 → 1`. Front page changes per flip. ~2s total cascade with overlap.
@@ -190,6 +202,8 @@ From 0:36–0:37, subtitle types in below the calendar stack: **"5 days later."*
 ---
 
 ### Beat 7 — Receipt prompt (0:37–0:42) · cream canvas
+
+**Assets used:** `b7-signoff-in-escrow.png`, `b7-parcel-arrived.jpg`
 
 Continuous cream. `b7-signoff-in-escrow.png` is the main stage, positioned slightly right of centre, perspective-tilted `perspective(2000px) rotateY(-5deg)` (mirror of Beat 4's angle).
 
@@ -208,6 +222,8 @@ From 0:41–0:42, hold composition. Parcel next to signoff card, partial checkma
 ---
 
 ### Beat 8 — Release payoff (0:42–0:47) · cream canvas ⭐ ACT 1 PAYOFF
+
+**Assets used:** `b8-pill-released.png`, `b4-marcus-avatar-warsaw.png` (Marcus receiving money), `b1-tagline-on-time.png` (tagline reference)
 
 **HARD CUT TO BLACK at exactly 0:47.000 — the music drop.**
 
@@ -235,6 +251,8 @@ At 0:46.97, `b8-pill-released.png` cross-fades in next to the tagline.
 
 ### Beat 9 — Dispute opens (0:47–0:52) · dark canvas
 
+**Assets used:** `b9-cracked-iphone.jpg`
+
 From 0:47–0:47.3, pure black hold (9 frames at 30fps). Music sub-bass impact at 0:47.3.
 
 From 0:47.3–0:47.7, `b9-cracked-iphone.jpg` fades up from black (`opacity: 0 → 1`, 400ms easeOutQuart). Ken Burns micro-zoom `scale: 1.05 → 1.0` same window.
@@ -250,6 +268,8 @@ From 0:48.8–0:52, hold composition 3.2s. Photo breathes subtly (`scale: 1 → 
 ---
 
 ### Beat 10 — Vera replays original promise (0:52–0:57) · cream canvas ⭐ MOAT
+
+**Assets used:** `b10-replay-card.png`, `b10-evidence-card.png`
 
 From 0:52–0:52.6, both cards enter staggered. TOP card (`b10-replay-card.png`) slides from above (`y: -200 → centre, opacity: 0 → 1`), 600ms easeOutQuart. BOTTOM card (`b10-evidence-card.png`) slides from below 120ms later, same duration. Both land centred horizontally, stacked with 60px gap.
 
@@ -268,6 +288,8 @@ From 0:56–0:57, hold. Both cards in their highlighted states.
 ---
 
 ### Beat 11 — Verdict + refund (0:57–1:02) · cream canvas
+
+**Assets used:** `b11-verdict-card.png`, `b11-pill-refunded.png`, `b11-sarah-avatar.png`, `b12-tagline-lockup.png`
 
 Cream background with subtle top-centred indigo radial glow (`radial-gradient(ellipse 60% 40% at 50% 30%, rgba(82, 102, 235, 0.10) 0%, transparent 70%)`).
 
@@ -290,6 +312,8 @@ From 1:01.3–1:02, hold. Verdict card centred-top, Sarah's avatar left with REF
 ---
 
 ### Beat 12 — Brand close (1:02–1:05) · dark canvas
+
+**Assets used:** `b12-vouch-wordmark.png`
 
 Dark canvas `#0c0c14`. From 1:02–1:03, `b12-vouch-wordmark.png` scale-ins centre-frame: `scale: 0.92 → 1`, **1.5s** easeOutQuart. Opacity `0 → 1` over 1.0s. **DELIBERATELY SLOW.**
 
