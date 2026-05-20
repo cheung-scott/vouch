@@ -1,5 +1,10 @@
 "use client";
 
+// Force dynamic rendering — page reads useSearchParams() which Next.js 16
+// requires either be Suspense-wrapped or rendered dynamically. Onboarding is
+// interactive (Stripe Connect.js) so static prerender adds no value anyway.
+export const dynamic = "force-dynamic";
+
 import { useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { Eyebrow } from "@/components/ui";
