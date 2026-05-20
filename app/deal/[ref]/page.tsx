@@ -370,13 +370,11 @@ function ActionPanel({ deal }: { deal: DealDetail }) {
           evidence (typically resolved within an hour). For the demo, use the
           button below to issue the verdict directly.
         </p>
+        {/* No "Open dispute" link here — the dispute is already open (that's
+            how the deal got into REVIEWING/DISPUTED). The demo verdict button
+            is the only meaningful action until verdict lands. A real /view-
+            dispute page is v1 scope. */}
         <div className="mt-4 flex flex-wrap gap-3">
-          <Link
-            href={`/deal/${reference}/dispute`}
-            className="rounded-md border border-[rgba(50,30,5,0.18)] bg-white px-4 py-2 text-sm font-medium transition-colors hover:bg-[#fbfaf6]"
-          >
-            Open dispute →
-          </Link>
           <DemoVerdictButton dealId={deal.id} />
         </div>
       </Card>
