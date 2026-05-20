@@ -6,6 +6,7 @@ import {
   type VeraSessionType,
 } from "@/lib/elevenlabs";
 import { dealStore } from "@/lib/deals";
+import { checkBuyerOnboardingRateLimit, getClientIp } from "@/lib/ratelimit";
 
 const SessionTypeEnum = z.enum([
   "BUYER_ONBOARDING",
@@ -113,6 +114,28 @@ export async function POST(request: Request) {
       deal.terms.currency,
     );
   } else if (sessionType === "BUYER_ONBOARDING") {
+    // Sec-Review S-103: IP-based ratelimit on the auto-create path.
+    // Every other branch above requires a server-validated deal_id; this
+    // is the only path that mutates state without one, so it's the only
+    // public DoS vector for deal creation + Stripe/ElevenLabs quota burn.
+    // 5 req/60s sliding window per IP. Fail-open in dev (no Upstash env);
+    // fail-open on Redis errors. See lib/ratelimit.ts for rationale.
+    const ip = getClientIp(request);
+    const rl = await checkBuyerOnboardingRateLimit(ip);
+    if (!rl.ok) {
+      return NextResponse.json(
+        { error: "rate_limited", reset: rl.reset },
+        {
+          status: 429,
+          headers: {
+            "Retry-After": String(Math.max(1, Math.ceil((rl.reset - Date.now()) / 1000))),
+            "X-RateLimit-Remaining": "0",
+            "X-RateLimit-Reset": String(rl.reset),
+          },
+        },
+      );
+    }
+
     // Auto-create a deal seeded with the buyer's first name + any
     // extension-provided terms. Anything not provided stays blank and
     // gets filled turn-by-turn as Vera calls extract_terms with this

@@ -1,14 +1,13 @@
 "use client";
 
-// Force dynamic rendering — page reads useSearchParams() which Next.js 16
-// requires either be Suspense-wrapped or rendered dynamically. Onboarding is
-// interactive (Stripe Connect.js) so static prerender adds no value anyway.
-export const dynamic = "force-dynamic";
-
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { Eyebrow } from "@/components/ui";
 import { EmbeddedConnectOnboarding } from "@/components/EmbeddedConnectOnboarding";
+
+// Next.js 16 requires useSearchParams() to be inside a Suspense boundary
+// (or the build prerender fails). Move the body of the page into a child
+// component that's wrapped in <Suspense> by the default export.
 
 type Status =
   | { kind: "idle" }
@@ -22,6 +21,27 @@ type Status =
   | { kind: "error"; what: string; message: string };
 
 export default function OnboardPage() {
+  return (
+    <Suspense fallback={<OnboardFallback />}>
+      <OnboardInner />
+    </Suspense>
+  );
+}
+
+function OnboardFallback() {
+  return (
+    <main className="flex min-h-screen flex-col items-center justify-center bg-[#f6f5f2] px-6 py-16 text-[#2a2924]">
+      <div className="w-full max-w-md">
+        <Eyebrow>Vouch · onboarding</Eyebrow>
+        <h1 className="mt-4 font-display text-4xl font-semibold leading-tight tracking-tight">
+          Loading...
+        </h1>
+      </div>
+    </main>
+  );
+}
+
+function OnboardInner() {
   const searchParams = useSearchParams();
   const dealId = searchParams.get("deal_id") || undefined;
 
@@ -63,7 +83,7 @@ export default function OnboardPage() {
           Set up your <span className="italic text-[#5266eb]">account</span>.
         </h1>
         <p className="mt-4 text-sm text-[#5a5548]">
-          Stripe Connect verification runs inside Vouch — you won&rsquo;t leave
+          Stripe Connect verification runs inside Vouch - you won&rsquo;t leave
           this page.
         </p>
 
@@ -110,7 +130,7 @@ export default function OnboardPage() {
                 accountId={status.accountId}
                 onExit={() => {
                   // Stripe Connect emits onExit when the seller finishes (or
-                  // cancels) the embedded flow. Route to /onboard/return —
+                  // cancels) the embedded flow. Route to /onboard/return -
                   // it'll detect deal_id, write seller.stripeAccountId, and
                   // forward to the deal's signoff page.
                   const params = new URLSearchParams({
@@ -120,7 +140,7 @@ export default function OnboardPage() {
                   window.location.href = `/onboard/return?${params.toString()}`;
                 }}
               />
-              {/* Manual escape hatch — Stripe's embedded onExit doesn't
+              {/* Manual escape hatch - Stripe's embedded onExit doesn't
                   always fire predictably on "Information submitted" screens
                   (the post-verification confirmation state). Visible button
                   lets the seller advance once they see Stripe say done. */}
@@ -133,8 +153,8 @@ export default function OnboardPage() {
                 className="mt-2 inline-block w-full rounded-md border border-[#5266eb] bg-white px-5 py-3 text-center text-sm font-medium text-[#5266eb] transition-colors hover:bg-[#5266eb] hover:text-white"
               >
                 {dealId
-                  ? "I'm done — continue to sign-off →"
-                  : "I'm done — continue →"}
+                  ? "I'm done - continue to sign-off →"
+                  : "I'm done - continue →"}
               </a>
               {status.onboardingUrl && (
                 <a

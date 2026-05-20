@@ -9,7 +9,7 @@
 
 Submitted to [ElevenHacks 2026 Hack #9: Stripe](https://hacks.elevenlabs.io/hackathons/8) (15–21 May 2026).
 
-**Try it:** [vouch.app/demo](https://vouch.app/demo) (3-min interactive walkthrough, no signup) · [vouch.app](https://vouch.app) (live product, requires Stripe test card)
+**Try it:** [vouch.fund/demo](https://vouch.fund/demo) (3-min interactive walkthrough, no signup) · [vouch.fund](https://vouch.fund) (live product, requires Stripe test card)
 
 ---
 

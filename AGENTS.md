@@ -80,7 +80,7 @@ Forbidden cliches (catches generic AI-generated UI):
 
 ## What's pending user decision
 
-- ⏳ Domain name (probably `vouch.app` or fallback)
+- ✅ Domain name — `vouch.fund` (deployed 2026-05-19)
 - ⏳ Mockup design changes (user has a feedback list — see `vault/CHANGES-PENDING.md`)
 - ⏳ v0 bake-off (user will try v0 against the hand-built mockup)
 - ⏳ Stripe Connect Express + Identity onboarding flows — built Day 1 morning

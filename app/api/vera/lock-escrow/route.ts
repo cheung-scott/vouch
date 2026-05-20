@@ -98,7 +98,7 @@ export async function POST(req: NextRequest) {
         // — production should collect full legal name during Connect
         // onboarding or accept it as an explicit input.
         fullName: `${deal.seller.firstName} Test`,
-        email: deal.seller.email ?? `seller-${deal.reference.toLowerCase()}@vouch.app`,
+        email: deal.seller.email ?? `seller-${deal.reference.toLowerCase()}@vouch.fund`,
         phone: deal.seller.phone,
         billingAddress: {
           // `address_full_match` is Stripe's test-mode magic value that

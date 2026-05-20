@@ -164,3 +164,95 @@ body {
 }
 .animate-vouch-pulse { animation: vouch-pulse 2.4s ease-in-out infinite; }
 .animate-vouch-blink { animation: vouch-blink 2s ease-in-out infinite; }
+
+/* ─────────────────────────────────────────────────────────
+   Emphasis underline — replaces italic+gradient text everywhere.
+   Italic+gradient is an AI-tell; chunky offset underline reads
+   as editorial / handcrafted instead.
+   ───────────────────────────────────────────────────────── */
+.emph {
+  text-decoration: underline;
+  text-decoration-color: var(--indigo);
+  text-decoration-thickness: 0.07em;
+  text-underline-offset: 0.12em;
+  font-style: normal;
+  text-decoration-skip-ink: none;
+}
+.emph-dark {
+  text-decoration: underline;
+  text-decoration-color: var(--stripe-purple);
+  text-decoration-thickness: 0.07em;
+  text-underline-offset: 0.12em;
+  font-style: normal;
+  text-decoration-skip-ink: none;
+  color: var(--white);
+}
+
+/* ─────────────────────────────────────────────────────────
+   v0 landing helpers — used by /v0-landing only
+   Keep scoped/named so they don't collide with our version
+   ───────────────────────────────────────────────────────── */
+
+/* Italic gradient text — v0 uses these class names */
+.gradient-text-dark {
+  background: linear-gradient(135deg, #ffffff 0%, #c4b5fd 50%, #635bff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-style: italic;
+}
+.gradient-text-cream {
+  background: linear-gradient(135deg, #5266eb 0%, #635bff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-style: italic;
+}
+
+/* Glassmorphism variants — v0 names */
+.glass-dark {
+  background: rgba(20, 20, 20, 0.55);
+  backdrop-filter: var(--blur);
+  -webkit-backdrop-filter: var(--blur);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
+.glass-cream-hi {
+  background: var(--cream-card-glass-hi);
+  backdrop-filter: var(--blur);
+  -webkit-backdrop-filter: var(--blur);
+  border: 1px solid var(--glass-edge);
+}
+
+/* CSS keyframes v0 uses for blob float + button effects */
+@keyframes float {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50%      { transform: translate(40px, 30px) scale(1.06); }
+}
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(99, 91, 255, 0.4); }
+  50%      { box-shadow: 0 0 20px 10px rgba(99, 91, 255, 0.2); }
+}
+@keyframes breathing {
+  0%, 100% { opacity: 0.6; transform: scale(1); }
+  50%      { opacity: 1;   transform: scale(1.1); }
+}
+@keyframes recording-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(217, 53, 28, 0.6); }
+  50%      { box-shadow: 0 0 0 12px rgba(217, 53, 28, 0); }
+}
+
+.animate-float          { animation: float 14s ease-in-out infinite alternate; }
+.animate-float-delayed  { animation: float 14s ease-in-out infinite alternate; animation-delay: -7s; }
+.animate-pulse-glow     { animation: pulse-glow 2s ease-in-out infinite; }
+.animate-breathing      { animation: breathing 2s ease-in-out infinite; }
+.animate-recording-pulse{ animation: recording-pulse 1s ease-out infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-float,
+  .animate-float-delayed,
+  .animate-pulse-glow,
+  .animate-breathing,
+  .animate-recording-pulse {
+    animation: none;
+  }
+}
