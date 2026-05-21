@@ -9,7 +9,7 @@
 - Pages render flat — no 3D perspective, no polaroid tilts
 - Each speaker gets an animated waveform during their speech
 - Each beat stands alone visually — no animation bridging two scenes
-- One italic gradient word per headline maximum
+- One italic indigo word per headline maximum (solid colour, no gradient)
 
 ---
 
@@ -37,7 +37,7 @@ Render the full Vouch demo video as one continuous 67-second scene at 1920×1080
 - **Each beat stands alone** — no animation continuity bridging scenes.
 - **Each speaker gets a distinct waveform variant** so viewers can tell Vera / Sarah / Marcus apart. Use bar-count and colour variation within the brand palette (indigo + cinnamon). Waveform animates during the speech, then settles.
 - **No "escrow" in user-facing copy.** The status is "MONEY HELD".
-- **Italic gradient emphasis** — only ONE word per headline gets the Fraunces italic indigo gradient (e.g. "on *time.*", "*kept.*", "*wrong?*", "*handshake.*").
+- **Italic indigo emphasis** — only ONE word per headline gets a solid indigo (`#5266eb`) italic Fraunces treatment (e.g. "on *time.*", "*kept.*", "*wrong?*", "*handshake.*"). No gradient — solid colour only. Editorial-classic, not "designed".
 - **Brand voice:** warm-editorial, anti-decoration. No confetti, no sparkle, no emoji ornaments.
 
 ---
@@ -63,7 +63,7 @@ Render the full Vouch demo video as one continuous 67-second scene at 1920×1080
 
 ### Scene 1 — Hook (0:00–0:05)
 
-**Show:** Hero tagline appears word-by-word: *"Receive your money, on time."* — italic indigo gradient on "*time.*" Then the real eBay listing (`b1-ebay-no-button.png`), then the Pay with Vouch button injects (`b1-ebay-with-button.png`), then a cursor clicks it.
+**Show:** Hero tagline appears word-by-word: *"Receive your money, on time."* — solid indigo italic on "*time.*" Then the real eBay listing (`b1-ebay-no-button.png`), then the Pay with Vouch button injects (`b1-ebay-with-button.png`), then a cursor clicks it.
 
 **Story:** Real marketplace. New way to pay. One click in.
 
@@ -103,7 +103,7 @@ Render the full Vouch demo video as one continuous 67-second scene at 1920×1080
 
 ### Scene 5 — Lock (0:28–0:33) ⭐ ACT 1 HERO
 
-**Show:** A pile of £400 (abstract layered banknote shapes — indigo + cream). A vault. The money goes into the vault. **At 0:28.7 — the drum hit — the vault snaps shut in a single frame, with screen shake.** Pulse rings. Status pills cascade through AWAITING SELLER → AGREED → MONEY HELD. Tagline below in lowercase mono: "receive your money, on time."
+**Show:** A pile of £400 (abstract layered banknote shapes — indigo + cream). A vault. The money goes into the vault. **At 0:28.7 — the drum hit — the vault snaps shut in a single frame, with screen shake.** Pulse rings. Status pills cascade through AWAITING SELLER → AGREED → MONEY HELD. Tagline below in lowercase mono: "receive your money, on *time.*" — solid indigo italic on "*time.*"
 
 **Story:** The drum hit. The lock. Money held safely.
 
@@ -133,7 +133,7 @@ Render the full Vouch demo video as one continuous 67-second scene at 1920×1080
 
 ### Scene 8 — Release payoff (0:42–0:47) ⭐ ACT 1 PAYOFF
 
-**Show:** A hero green tick. £0 → £609.89 counter. Money travels from the vault to Marcus's avatar (`b4-marcus-avatar-warsaw.png`); he gets a notification. Final tagline "Receive your money, *on time.*" lands word-by-word — last word at 0:46.97. RELEASED pill (`b8-pill-released.png`).
+**Show:** A hero green tick. £0 → £609.89 counter. Money travels from the vault to Marcus's avatar (`b4-marcus-avatar-warsaw.png`); he gets a notification. Final tagline "Receive your money, on *time.*" lands word-by-word — solid indigo italic on "*time.*" — last word at 0:46.97. RELEASED pill (`b8-pill-released.png`).
 
 **Story:** The promise delivered. Money lands.
 
@@ -143,7 +143,7 @@ Render the full Vouch demo video as one continuous 67-second scene at 1920×1080
 
 ### Scene 8.5 — Framing card pivot (0:47–0:49)
 
-**Show:** A clean cream canvas. Centred Fraunces text: ***"And when something goes wrong?"*** Italic indigo gradient on "*wrong?*" only. The music drop lands on the "wrong?" reveal at 0:47.5.
+**Show:** A clean cream canvas. Centred Fraunces text: ***"And when something goes wrong?"*** Solid indigo italic on "*wrong?*" only. The music drop lands on the "wrong?" reveal at 0:47.5.
 
 **Story:** The Act 1 promise delivered. Now the harder question — Vouch's other promise.
 
@@ -151,7 +151,7 @@ Render the full Vouch demo video as one continuous 67-second scene at 1920×1080
 
 ### Scene 9 — Dispute opens (0:49–0:54)
 
-**Show:** Cracked iPhone photograph (`b9-cracked-iphone.jpg`). Sub-bass impact on the photo landing. Tagline below: *"Every deal, kept."* — italic gradient on "*kept.*"
+**Show:** Cracked iPhone photograph (`b9-cracked-iphone.jpg`). Sub-bass impact on the photo landing. Tagline below: *"Every deal, kept."* — solid indigo italic on "*kept.*"
 
 **Story:** Here's what went wrong. Vouch's other promise — the safety net.
 
@@ -169,7 +169,7 @@ Render the full Vouch demo video as one continuous 67-second scene at 1920×1080
 
 ### Scene 11 — Verdict + refund (0:59–1:04)
 
-**Show:** Verdict card (`b11-verdict-card.png`) with glassmorphism. Dispute-chime SFX on land. Heading: "Refund to *Sarah*." Money returns from Marcus back to Sarah. Counter ticks down to £0. REFUNDED pill (`b11-pill-refunded.png`). Sarah's avatar (`b11-sarah-avatar.png`) reacts. Tagline anchor (`b12-tagline-lockup.png`): "Every deal, *kept.*"
+**Show:** Verdict card (`b11-verdict-card.png`) with glassmorphism. Dispute-chime SFX on land. Heading: "Refund to *Sarah*." — solid indigo italic on "*Sarah*." Money returns from Marcus back to Sarah. Counter ticks down to £0. REFUNDED pill (`b11-pill-refunded.png`). Sarah's avatar (`b11-sarah-avatar.png`) reacts. Tagline anchor (`b12-tagline-lockup.png`): "Every deal, *kept.*"
 
 **Story:** The system worked. Refund issued. Account flagged.
 
@@ -177,7 +177,7 @@ Render the full Vouch demo video as one continuous 67-second scene at 1920×1080
 
 ### Scene 12 — Brand close (1:04–1:07) — dark canvas
 
-**Show:** Canvas darkens from cream to dark navy (NOT through black — interpolated colour shift). Vouch wordmark (`b12-vouch-wordmark.png`) lands at 1:04.5 — confident, unhurried. Vera waveform breathes beneath. Brand line in mono: ***"Trust the *handshake.* Hold the money."*** Hold. Cut to black at 1:07.
+**Show:** Canvas darkens from cream to dark navy (NOT through black — interpolated colour shift). Vouch wordmark (`b12-vouch-wordmark.png`) lands at 1:04.5 — confident, unhurried. Vera waveform breathes beneath. Brand line in mono: ***"Trust the handshake. Hold the money."*** — solid indigo italic on "*handshake.*" Hold. Cut to black at 1:07.
 
 **Story:** The brand promise distilled.
 
