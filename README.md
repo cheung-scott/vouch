@@ -1,6 +1,6 @@
 # Vouch
 
-> **Voice-recorded payment protection.** Vera — an AI mediator — captures the deal in both parties' voices. Stripe holds the money safely until the item arrives.
+> **Voice-recorded payment protection.** Vera - an AI mediator - captures the deal in both parties' voices. Stripe holds the money safely until the item arrives.
 
 [![Built with Next.js 16](https://img.shields.io/badge/Next.js-16-black?logo=next.js)](https://nextjs.org)
 [![ElevenLabs](https://img.shields.io/badge/Voice-ElevenLabs-635bff)](https://elevenlabs.io)
@@ -99,4 +99,4 @@ MIT — see [`LICENSE`](LICENSE).
 
 ---
 
-*Built solo for [ElevenHacks 2026 Hack #9: Stripe](https://hacks.elevenlabs.io/hackathons/8) by [Scott Cheung](https://github.com/cheung-scott).*
+*Built solo for [ElevenHacks 2026 Hack #9: Stripe](https://hacks.elevenlabs.io/hackathons/8)
