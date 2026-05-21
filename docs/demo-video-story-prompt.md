@@ -1,8 +1,8 @@
-# Vouch demo video — story-driven Claude Design prompt (v3.4)
+# Vouch demo video — story-driven Claude Design prompt (v3.5)
 
 **What this is:** A single story-driven prompt for the full 67-second Vouch demo video, rendered in Claude Design as one prototype.
 
-**Discipline applied (v3.4):** Declare what to show + when sync moments must land. Do NOT prescribe motion verbs, durations, positions, or compositional micro-choices that Claude's motion-design instincts can handle within the brand system.
+**Discipline applied:** Declare what to show + when sync moments must land. Trust Claude to choose motion, easing, positioning, transitions — AND to choose which uploaded asset fits each scene from the library provided.
 
 **Core rules:**
 - Cream is the canvas for the whole video (except Beat 12, the brand close, which is dark)
@@ -18,14 +18,14 @@
 - New prototype: **"Vouch Demo Video"**
 - Hi-fidelity, interactive prototype
 - Apply published Vouch Design System
-- Upload all 36 assets from `docs/demo-stills/` (listed at the bottom of this doc)
+- Upload all 36 assets from `docs/demo-stills/` (listed at the bottom of this doc) as a **library**. Claude picks the best-fit asset for each scene from the library — names are descriptive (`b1-ebay-with-button`, `b3-captured-card-amount`, etc.).
 - Paste the prompt block below
 
 ---
 
 ## BEGIN STORY PROMPT — paste everything between markers
 
-Render the full Vouch demo video as one continuous 67-second scene at 1920×1080, 30fps. Apply the Vouch Design System throughout. The hard constraints below define what must happen and when; the per-scene briefs describe what to show and why. **Choose your own motion choreography, easing curves, positioning, timing, and transitions** — trust your sense for fintech-editorial motion design. You don't need to ask permission to make compositional decisions.
+Render the full Vouch demo video as one continuous 67-second scene at 1920×1080, 30fps. Apply the Vouch Design System throughout. The hard constraints below define what must happen and when; the per-scene briefs describe what to show and why. **Choose your own motion choreography, easing, positioning, timing, transitions, AND which uploaded asset best fits each scene** — the 36 uploaded images are a library; pick contextually. You don't need to ask permission to make compositional or asset-selection decisions.
 
 ---
 
@@ -63,17 +63,17 @@ Render the full Vouch demo video as one continuous 67-second scene at 1920×1080
 
 ### Scene 1 — Hook (0:00–0:05)
 
-**Show:** Hero tagline appears word-by-word: *"Receive your money, on time."* — solid indigo italic on "*time.*" Then the real eBay listing (`b1-ebay-no-button.png`), then the Pay with Vouch button injects (`b1-ebay-with-button.png`), then a cursor clicks it.
+**Show:** Hero tagline appears word-by-word: *"Receive your money, on time."* — solid indigo italic on "*time.*" Then an eBay-style product listing for an iPhone 15 Pro Max 512GB Blue Titanium, £609.89. The Pay with Vouch button injects next to the existing buy button. Cursor clicks it.
 
 **Story:** Real marketplace. New way to pay. One click in.
 
-**Assets:** `b1-ebay-no-button.png`, `b1-ebay-with-button.png`, `b1-button-only.png`
+**Asset hint:** Pick the eBay listing screenshots from the library — there are versions with and without the Vouch button.
 
 ---
 
 ### Scene 2 — Brand reveal (0:05–0:09)
 
-**Show:** Vouch wordmark (`b12-vouch-wordmark-light.png`) lands on the downbeat. Small mono tagline anchor underneath. Vera waveform signature breathes.
+**Show:** Vouch wordmark lands on the downbeat. Small mono tagline anchor underneath. Vera waveform signature breathes.
 
 **Story:** This is Vouch. Vera is here.
 
@@ -81,23 +81,25 @@ Render the full Vouch demo video as one continuous 67-second scene at 1920×1080
 
 ### Scene 3 — Buyer intake (0:09–0:18)
 
-**Show:** The `/new` page (`b3-new-q4-vera-speaking.png`). Vera asks her question (her waveform plays). Sarah replies *"By Friday."* (her waveform plays). Four captured-term cards arrive into the right-side strip — item, seller (`Marcus`), amount (`£609.89`), delivery (`By Friday`). Hand off to Marcus's side.
+**Show:** Vouch's `/new` page with Vera's voice intake UI. Vera asks her question (her waveform plays). Sarah replies *"By Friday."* (her waveform plays). Four captured-term cards arrive into the right-side strip — item (iPhone 15 Pro Max 512GB), seller (Marcus), amount (£609.89), delivery (By Friday). Hand off to Marcus's side.
 
 **Story:** Vera captures the whole deal by voice in 9 seconds. Effortless.
 
 **Speakers:** Vera (Q1), Sarah ("By Friday.")
 
-**Assets:** `b3-new-q4-vera-speaking.png`, `b3-captured-card-item.png`, `b3-captured-card-seller.png`, `b3-captured-card-amount.png`, `b3-captured-card-delivery.png`
+**Asset hint:** Pick the relevant /new-page screenshot and individual captured-card images from the library.
 
 ---
 
 ### Scene 4 — Multilingual seller agreement (0:18–0:28) ⭐ MOAT MOMENT
 
-**Show:** Marcus's view (`b4-seller-vera-reading.png`) with his Warsaw avatar (`b4-marcus-avatar-warsaw.png`) nearby. Vera reads Sarah's terms in Polish (her waveform plays). Marcus replies *"Zgadzam się."* (his waveform plays). **The Polish phrase (`b4-polish-text.png`) transforms letter-by-letter into "I agree." (`b4-english-text.png`) — this is the moat moment, make the morph hero-worthy.** Marcus taps "I agree" (`b4-i-agree-button-default.png` → `b4-i-agree-button-tapped.png`).
+**Show:** Marcus's view of Vouch's seller-intake page, with his Warsaw avatar visible. Vera reads Sarah's terms in Polish (her waveform plays). Marcus replies *"Zgadzam się."* (his waveform plays). **The Polish phrase transforms letter-by-letter into "I agree." — this is the moat moment, make the morph hero-worthy.** Marcus taps the "I agree" button.
 
 **Story:** Cross-border voice mediation. Two parties, two languages, one agreement.
 
 **Speakers:** Vera (Polish recital), Marcus ("Zgadzam się.")
+
+**Asset hint:** Pick the seller-page screenshot, the Polish and English text frames, the Marcus avatar with Warsaw tag, and the I-agree button states (default + tapped).
 
 ---
 
@@ -109,7 +111,7 @@ Render the full Vouch demo video as one continuous 67-second scene at 1920×1080
 
 **Critical:** The vault snap at 0:28.7 MUST be a single-frame transition — no soft animation. This is the most precise sync in the whole video.
 
-**Assets:** `b5-pill-awaiting-seller.png`, `b5-pill-agreed.png`, `b5-pill-in-escrow.png`
+**Asset hint:** Pick the three status pill images from the library (AWAITING SELLER, AGREED, MONEY HELD).
 
 ---
 
@@ -123,19 +125,23 @@ Render the full Vouch demo video as one continuous 67-second scene at 1920×1080
 
 ### Scene 7 — Item arrived + receipt prompt (0:37–0:42)
 
-**Show:** Sarah's signoff page (`b7-signoff-in-escrow.png`). The iPhone parcel (`b7-parcel-arrived.jpg`) arrives nearby — both clearly visible, not overlapping. Vera asks *"Does it match?"* (her waveform). Sarah replies *"Yes."* (her waveform). The signoff status updates to receipt-confirmed.
+**Show:** Sarah's signoff/in-escrow page showing the deal in MONEY HELD state. An iPhone parcel arrives nearby — both clearly visible, not overlapping. Vera asks *"Does it match?"* (her waveform). Sarah replies *"Yes."* (her waveform). The signoff status updates to receipt-confirmed.
 
 **Story:** Item arrives. Voice-confirmed receipt.
 
 **Speakers:** Vera, Sarah.
 
+**Asset hint:** Pick the signoff/in-escrow page screenshot and the parcel photograph.
+
 ---
 
 ### Scene 8 — Release payoff (0:42–0:47) ⭐ ACT 1 PAYOFF
 
-**Show:** A hero green tick. £0 → £609.89 counter. Money travels from the vault to Marcus's avatar (`b4-marcus-avatar-warsaw.png`); he gets a notification. Final tagline "Receive your money, on *time.*" lands word-by-word — solid indigo italic on "*time.*" — last word at 0:46.97. RELEASED pill (`b8-pill-released.png`).
+**Show:** A hero green tick. £0 → £609.89 counter. Money travels from the vault to Marcus's avatar; he gets a notification. Final tagline "Receive your money, on *time.*" lands word-by-word — solid indigo italic on "*time.*" — last word at 0:46.97. RELEASED pill appears.
 
 **Story:** The promise delivered. Money lands.
+
+**Asset hint:** Pick the Marcus avatar (with Warsaw tag) and the RELEASED status pill.
 
 ---
 
@@ -151,35 +157,43 @@ Render the full Vouch demo video as one continuous 67-second scene at 1920×1080
 
 ### Scene 9 — Dispute opens (0:49–0:54)
 
-**Show:** Cracked iPhone photograph (`b9-cracked-iphone.jpg`). Sub-bass impact on the photo landing. Tagline below: *"Every deal, kept."* — solid indigo italic on "*kept.*"
+**Show:** A photograph of a cracked iPhone on a textured surface — the visual evidence. Sub-bass impact on the photo landing. Tagline below: *"Every deal, kept."* — solid indigo italic on "*kept.*"
 
 **Story:** Here's what went wrong. Vouch's other promise — the safety net.
+
+**Asset hint:** Pick the cracked-iPhone photograph from the library.
 
 ---
 
 ### Scene 10 — Vera replays original promise (0:54–0:59) ⭐ MOAT
 
-**Show:** Two cards: Vera's replay UI on top (`b10-replay-card.png`), Sarah's evidence below (`b10-evidence-card.png`). Marcus's diegetic voice clip plays *"No scratches, original box."* — his waveform animates inside the replay card. At 0:56 the bar at the word "scratches" spikes, and "scratches" gets highlighted in the text. The evidence card reacts (connects visually to the playback).
+**Show:** Two cards: Vera's replay UI on top (showing Marcus's commitment "no scratches, original box."), Sarah's evidence below (cracked phone photo + caption). Marcus's diegetic voice clip plays *"No scratches, original box."* — his waveform animates inside the replay card. At 0:56 the bar at the word "scratches" spikes, and "scratches" gets highlighted in the text. The evidence card reacts (connects visually to the playback).
 
 **Story:** The product's own evidence chain. Marcus's actual voice indicting him. No "he-said-she-said."
 
 **Speakers:** Marcus (diegetic playback, inside the replay card).
 
+**Asset hint:** Pick the dispute-replay card images from the library (top: Vera replay UI, bottom: evidence card).
+
 ---
 
 ### Scene 11 — Verdict + refund (0:59–1:04)
 
-**Show:** Verdict card (`b11-verdict-card.png`) with glassmorphism. Dispute-chime SFX on land. Heading: "Refund to *Sarah*." — solid indigo italic on "*Sarah*." Money returns from Marcus back to Sarah. Counter ticks down to £0. REFUNDED pill (`b11-pill-refunded.png`). Sarah's avatar (`b11-sarah-avatar.png`) reacts. Tagline anchor (`b12-tagline-lockup.png`): "Every deal, *kept.*"
+**Show:** A glassmorphism verdict card slides in. Dispute-chime SFX on land. Heading: "Refund to *Sarah*." — solid indigo italic on "*Sarah*." Money returns from Marcus back to Sarah. Counter ticks down to £0. REFUNDED pill appears. Sarah's avatar reacts. Tagline anchor: "Every deal, *kept.*"
 
 **Story:** The system worked. Refund issued. Account flagged.
+
+**Asset hint:** Pick the verdict card, REFUNDED pill, Sarah's avatar, and the closing tagline lockup from the library.
 
 ---
 
 ### Scene 12 — Brand close (1:04–1:07) — dark canvas
 
-**Show:** Canvas darkens from cream to dark navy (NOT through black — interpolated colour shift). Vouch wordmark (`b12-vouch-wordmark.png`) lands at 1:04.5 — confident, unhurried. Vera waveform breathes beneath. Tech-stack signature underneath in mono small caps, 0.18em tracking: **"BUILT ON STRIPE CONNECT + ELEVENLABS CONVAI"** in muted white (`rgba(255,255,255,0.55)`). Hold the composition. Music fades. **No cut to black** — the final frame IS the wordmark + signature on the dark canvas. The video simply ends with the music tail.
+**Show:** Canvas darkens from cream to dark navy (NOT through black — interpolated colour shift). Vouch wordmark lands at 1:04.5 — confident, unhurried. Vera waveform breathes beneath. Tech-stack signature underneath in mono small caps, 0.18em tracking: **"BUILT ON STRIPE CONNECT + ELEVENLABS CONVAI"** in muted white (`rgba(255,255,255,0.55)`). Hold the composition. Music fades. **No cut to black** — the final frame IS the wordmark + signature on the dark canvas. The video simply ends with the music tail.
 
 **Story:** The brand. The tech foundation. End on confidence, not fade.
+
+**Asset hint:** Pick the dark-variant Vouch wordmark from the library.
 
 ---
 
@@ -188,6 +202,8 @@ Render the full Vouch demo video as one continuous 67-second scene at 1920×1080
 ---
 
 ## Assets to upload (36 files from `docs/demo-stills/`)
+
+Upload all of these as a library. Claude picks the best-fit per scene from this set. Filenames are descriptive so contextual matching is straightforward.
 
 ### Act 1
 - `b1-ebay-no-button.png`
@@ -232,10 +248,10 @@ Render the full Vouch demo video as one continuous 67-second scene at 1920×1080
 
 ## Fallback plan
 
-1. Beats 5 + 9 saved as standalone HTML (working renders)
+1. Beats 5 + 9 saved as standalone HTML (working renders from earlier attempts)
 2. Per-beat prompt pack at `docs/demo-video-claude-design-prompts.md` for chunked rendering
-3. CapCut for stitching
+3. CapCut for stitching + swapping real product screenshots over Claude's mockups during edit
 
 ---
 
-*Generated 2026-05-21. v3.4: directing intent, not motion. Per-scene briefs ~40-60% shorter than v3.3. Sync moments + brand rules retain prescriptive precision; everything else trusts Claude.*
+*Generated 2026-05-21. v3.5: descriptive scene briefs, Claude picks contextual assets from the uploaded library, no per-file references in scene bodies (only "asset hints" pointing Claude toward the right cluster).*
