@@ -98,5 +98,3 @@ Roadmap (validation, regulatory partner, AuthN, KV persistence, real LLM extract
 MIT — see [`LICENSE`](LICENSE).
 
 ---
-
-*Built solo for [ElevenHacks 2026 Hack #9: Stripe](https://hacks.elevenlabs.io/hackathons/8)
