@@ -111,11 +111,11 @@ function MergedHero() {
                   between MergedHero and MergedPainPivot with a full-width video.
                   Until then this CTA scrolls to a placeholder. */}
               <Link
-                href="/demo"
+                href="/install"
                 className="rounded-md border border-white/18 bg-transparent px-7 py-3.5 text-[14px] font-medium text-white transition-colors hover:bg-white/[0.06]"
                 style={{ fontFamily: "var(--font-inter), sans-serif" }}
               >
-                See the demo
+                Get the extension →
               </Link>
             </div>
 

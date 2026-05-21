@@ -47,6 +47,13 @@ export function Nav() {
           >
             Trust
           </Link>
+          <Link
+            href="/install"
+            className="text-[14px] text-white/48 hover:text-white transition-colors duration-200"
+            style={{ fontFamily: 'var(--font-inter), sans-serif' }}
+          >
+            Extension
+          </Link>
         </div>
 
         {/* CTA */}
