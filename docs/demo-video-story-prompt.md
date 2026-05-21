@@ -1,6 +1,14 @@
-# Vouch demo video — story-driven Claude Design prompt (v3, creative freedom)
+# Vouch demo video — story-driven Claude Design prompt (v3.1, cream-only + framing card pivot)
 
-**Why this version:** v2 monolithic over-specified motion (5000+ words of frame-perfect choreography across 12 scenes) and produced poor results. This v3 inverts the approach — tells Claude WHAT to show + WHEN it must land + WHY each scene matters, then trusts its motion-design instincts. Shorter prompt, fewer rules, better output.
+**Why this version (v3.1):**
+- v2 monolithic over-specified motion (5000+ words of frame-perfect choreography across 12 scenes) and produced poor render
+- v3 inverted the approach — story + sync moments + creative freedom — and produced a working render but with two editorial issues: (1) the hard cut to black at 0:47 felt jarring, (2) the cracked iPhone fading from black read as bleak rather than urgent
+- v3.1 fixes both:
+  - **Beat 1 opens on cream**, not dark canvas (cream is Vouch's home surface)
+  - **Act 1 → Act 2 pivot uses a framing card on cream** ("And when something goes wrong?"), NOT a hard cut to black
+  - **Beat 9 cracked iPhone sits as a polaroid on cream**, not on black
+  - **Total runtime extended to 67s** to accommodate the 2s framing card
+  - **Only ONE legitimate cut to black** in the entire video — the final end at 1:07
 
 **Use this version for the monolithic render.** Keep v1 (per-beat) and v2 (monolithic-explicit) as references.
 
@@ -18,17 +26,17 @@
 
 ## BEGIN STORY PROMPT — paste everything between markers
 
-Render the full Vouch demo video as one continuous 65-second scene at 1920×1080, 30fps. Apply the Vouch Design System throughout. Use the uploaded assets where specified. **Choose your own motion choreography, easing curves, and transition styles** — trust your sense for fintech-editorial motion design. The constraints below define what must happen and when; you decide how.
+Render the full Vouch demo video as one continuous 67-second scene at 1920×1080, 30fps. Apply the Vouch Design System throughout. Use the uploaded assets where specified. **Choose your own motion choreography, easing curves, and transition styles** — trust your sense for fintech-editorial motion design. The constraints below define what must happen and when; you decide how.
 
 ---
 
 ## Hard constraints (non-negotiable)
 
 - **Master easing:** easeOutQuart (`cubic-bezier(0.22, 1, 0.36, 1)`). No bouncy springs — they read toy-like on financial UI.
-- **Two cuts only:** HARD CUT TO BLACK at 0:47.000 (music drop), CUT TO BLACK at 1:05.000 (video end). Everything else flows continuously on whichever canvas (cream or dark) it occupies.
-- **Cream-to-cream transitions are SEAMLESS** — no fades to black between consecutive cream scenes. Pretend each cream scene begins where the last cream scene ended.
+- **NO FADES TO BLACK anywhere except the final video end at 1:07.000.** Everything else flows continuously on the cream canvas. The Act 1 → Act 2 pivot at 0:47 uses a typographic framing card on cream (NOT a hard cut to black). The cracked iPhone in Beat 9 sits ON cream, not over black. The only legitimate black moment in the entire video is the closing cut at 1:07.
+- **Cream is the default surface** — Beats 1-11 ALL render on cream `#f6f5f2`. Only Beat 12 (the brand close) uses the dark canvas `#0c0c14`. Transitions between cream scenes are seamless (each scene's final frame is the next scene's first frame).
 - **No escrow language** — never use the word "escrow" in visible copy. The status is "MONEY HELD".
-- **Italic gradient emphasis** — only ONE word per headline gets the Fraunces italic indigo gradient treatment (e.g. "on *time.*", "*kept.*", "*handshake.*").
+- **Italic gradient emphasis** — only ONE word per headline gets the Fraunces italic indigo gradient treatment (e.g. "on *time.*", "*kept.*", "*wrong?*", "*handshake.*").
 - **Brand voice:** warm-editorial, anti-decoration. No confetti, no sparkle, no emoji ornaments, no stock-photo feel, no generic fintech sky-blue.
 
 ---
@@ -43,24 +51,26 @@ These are the moments that MUST land on the music. If you nail nothing else, nai
 | **0:06.000** | Vouch wordmark lands centred | Music downbeat |
 | **0:28.700** | Vault snaps shut, screen shake | DRUM HIT — single most important sync in the whole video |
 | **0:43.400** | Hero green tick appears | Release-bell SFX |
-| **0:46.970** | Final word "time." of Act 1 tagline lands | Last beat before music drop |
-| **0:47.000** | HARD CUT TO BLACK | Music drop |
-| **0:47.300** | Cracked iPhone fades up from black | Sub-bass impact |
-| **0:54.000** | Waveform bar at "scratches" pulses | Word sync in Marcus's diegetic clip |
-| **1:02.500** | Vouch wordmark lands centred | Final sustained chord |
-| **1:05.000** | Cut to black | Video end |
+| **0:46.970** | Final word "time." of Act 1 tagline lands | Last word before pivot |
+| **0:47.500** | Framing card word "wrong?" lands on cream | Music drop — the editorial pivot moment, no black |
+| **0:50.000** | Cracked iPhone polaroid lands fully on cream | Sub-bass impact (Beat 9 now starts at 0:49 after the framing card) |
+| **0:56.000** | Waveform bar at "scratches" pulses | Word sync in Marcus's diegetic clip (~+2s from original) |
+| **1:04.500** | Vouch wordmark lands centred | Final sustained chord |
+| **1:07.000** | Cut to black | Video end (ONLY hard cut in the whole video) |
 
 ---
 
 ## ACT 1 — Happy Path (0:00–0:47) · tagline: *"Receive your money, on time."*
 
-### Scene 1 — Hook (0:00–0:05) — dark canvas
+### Scene 1 — Hook (0:00–0:05) — cream canvas
 
-**Show:** Hero tagline word-by-word reveal on dark `#0c0c14`. Then a cream surface introduces a real eBay listing (`b1-ebay-no-button.png`). The Pay with Vouch button appears (cross-dissolve to `b1-ebay-with-button.png`). Cursor clicks the button.
+**Show:** Open on cream `#f6f5f2`. Hero tagline reveals word-by-word in dark ink: *"Receive your money, on time."* — "on time." in italic Fraunces with indigo gradient. First word "Receive" lands on the music kick at 0:01. Tagline holds briefly, then cross-fades to the eBay listing (`b1-ebay-no-button.png`) full-bleed on the cream. The Pay with Vouch button appears (cross-dissolve to `b1-ebay-with-button.png`). Cursor moves to it and clicks.
 
 **Story:** Real marketplace. New way to pay. One click in.
 
 **Assets:** `b1-ebay-no-button.png`, `b1-ebay-with-button.png`, `b1-button-only.png`
+
+**Critical:** Open on cream — NO dark canvas. The tagline text reads as dark ink on cream, with italic indigo gradient only on "on time." This is the editorial standard for Vouch.
 
 ---
 
@@ -120,33 +130,54 @@ These are the moments that MUST land on the music. If you nail nothing else, nai
 
 **Story:** The promise delivered. Money lands.
 
-**At 0:47.000 — HARD CUT TO BLACK. Single frame. Synced to music drop.**
+**At 0:47.000 — NO BLACK CUT.** Beat 8's final cream composition holds momentarily, then transitions smoothly into the framing card below. The music drop lands DURING the framing card (not on a black cut).
 
 ---
 
-## ⬇ HARD CUT TO BLACK at 0:47 ⬇
+## ⬇ Editorial pivot via framing card on cream — NO BLACK ⬇
 
-## ACT 2 — Dispute / safety net (0:47–1:02) · tagline: *"Every deal, kept."*
+## ACT 2 — Dispute / safety net (0:47–1:04) · tagline: *"Every deal, kept."*
 
-### Scene 9 — Dispute opens (0:47–0:52) — dark canvas
+### Scene 8.5 — Framing card pivot (0:47–0:49) — cream canvas ⭐ NEW
 
-**Show:** 9 frames of pure black. Cracked iPhone photo (`b9-cracked-iphone.jpg`) fades up with a subtle Ken Burns zoom-out (sub-bass impact on land). Hold the silence. Tagline *"Every deal, kept."* (italic gradient on "kept.") types in lower-third over ~800ms. Then hold — almost no motion, just a barely-perceptible breath on the photo.
+**Show:** Beat 8's final composition (Marcus + money + RELEASED pill + tagline) gracefully clears off-screen or cross-dissolves to a clean cream canvas. Large Fraunces text types in centred: ***"And when something goes wrong?"*** — word-by-word, ~250ms stagger. The word "**wrong?**" is in italic Fraunces with the indigo gradient. The **music drop lands precisely on the "wrong?" word reveal at 0:47.5** — this is the editorial pivot moment, replacing what was previously a hard cut to black. Hold the question on cream for ~1 second.
 
-**Story:** Something went wrong. The drop. The silence.
+**Story:** The Act 1 promise delivered. Now the harder question — and Vouch's other promise.
 
-**This is the most editorially restrained scene in the video. Do not add particles, sparkles, or decoration. Trust silence + image alone.**
+**Critical:**
+- Open on cream, not black
+- Type-in feels confident, not dramatic — match the editorial brand voice
+- The italic gradient on "wrong?" is the only emphasis — rest of the line in dark ink
+- Music drop syncs to the "wrong?" reveal, not to any cut
+- This beat is 2 seconds long; everything in Act 2 shifts +2s from the original timing
 
 ---
 
-### Scene 10 — Vera replays original promise (0:52–0:57) — cream canvas ⭐ MOAT
+### Scene 9 — Dispute opens (0:49–0:54) — cream canvas
 
-**Show:** Two cards slide into centre-frame, stacked. TOP card `b10-replay-card.png` (Vera replay UI showing "Marcus said: 'no scratches, original box.'") with an indigo accent border. BOTTOM card `b10-evidence-card.png` (Sarah's evidence — cracked phone photo + caption) with a neutral border. Marcus's diegetic voice clip plays — *"No scratches, original box."* — and at 0:54 the waveform bar at "scratches" pulses (scales up + pulse ring). A warning-soft highlight pill wipes in behind the word "scratches" in the text. The bottom card's border transitions from neutral to indigo and breathes.
+**Show:** The framing question lifts away (fade up + slight scale, NOT to black — just fades off the cream). The cracked iPhone photo (`b9-cracked-iphone.jpg`) enters as a **tilted polaroid-style image** — rotated ~-3°, with a subtle drop shadow, set on the cream surface like a piece of physical evidence placed on a desk. Photo scale-ins from `scale: 1.05 → 1.0` (Ken Burns micro-zoom). Sub-bass impact on the photo landing. Hold ~1s. Tagline *"Every deal, kept."* (italic gradient on "kept.") types in below the photo over ~800ms. Then hold — photo breathes subtly.
+
+**Story:** Here's what went wrong. Vouch's other promise — the safety net.
+
+**Critical:**
+- **NO black background.** The cream surface is ALWAYS visible around the photo.
+- Polaroid-style framing (slight rotation, drop shadow, cream visible at edges) — the photo is "evidence laid on a desk", not a full-bleed cinematic shot
+- No silence pause from black — flows continuously from the framing card's cream
+- Tagline is dark ink on cream, italic gradient on "kept." only
+
+---
+
+---
+
+### Scene 10 — Vera replays original promise (0:54–0:59) — cream canvas ⭐ MOAT
+
+**Show:** Two cards slide into centre-frame, stacked. TOP card `b10-replay-card.png` (Vera replay UI showing "Marcus said: 'no scratches, original box.'") with an indigo accent border. BOTTOM card `b10-evidence-card.png` (Sarah's evidence — cracked phone photo + caption) with a neutral border. Marcus's diegetic voice clip plays — *"No scratches, original box."* — and at 0:56 the waveform bar at "scratches" pulses (scales up + pulse ring). A warning-soft highlight pill wipes in behind the word "scratches" in the text. The bottom card's border transitions from neutral to indigo and breathes.
 
 **Story:** The product's own evidence chain. Marcus's actual voice indicting him. No "he-said-she-said."
 
 ---
 
-### Scene 11 — Verdict + refund (0:57–1:02) — cream canvas
+### Scene 11 — Verdict + refund (0:59–1:04) — cream canvas
 
 **Show:** Verdict card (`b11-verdict-card.png`) with glassmorphism (blur + saturation) slides up centre-frame on a dispute-chime SFX. Heading reads "Refund to Sarah." (italic gradient on "Sarah."). Below, money slides BACK from Marcus → Sarah (reverse of Scene 8's path). £609.89 counter ticks DOWN to £0. REFUNDED pill (`b11-pill-refunded.png`) appears. Sarah's avatar (`b11-sarah-avatar.png`) micro-bounces as her money arrives. Tagline `b12-tagline-lockup.png` ("Every deal, kept.") cross-fades in as the anchor.
 
@@ -154,11 +185,13 @@ These are the moments that MUST land on the music. If you nail nothing else, nai
 
 ---
 
-### Scene 12 — Brand close (1:02–1:05) — dark canvas
+### Scene 12 — Brand close (1:04–1:07) — dark canvas
 
-**Show:** Cross-fade from cream to dark `#0c0c14`. Vouch wordmark (`b12-vouch-wordmark.png`) scales in **slowly** (1.5s — deliberately slow confidence pace) centre-frame, landing at 1:02.5. Subtle Vera waveform breathing beneath. Brand line types in mono below: ***"Trust the handshake. Hold the money."*** Final word at 1:04.7. Hold 300ms.
+**Show:** Smooth transition from cream → dark `#0c0c14`. **Do NOT fade through black.** Instead, the cream surface darkens directly to `#0c0c14` over ~600ms (cream pixels animate to dark navy via a colour ramp, NOT via opacity-to-black). Vouch wordmark (`b12-vouch-wordmark.png`) scales in **slowly** (1.5s — deliberately slow confidence pace) centre-frame, landing at 1:04.5. Subtle Vera waveform breathing beneath. Brand line types in mono below: ***"Trust the handshake. Hold the money."*** Final word at 1:06.7. Hold 300ms.
 
-**At 1:05.000 — cut to black. Video ends.**
+**At 1:07.000 — cut to black. Video ends. This is the ONLY hard cut to black in the entire video.**
+
+**Critical:** The cream → dark transition uses a colour interpolation (cream tones smoothly shift to dark navy) — NOT a fade through black. Pretend the canvas itself is changing colour; the wordmark emerges from that darkened canvas.
 
 ---
 
