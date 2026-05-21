@@ -77,7 +77,7 @@ These are the moments that MUST land on the music. If you nail nothing else, nai
 
 ---
 
-### Scene 2 — Brand reveal (0:05–0:09) — cream canvas
+### Scene 2 — Brand reveal (0:05–0:09)
 
 **Show:** Vouch wordmark centred (`b12-vouch-wordmark-light.png`) landing on the music downbeat at 0:06. Small mono tagline under it. Subtle Vera waveform breathing nearby.
 
