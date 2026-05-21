@@ -32,12 +32,12 @@ Render the full Vouch demo video as one continuous 67-second scene at 1920×1080
 ## Hard constraints
 
 - **Master easing:** easeOutQuart (`cubic-bezier(0.22, 1, 0.36, 1)`). No bouncy springs.
-- **Cream `#f6f5f2`** is the background for the whole video except Beat 12 (dark `#0c0c14`). One continuous canvas — scenes lay on top. The only cut to black is the final end at 1:07.
+- **Cream `#f6f5f2`** is the background for the whole video except Beat 12 (dark `#0c0c14`). One continuous canvas — scenes lay on top. **There is NO cut to black anywhere in the video** — the final frame is the wordmark + tech-stack signature holding on the dark canvas as music fades.
 - **Pages render flat** — no 3D perspective, no polaroid tilts. Product UI is the star.
 - **Each beat stands alone** — no animation continuity bridging scenes.
 - **Each speaker gets a distinct waveform variant** so viewers can tell Vera / Sarah / Marcus apart. Use bar-count and colour variation within the brand palette (indigo + cinnamon). Waveform animates during the speech, then settles.
 - **No "escrow" in user-facing copy.** The status is "MONEY HELD".
-- **Italic indigo emphasis** — only ONE word per headline gets a solid indigo (`#5266eb`) italic Fraunces treatment (e.g. "on *time.*", "*kept.*", "*wrong?*", "*handshake.*"). No gradient — solid colour only. Editorial-classic, not "designed".
+- **Italic indigo emphasis** — only ONE word per headline gets a solid indigo (`#5266eb`) italic Fraunces treatment (e.g. "on *time.*", "*kept.*", "*wrong?*"). No gradient — solid colour only. Editorial-classic, not "designed".
 - **Brand voice:** warm-editorial, anti-decoration. No confetti, no sparkle, no emoji ornaments.
 
 ---
@@ -55,7 +55,7 @@ Render the full Vouch demo video as one continuous 67-second scene at 1920×1080
 | 0:50.000 | Cracked iPhone fully on cream (sub-bass) |
 | 0:56.000 | Waveform spike on the word "scratches" |
 | 1:04.500 | Vouch wordmark lands (final sustained chord) |
-| 1:07.000 | Cut to black — video ends |
+| 1:07.000 | Music fades. Wordmark + tech-stack signature hold on dark canvas. Video ends. |
 
 ---
 
@@ -177,9 +177,9 @@ Render the full Vouch demo video as one continuous 67-second scene at 1920×1080
 
 ### Scene 12 — Brand close (1:04–1:07) — dark canvas
 
-**Show:** Canvas darkens from cream to dark navy (NOT through black — interpolated colour shift). Vouch wordmark (`b12-vouch-wordmark.png`) lands at 1:04.5 — confident, unhurried. Vera waveform breathes beneath. Brand line in mono: ***"Trust the handshake. Hold the money."*** — solid indigo italic on "*handshake.*" Hold. Cut to black at 1:07.
+**Show:** Canvas darkens from cream to dark navy (NOT through black — interpolated colour shift). Vouch wordmark (`b12-vouch-wordmark.png`) lands at 1:04.5 — confident, unhurried. Vera waveform breathes beneath. Tech-stack signature underneath in mono small caps, 0.18em tracking: **"BUILT ON STRIPE CONNECT + ELEVENLABS CONVAI"** in muted white (`rgba(255,255,255,0.55)`). Hold the composition. Music fades. **No cut to black** — the final frame IS the wordmark + signature on the dark canvas. The video simply ends with the music tail.
 
-**Story:** The brand promise distilled.
+**Story:** The brand. The tech foundation. End on confidence, not fade.
 
 ---
 
