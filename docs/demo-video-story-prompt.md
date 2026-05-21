@@ -1,13 +1,15 @@
-# Vouch demo video — story-driven Claude Design prompt (v3.1, cream-only + framing card pivot)
+# Vouch demo video — story-driven Claude Design prompt (v3.2, cream-only + flat pages)
 
-**Why this version (v3.1):**
+**Why this version (v3.2):**
 - v2 monolithic over-specified motion (5000+ words of frame-perfect choreography across 12 scenes) and produced poor render
-- v3 inverted the approach — story + sync moments + creative freedom — and produced a working render but with two editorial issues: (1) the hard cut to black at 0:47 felt jarring, (2) the cracked iPhone fading from black read as bleak rather than urgent
-- v3.1 fixes both:
+- v3 inverted the approach — story + sync moments + creative freedom — and produced a working render but with editorial issues
+- v3.1 removed all fades to black + added the framing card pivot
+- v3.2 additionally removes ALL 3D perspective tilts on pages — show the product UI flat and prominent:
   - **Beat 1 opens on cream**, not dark canvas (cream is Vouch's home surface)
   - **Act 1 → Act 2 pivot uses a framing card on cream** ("And when something goes wrong?"), NOT a hard cut to black
-  - **Beat 9 cracked iPhone sits as a polaroid on cream**, not on black
-  - **Total runtime extended to 67s** to accommodate the 2s framing card
+  - **Beat 9 cracked iPhone is a flat photo on cream** (NOT polaroid tilted), still emotionally impactful but design-clean
+  - **Beat 4 + Beat 7 product pages render flat** (no `perspective(2000px) rotateY()`) — the UI is the star, show it off cleanly
+  - **Total runtime 67s** (Act 2 shifted +2s for the framing card)
   - **Only ONE legitimate cut to black** in the entire video — the final end at 1:07
 
 **Use this version for the monolithic render.** Keep v1 (per-beat) and v2 (monolithic-explicit) as references.
@@ -92,9 +94,11 @@ These are the moments that MUST land on the music. If you nail nothing else, nai
 
 ### Scene 4 — Multilingual seller agreement (0:18–0:28) — cream canvas ⭐ MOAT
 
-**Show:** Marcus's view (`b4-seller-vera-reading.png`) — tilted in 3D perspective with a trust-blue halo. Marcus's avatar with **Warsaw, PL** location tag (`b4-marcus-avatar-warsaw.png`) lands top-right. Vera reads Sarah's terms in Polish (waveform pulses). Marcus's diegetic voice replies *"Zgadzam się."* The Polish text (`b4-polish-text.png`) **transforms letter-by-letter into English** "I agree." (`b4-english-text.png`) — this is the hero moment. The "I agree" button appears (`b4-i-agree-button-default.png`) and gets tapped (`b4-i-agree-button-tapped.png`).
+**Show:** Marcus's view (`b4-seller-vera-reading.png`) displayed **flat and prominent** centre-frame on cream — NO 3D perspective tilt, NO rotation. The page sits straight, showing the product UI clearly with a subtle trust-blue halo behind it. Marcus's avatar with **Warsaw, PL** location tag (`b4-marcus-avatar-warsaw.png`) lands top-right. Vera reads Sarah's terms in Polish (waveform pulses). Marcus's diegetic voice replies *"Zgadzam się."* The Polish text (`b4-polish-text.png`) **transforms letter-by-letter into English** "I agree." (`b4-english-text.png`) — this is the hero moment. The "I agree" button appears (`b4-i-agree-button-default.png`) and gets tapped (`b4-i-agree-button-tapped.png`).
 
 **Story:** Cross-border voice mediation. Two parties, two languages, one agreement.
+
+**Critical:** Pages render flat (no perspective transforms). The product UI is the star — show it off cleanly.
 
 ---
 
@@ -118,7 +122,7 @@ These are the moments that MUST land on the music. If you nail nothing else, nai
 
 ### Scene 7 — Item arrived + receipt prompt (0:37–0:42) — cream canvas
 
-**Show:** Sarah's signoff page (`b7-signoff-in-escrow.png`) tilted right (mirror of Scene 4's left tilt). An iPhone parcel (`b7-parcel-arrived.jpg`) slides in from below, set down naturally. Vera asks "Does it match?" (waveform). Sarah replies "Yes." A large checkmark BEGINS to draw on top of the signoff card — but only partially (path drawn ~40%). The partial checkmark is the cliffhanger that resolves in Scene 8.
+**Show:** Sarah's signoff page (`b7-signoff-in-escrow.png`) displayed **flat and prominent** on cream — NO perspective tilt. An iPhone parcel (`b7-parcel-arrived.jpg`) slides in from below, positioned alongside the signoff page (not overlapping it — both clearly visible). Vera asks "Does it match?" (waveform). Sarah replies "Yes." A large checkmark BEGINS to draw on top of the signoff card — but only partially (path drawn ~40%). The partial checkmark is the cliffhanger that resolves in Scene 8.
 
 **Story:** Item arrives. Voice-confirmed receipt. Almost there.
 
@@ -155,13 +159,14 @@ These are the moments that MUST land on the music. If you nail nothing else, nai
 
 ### Scene 9 — Dispute opens (0:49–0:54) — cream canvas
 
-**Show:** The framing question lifts away (fade up + slight scale, NOT to black — just fades off the cream). The cracked iPhone photo (`b9-cracked-iphone.jpg`) enters as a **tilted polaroid-style image** — rotated ~-3°, with a subtle drop shadow, set on the cream surface like a piece of physical evidence placed on a desk. Photo scale-ins from `scale: 1.05 → 1.0` (Ken Burns micro-zoom). Sub-bass impact on the photo landing. Hold ~1s. Tagline *"Every deal, kept."* (italic gradient on "kept.") types in below the photo over ~800ms. Then hold — photo breathes subtly.
+**Show:** The framing question lifts away (fade up + slight scale, NOT to black — just fades off the cream). The cracked iPhone photo (`b9-cracked-iphone.jpg`) enters **flat and centred** on the cream surface — NO rotation, NO polaroid tilt. The photo sits as a clean rectangular image (with a subtle drop shadow to lift it off the cream, but otherwise upright). Photo scale-ins from `scale: 1.05 → 1.0` (Ken Burns micro-zoom). Sub-bass impact on the photo landing. Hold ~1s. Tagline *"Every deal, kept."* (italic gradient on "kept.") types in below the photo over ~800ms. Then hold — photo breathes subtly.
 
 **Story:** Here's what went wrong. Vouch's other promise — the safety net.
 
 **Critical:**
 - **NO black background.** The cream surface is ALWAYS visible around the photo.
-- Polaroid-style framing (slight rotation, drop shadow, cream visible at edges) — the photo is "evidence laid on a desk", not a full-bleed cinematic shot
+- **NO tilt or rotation** on the photo — display it flat, upright, prominent
+- Subtle drop shadow only (to separate from cream), no other decoration
 - No silence pause from black — flows continuously from the framing card's cream
 - Tagline is dark ink on cream, italic gradient on "kept." only
 
