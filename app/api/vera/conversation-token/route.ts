@@ -24,7 +24,7 @@ const PrefilledTermsSchema = z
   .object({
     item: z.string().max(500).optional(),
     amount_minor: z.number().int().nonnegative().optional(),
-    currency: z.enum(["GBP", "USD", "EUR"]).optional(),
+    currency: z.enum(["USD", "GBP", "EUR"]).optional(),
     // Seller "name" from a marketplace is usually a username/handle (e.g.
     // "mrclearances"). Stays as a placeholder until SELLER_ONBOARDING captures
     // the real first name. Looser regex than user_first_name on purpose.
@@ -149,7 +149,7 @@ export async function POST(request: Request) {
       item: t?.item ?? "",
       quantity: 1,
       amountMinor: t?.amount_minor ?? 0,
-      currency: t?.currency ?? ("GBP" as const),
+      currency: t?.currency ?? ("USD" as const),
     };
     const created = await dealStore.create({
       buyer: {

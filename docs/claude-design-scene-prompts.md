@@ -19,7 +19,7 @@
 ```
 Create a 5-second 16:9 1920×1080 motion video clip at 30fps.
 
-VISUAL: A clean screen recording aesthetic of a desktop browser window showing a real eBay product listing — "iPhone 15 256GB, white, unlocked" with seller "Marcus Adebayo" and price "£400.00". The listing looks authentic, with eBay's familiar layout.
+VISUAL: A clean screen recording aesthetic of a desktop browser window showing a real eBay product listing — "iPhone 15 256GB, white, unlocked" with seller "Marcus Adebayo" and price "$400.00". The listing looks authentic, with eBay's familiar layout.
 
 ANIMATION SEQUENCE:
 - 0.0s–0.8s: Listing page loads, Sarah's cursor hovers over the price area
@@ -74,7 +74,7 @@ VISUAL: A clean web app interface — Vouch's /new page on a cream background (#
 PRE-FILLED FIELDS (visible from start, slightly faded):
 - Item: "iPhone 15, 256GB, white, unlocked"
 - Seller: "Marcus Adebayo"
-- Amount: "£400 GBP"
+- Amount: "$400 GBP"
 (Each prefilled card has a small chip indicating "From eBay")
 
 ANIMATION SEQUENCE:
@@ -103,7 +103,7 @@ VISUAL: A clean web app interface — Vouch's /deal/[ref]/seller page on cream b
 KEY ANIMATION — LETTER-BY-LETTER LANGUAGE MORPH:
 
 - 0.0s–4.0s: Vera's waveform animates as she recites Sarah's terms in Polish (real Vera audio added in post, ~4s).
-  Subtitled under Marcus's avatar in JetBrains Mono: "Sarah ustawiła ofertę..." then "...przeczytaj warunki..." then summary line "...iPhone 15, £400, Royal Mail Tracked..."
+  Subtitled under Marcus's avatar in JetBrains Mono: "Sarah ustawiła ofertę..." then "...przeczytaj warunki..." then summary line "...iPhone 15, $400, Royal Mail Tracked..."
 
 - 4.0s–5.0s: Marcus's voice waveform pulses — he says "Zgadzam się." (real audio added in post).
 
@@ -128,8 +128,8 @@ Create a 5-second 16:9 1920×1080 motion video clip at 30fps. PEAK MOMENT.
 VISUAL: Big cream surface (#f6f5f2). Centre-frame: an animated vault / escrow lock visual.
 
 ANIMATION SEQUENCE:
-- 0.0s–1.0s: A floating "£400" amount counter sits centre-frame, slightly bouncing
-- 1.0s–2.5s: The £400 transforms / slides into a stylised mechanical lockbox or vault graphic — like a Stripe-flavoured safe. Coins/notes scatter inwards and consolidate. Status pill (top-right corner) ticks through: "AGREED" → "AWAITING_CONFIRM" → settles on "IN_ESCROW".
+- 0.0s–1.0s: A floating "$400" amount counter sits centre-frame, slightly bouncing
+- 1.0s–2.5s: The $400 transforms / slides into a stylised mechanical lockbox or vault graphic — like a Stripe-flavoured safe. Coins/notes scatter inwards and consolidate. Status pill (top-right corner) ticks through: "AGREED" → "AWAITING_CONFIRM" → settles on "IN_ESCROW".
 - 2.5s–3.0s: ⭐ VAULT SNAPS SHUT — bold satisfying mechanical click. The vault door visually slams closed with a brief 2-3px screen shake. SFX added in post (lock-thunk, 150ms, low-frequency).
 - 3.0s–4.5s: Tagline lands AS the money locks: "Receive your money, on time." in small mono under the vault, letter-spacing 0.14em, ink-muted colour
 - 4.5s–5.0s: Brief hold, then cinematic time-skip whoosh begins prepping the next beat
@@ -190,11 +190,11 @@ OUTPUT: MP4, 1920×1080, 30fps, ~5s duration.
 ```
 Create a 5-second 16:9 1920×1080 motion video clip at 30fps. THIS IS THE EMOTIONAL CLIMAX OF ACT 1.
 
-VISUAL: Big centre-frame ✓ tick animation. £400 amount counter releases from the escrow vault and slides toward Marcus's avatar.
+VISUAL: Big centre-frame ✓ tick animation. $400 amount counter releases from the escrow vault and slides toward Marcus's avatar.
 
 ANIMATION SEQUENCE:
 - 0.0s–1.5s: ⭐ HERO TICK — bold scale-in checkmark, satisfying weight. The tick is large (centre 40% of frame), drawn in Stripe purple (#635bff), with a soft glow on completion.
-- 1.5s–3.5s: The £400 counter slides out of the vault graphic (left side of frame) and animates toward Marcus's avatar on the right. Coin-flow visual along the path. Marcus's avatar shows a small notification chime visual.
+- 1.5s–3.5s: The $400 counter slides out of the vault graphic (left side of frame) and animates toward Marcus's avatar on the right. Coin-flow visual along the path. Marcus's avatar shows a small notification chime visual.
 - 3.5s–4.5s: Tagline lands LARGE: "Receive your money, on time." — Fraunces semibold, italic on "on time", hero gradient (white → violet-300 → Stripe purple). Marcus's avatar and the tagline share the final frame.
 - 4.5s–5.0s: HARD CUT to BLACK at exactly frame 1410 (= 0:47.00 at 30fps). The music drops at this moment.
 
@@ -253,14 +253,14 @@ OUTPUT: MP4, 1920×1080, 30fps, ~5s duration.
 ```
 Create a 5-second 16:9 1920×1080 motion video clip at 30fps.
 
-VISUAL: A verdict card slides in centre-frame. Below it, an animation of £400 sliding back from the escrow vault toward Sarah's avatar.
+VISUAL: A verdict card slides in centre-frame. Below it, an animation of $400 sliding back from the escrow vault toward Sarah's avatar.
 
 ANIMATION SEQUENCE:
 - 0.0s–1.5s: Verdict card slides in from above, lands authoritatively. Card content:
     - Title: "RULING" (mono uppercase, letter-spacing 0.14em, A24 red)
     - Body (Fraunces): "Refund to Sarah. Marcus's account flagged."
     - Status pill at bottom: "REFUNDED" in red
-- 1.5s–4.0s: Below the card, animated coin-stream / money-particles flow back from a small vault graphic on the right to Sarah's avatar on the left. Counter ticks up on Sarah's side: "£0 → £400".
+- 1.5s–4.0s: Below the card, animated coin-stream / money-particles flow back from a small vault graphic on the right to Sarah's avatar on the left. Counter ticks up on Sarah's side: "$0 → $400".
 - 4.0s–5.0s: Tagline lands small under the verdict: "Every deal, kept." in mono, ink-muted. Brief hold, prep for close.
 
 STYLE: Authoritative, fair, not gloating. The money reversal animation should feel deliberate — the system did its job.

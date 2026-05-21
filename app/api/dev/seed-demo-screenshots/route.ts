@@ -11,7 +11,7 @@ export const dynamic = "force-dynamic";
  * through the buyer → seller → onboard → signoff flow end-to-end.
  *
  * All 4 deals share the same realistic dataset (Sarah → Marcus, iPhone 15
- * Pro Max 512GB Blue Titanium, £609.89, by Friday) so screenshots feel
+ * Pro Max 512GB Blue Titanium, $609.89, by Friday) so screenshots feel
  * like the same person at different points in the flow.
  *
  * OWNER_TOKEN gated. Returns the 4 deal references + ready-to-visit URLs.
@@ -59,8 +59,8 @@ export async function POST(req: NextRequest) {
       terms: {
         item: "Apple iPhone 15 Pro Max — 512GB — Blue Titanium (Unlocked)",
         quantity: 1,
-        amountMinor: 60989, // £609.89
-        currency: "GBP" as const,
+        amountMinor: 60989, // $609.89
+        currency: "USD" as const,
         deliveryMethod: "Royal Mail Special Delivery",
         notes: "deadline: by Friday 22 May",
       },
@@ -155,7 +155,7 @@ export async function POST(req: NextRequest) {
     },
     {
       shot: "seller-04-signoff.png",
-      description: "Joint sign-off in IN_ESCROW stage — green 'money is held' card with £609.89.",
+      description: "Joint sign-off in IN_ESCROW stage — green 'money is held' card with $609.89.",
       url: `${origin}/deal/${inEscrow.reference}/signoff`,
       manual_steps: "Just visit and screenshot.",
     },

@@ -131,7 +131,7 @@ export default function HowItWorksPage() {
                 src: "/images/how-it-works/seller-04-signoff.png",
                 alt: "Joint sign-off complete; money held safely",
               }}
-              hint="/deal/[ref]/signoff in IN_ESCROW — green locked card with £400 amount"
+              hint="/deal/[ref]/signoff in IN_ESCROW — green locked card with $400 amount"
             />
           </ol>
         </section>

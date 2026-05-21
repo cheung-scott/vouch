@@ -10,14 +10,14 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 /**
- * Format a money amount in pence/cents (Stripe convention) as a localised string.
- * @example formatMoney(40000) → "£400.00"
+ * Format a money amount in cents/pence (Stripe convention) as a localised string.
+ * @example formatMoney(40000) → "$400.00"
  */
 export function formatMoney(
   amountInMinorUnits: number,
-  currency: "GBP" | "USD" | "EUR" = "GBP",
+  currency: "USD" | "GBP" | "EUR" = "USD",
 ): string {
-  return new Intl.NumberFormat("en-GB", {
+  return new Intl.NumberFormat("en-US", {
     style: "currency",
     currency,
     minimumFractionDigits: 2,

@@ -137,7 +137,7 @@ export function HeroBackground() {
 
 const paymentIntent = await stripe.paymentIntents.create({
   amount: 40000,
-  currency: 'gbp',
+  currency: 'usd',
   capture_method: 'manual',
   metadata: {
     vouch_deal_id: 'deal_2xK9mN',

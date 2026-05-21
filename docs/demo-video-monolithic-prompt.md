@@ -160,7 +160,7 @@ From 0:27–0:28, the radial wipe deepens, cream dims slightly. **Directly conti
 
 **Peak motion MUST land on the drum hit at 0:28.7.**
 
-From 0:28–0:28.4, a pile of £400 (4-5 layered indigo+cream banknote rectangles, slight tilt) slides into centre-frame from offstage left, 400ms.
+From 0:28–0:28.4, a pile of $400 (4-5 layered indigo+cream banknote rectangles, slight tilt) slides into centre-frame from offstage left, 400ms.
 
 From 0:28.4–0:28.55, stylised SVG vault appears centre-frame (rounded square, concentric rings, brushed-steel grey outline). Shutter at 90° open. 150ms via opacity + slight scale-in.
 
@@ -231,7 +231,7 @@ From 0:42–0:43, complete the partial checkmark from Beat 7: `pathLength: 0.4 �
 
 From 0:43–0:43.4, hero tick scale-in: large success-green checkmark on a white circle (120px diameter, semantic success color) appears centre-frame. `scale: 0 → 1.15 → 1`, 350ms, single concentric ring pulse on the overshoot.
 
-From 0:43.4–0:44.4, `£0` counter appears below the tick. Ticks UP £0 → £609.89 over 700ms, per-digit increment animation. Fraunces semibold, 64px.
+From 0:43.4–0:44.4, `$0` counter appears below the tick. Ticks UP $0 → $609.89 over 700ms, per-digit increment animation. Fraunces semibold, 64px.
 
 From 0:43.4–0:45.4, simultaneously, money slides from vault position (off-screen left) to Marcus's avatar (off-screen right) via SVG motion path. `offsetPath` + `offsetDistance: 0% → 100%`, 1.2s easeInOut. Marcus's avatar `b4-marcus-avatar-warsaw.png` enters from the right at 0:44 at the path's endpoint.
 
@@ -297,11 +297,11 @@ From 0:57–0:57.6, `b11-verdict-card.png` slides up into centre (`y: 100 → 0,
 
 From 0:58–0:58.4, card heading "Refund to Sarah." reveals word-by-word (80ms stagger). "Sarah" in italic indigo.
 
-From 0:59–1:00.2, below the card, money reversal. £-symbol cluster slides BACK from Marcus's position (off-screen right) toward Sarah (off-screen left) via REVERSE of Beat 8's motion path. `offsetPath` + `offsetDistance: 0% → 100%` along reversed path, 1.2s easeInOut.
+From 0:59–1:00.2, below the card, money reversal. $-symbol cluster slides BACK from Marcus's position (off-screen right) toward Sarah (off-screen left) via REVERSE of Beat 8's motion path. `offsetPath` + `offsetDistance: 0% → 100%` along reversed path, 1.2s easeInOut.
 
-From 0:59–0:59.8, £-amount counter beneath verdict card ticks DOWN £609.89 → £0 over 800ms.
+From 0:59–0:59.8, $-amount counter beneath verdict card ticks DOWN $609.89 → $0 over 800ms.
 
-At 1:00.5, `b11-pill-refunded.png` cross-fades in next to the counter (now £0), 300ms.
+At 1:00.5, `b11-pill-refunded.png` cross-fades in next to the counter (now $0), 300ms.
 
 From 1:01–1:01.3, Sarah's avatar (`b11-sarah-avatar.png`) at money's destination does micro-bounce `scale: 1 → 1.06 → 1`, 250ms, no spring.
 

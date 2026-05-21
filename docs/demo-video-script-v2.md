@@ -45,7 +45,7 @@ Each beat:
 |---|---|
 | **Music** | Intro stab, kick lands on 0:01 |
 | **Tagline** | *"Receive your money, on time."* — word-by-word reveal, hero italic gradient on "**on time**" |
-| **On-screen** | Real eBay listing page (iPhone 15 256GB, £400, seller Marcus). Vouch Chrome extension injects a "**Pay with Vouch**" button next to the eBay "Buy It Now" button. Button has a subtle glow + pulse animation. Sarah's cursor moves toward it. |
+| **On-screen** | Real eBay listing page (iPhone 15 256GB, $400, seller Marcus). Vouch Chrome extension injects a "**Pay with Vouch**" button next to the eBay "Buy It Now" button. Button has a subtle glow + pulse animation. Sarah's cursor moves toward it. |
 | **VO** | (silent for the first 2s, then) *"Receive your money, on time."* (Vera, narrator-mode) starts on word 1 of the typography reveal |
 | **Animation** | Page loads → extension button slides in from the right edge of the buy-box → glows → cursor click → cream-surface wipe enters from below as we transition to Vera. Reference clip needed: **"Chrome extension button injection on a familiar marketplace + glow + click"** |
 | **SFX** | Soft UI tick on button land + light click on cursor |
@@ -107,7 +107,7 @@ Each beat:
 |---|---|
 | **Music** | Drum hit / accent — verify exact timestamp by listening |
 | **Tagline** | *"receive your money, on time."* lands small in mono under the lock animation |
-| **On-screen** | Big cream surface with **escrow lock animation**. Pile of £400 (or stack-of-cards visual) slides into a vault / lock. Status pill: AWAITING_SELLER → AGREED → IN_ESCROW. |
+| **On-screen** | Big cream surface with **escrow lock animation**. Pile of $400 (or stack-of-cards visual) slides into a vault / lock. Status pill: AWAITING_SELLER → AGREED → IN_ESCROW. |
 | **VO** | (silence — let music + SFX carry) |
 | **Animation** | **PEAK MOMENT.** Lock-thunk visual: vault snaps shut, brief 2–3px screen shake. The tagline appears AS the money locks — reinforcing the promise just made. Reference clip needed: **"satisfying mechanical lock animation — vault / safe / lockbox click"** |
 | **SFX** | 🔒 **Lock-thunk SFX (150ms, low frequency)** — the most important SFX in the video |
@@ -149,7 +149,7 @@ Each beat:
 |---|---|
 | **Music** | **BUILD into the drop** at 0:47 — Track 4's drop is the editorial pivot |
 | **Tagline** | *"Receive your money, on time."* lands one last time as the money slides to Marcus — the freelancer/seller's payoff moment |
-| **On-screen** | Big animated ✓ tick lands center-screen. £400 amount counter releases from escrow to Marcus's avatar. Marcus gets a notification chime visual. The tagline + Marcus's avatar share the frame for ~1 second — the promise is kept. |
+| **On-screen** | Big animated ✓ tick lands center-screen. $400 amount counter releases from escrow to Marcus's avatar. Marcus gets a notification chime visual. The tagline + Marcus's avatar share the frame for ~1 second — the promise is kept. |
 | **VO** | (silent — visual + SFX punctuate) |
 | **Animation** | **HERO TICK** — bold scale-in, satisfying weight. Money slides out of vault toward Marcus. Reference clip needed: **"satisfying checkmark tick animation"** + **"money transfer / coin slide"** |
 | **SFX** | 🔔 Release bell (gentle, ~400ms) on tick land |
@@ -199,7 +199,7 @@ Each beat:
 |---|---|
 | **Music** | Full energy return |
 | **Tagline** | *"Every deal, kept."* lands small under the verdict card as confirmation — the promise pays off |
-| **On-screen** | Verdict card slides in: **"Ruling: refund to Sarah. Marcus's account flagged."** Beneath: £400 amount slides back from escrow to Sarah's avatar. Status pill: REFUNDED. Tagline appears small underneath. |
+| **On-screen** | Verdict card slides in: **"Ruling: refund to Sarah. Marcus's account flagged."** Beneath: $400 amount slides back from escrow to Sarah's avatar. Status pill: REFUNDED. Tagline appears small underneath. |
 | **VO** | (NONE — possibly a single Vera *"Done."* if you want, but my recommendation: silence) |
 | **Animation** | Money reversal — animated coin-stream back to Sarah. Verdict card lands authoritatively. Tagline appears. Reference clip needed: **"refund / money returning to buyer animation"** + **"verdict / ruling card reveal"** |
 | **SFX** | Soft chime on verdict; coin/cash sweep on money return |

@@ -124,7 +124,7 @@ export function SellerRepBadge({
           {stats.total_amount_minor > 0 && (
             <>
               <span className="mx-1.5 text-[#8a8478]">·</span>
-              <span>£{(stats.total_amount_minor / 100).toFixed(0)} moved</span>
+              <span>${(stats.total_amount_minor / 100).toFixed(0)} moved</span>
             </>
           )}
         </p>

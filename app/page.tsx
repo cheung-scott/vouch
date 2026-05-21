@@ -144,8 +144,8 @@ function MergedHero() {
 // ══════════════════════════════════════════════════════════════════════════
 
 const ARTIFACTS = [
-  { txt: "you said £500 by Friday",  x: -180, y: -120, rot: -8 },
-  { txt: "I owe you £200 - Mike",    x:  140, y: -100, rot:  6 },
+  { txt: "you said $500 by Friday",  x: -180, y: -120, rot: -8 },
+  { txt: "I owe you $200 - Mike",    x:  140, y: -100, rot:  6 },
   { txt: "🎤 voice note · 0:18",     x: -220, y:   40, rot: -12 },
   { txt: "FB Marketplace · sold",    x:  200, y:   60, rot: 10 },
   { txt: "u still good for it??",    x: -100, y:  140, rot: 5 },
@@ -261,7 +261,7 @@ function MergedPainPivot() {
 }
 
 // ══════════════════════════════════════════════════════════════════════════
-// MOAT BAND — £8B stat hook + true pitch (was "text trails" line)
+// MOAT BAND — $10B stat hook + true pitch (was "text trails" line)
 // ══════════════════════════════════════════════════════════════════════════
 
 function MoatBand() {
@@ -283,7 +283,7 @@ function MoatBand() {
             className="tabular font-display font-semibold leading-none tracking-[-0.03em] text-[var(--ink)]"
             style={{ fontSize: "clamp(64px, 12vw, 140px)" }}
           >
-            £8 billion
+            $10 billion
           </span>
           <span className="text-base text-[var(--ink-muted)] md:text-lg">
             lost annually to peer-to-peer payment fraud.
@@ -291,7 +291,7 @@ function MoatBand() {
         </div>
 
         <h2 className="mt-4 font-display text-3xl font-medium leading-tight tracking-tight text-[var(--ink)] md:text-5xl">
-          When £400 goes missing,{" "}
+          When $400 goes missing,{" "}
           <span className="emph">screenshots aren&rsquo;t enough.</span>
         </h2>
         <p className="mx-auto max-w-2xl text-base text-[var(--ink-muted)] md:text-lg">
@@ -462,7 +462,7 @@ function PhaseCaption({
 const CHAOS_ITEMS = [
   { txt: "FB Marketplace · iPhone",     x: -180, y: -80,  rot: -8 },
   { txt: "🎤 voice note · 0:34",        x:  170, y: -110, rot:  6 },
-  { txt: "WhatsApp · £400 ok?",         x: -200, y:  40,  rot:  4 },
+  { txt: "WhatsApp · $400 ok?",         x: -200, y:  40,  rot:  4 },
   { txt: "Tracking · awaiting label",   x:  190, y:  60,  rot: -6 },
   { txt: "DM · still up?",              x:  -10, y: -150, rot:  2 },
   { txt: "Bank ref · iphone-marcus",    x:   20, y:  120, rot: -3 },
@@ -573,7 +573,7 @@ function MergedDealRecordCard({
               className="tabular font-display font-semibold"
               style={{ color: reduced ? "var(--ink)" : amountColor }}
             >
-              £400
+              $400
             </motion.span>
           </dd>
         </div>
@@ -624,7 +624,7 @@ function MergedDealRecordCard({
           className="mt-3 text-center text-[12px] font-semibold uppercase tracking-[0.14em]"
           style={{ fontFamily: "var(--font-jetbrains), monospace", color: "var(--success)" }}
         >
-          £400 routed to Marcus
+          $400 routed to Marcus
         </p>
       </motion.div>
     </div>
@@ -798,7 +798,7 @@ const COMP_ROWS: { feature: string; cells: Record<string, CompCell> }[] = [
   { feature: "Funds held until both confirm", cells: { vouch: { ok: true }, paypal: "Partial", wise: { ok: false }, direct: { ok: false } } },
   { feature: "Dispute resolution", cells: { vouch: "Voice replay", paypal: "Text + tickets", wise: "Limited", direct: "None" } },
   { feature: "Multilingual mediation", cells: { vouch: "80 languages", paypal: "English-led", wise: "English-led", direct: "None" } },
-  { feature: "Fee per deal", cells: { vouch: "2.9%", paypal: "2.99% + £0.30", wise: "0.5 - 1.5%", direct: "0%" } },
+  { feature: "Fee per deal", cells: { vouch: "2.9%", paypal: "2.99% + $0.30", wise: "0.5 - 1.5%", direct: "0%" } },
   { feature: "Protection for sellers", cells: { vouch: { ok: true }, paypal: { ok: false }, wise: { ok: false }, direct: { ok: false } } },
 ];
 

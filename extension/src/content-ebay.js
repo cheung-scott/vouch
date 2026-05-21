@@ -81,7 +81,7 @@
 
   /**
    * Parse an eBay price string into { amount, currency }.
-   * Handles: "£400.00", "US $399.99", "EUR 1,250.50", "GBP 75", etc.
+   * Handles: "US $399.99", "£400.00", "EUR 1,250.50", "GBP 75", etc.
    */
   function parsePrice(raw) {
     if (!raw) return { amount: "", currency: "" };

@@ -63,7 +63,7 @@ Render the full Vouch demo video as one continuous 67-second scene at 1920×1080
 
 ### Scene 1 — Hook (0:00–0:05)
 
-**Show:** Hero tagline appears word-by-word: *"Receive your money, on time."* — solid indigo italic on "*time.*" Then an eBay-style product listing for an iPhone 15 Pro Max 512GB Blue Titanium, £609.89. The Pay with Vouch button injects next to the existing buy button. Cursor clicks it.
+**Show:** Hero tagline appears word-by-word: *"Receive your money, on time."* — solid indigo italic on "*time.*" Then an eBay-style product listing for an iPhone 15 Pro Max 512GB Blue Titanium, $609.89. The Pay with Vouch button injects next to the existing buy button. Cursor clicks it.
 
 **Story:** Real marketplace. New way to pay. One click in.
 
@@ -81,7 +81,7 @@ Render the full Vouch demo video as one continuous 67-second scene at 1920×1080
 
 ### Scene 3 — Buyer intake (0:09–0:18)
 
-**Show:** Vouch's `/new` page with Vera's voice intake UI. Vera asks her question (her waveform plays). Sarah replies *"By Friday."* (her waveform plays). Four captured-term cards arrive into the right-side strip — item (iPhone 15 Pro Max 512GB), seller (Marcus), amount (£609.89), delivery (By Friday). Hand off to Marcus's side.
+**Show:** Vouch's `/new` page with Vera's voice intake UI. Vera asks her question (her waveform plays). Sarah replies *"By Friday."* (her waveform plays). Four captured-term cards arrive into the right-side strip — item (iPhone 15 Pro Max 512GB), seller (Marcus), amount ($609.89), delivery (By Friday). Hand off to Marcus's side.
 
 **Story:** Vera captures the whole deal by voice in 9 seconds. Effortless.
 
@@ -105,7 +105,7 @@ Render the full Vouch demo video as one continuous 67-second scene at 1920×1080
 
 ### Scene 5 — Lock (0:28–0:33) ⭐ ACT 1 HERO
 
-**Show:** A pile of £400 (abstract layered banknote shapes — indigo + cream). A vault. The money goes into the vault. **At 0:28.7 — the drum hit — the vault snaps shut in a single frame, with screen shake.** Pulse rings. Status pills cascade through AWAITING SELLER → AGREED → MONEY HELD. Tagline below in lowercase mono: "receive your money, on *time.*" — solid indigo italic on "*time.*"
+**Show:** A pile of $400 (abstract layered banknote shapes — indigo + cream). A vault. The money goes into the vault. **At 0:28.7 — the drum hit — the vault snaps shut in a single frame, with screen shake.** Pulse rings. Status pills cascade through AWAITING SELLER → AGREED → MONEY HELD. Tagline below in lowercase mono: "receive your money, on *time.*" — solid indigo italic on "*time.*"
 
 **Story:** The drum hit. The lock. Money held safely.
 
@@ -137,7 +137,7 @@ Render the full Vouch demo video as one continuous 67-second scene at 1920×1080
 
 ### Scene 8 — Release payoff (0:42–0:47) ⭐ ACT 1 PAYOFF
 
-**Show:** A hero green tick. £0 → £609.89 counter. Money travels from the vault to Marcus's avatar; he gets a notification. Final tagline "Receive your money, on *time.*" lands word-by-word — solid indigo italic on "*time.*" — last word at 0:46.97. RELEASED pill appears.
+**Show:** A hero green tick. $0 → $609.89 counter. Money travels from the vault to Marcus's avatar; he gets a notification. Final tagline "Receive your money, on *time.*" lands word-by-word — solid indigo italic on "*time.*" — last word at 0:46.97. RELEASED pill appears.
 
 **Story:** The promise delivered. Money lands.
 
@@ -179,7 +179,7 @@ Render the full Vouch demo video as one continuous 67-second scene at 1920×1080
 
 ### Scene 11 — Verdict + refund (0:59–1:04)
 
-**Show:** A glassmorphism verdict card slides in. Dispute-chime SFX on land. Heading: "Refund to *Sarah*." — solid indigo italic on "*Sarah*." Money returns from Marcus back to Sarah. Counter ticks down to £0. REFUNDED pill appears. Sarah's avatar reacts. Tagline anchor: "Every deal, *kept.*"
+**Show:** A glassmorphism verdict card slides in. Dispute-chime SFX on land. Heading: "Refund to *Sarah*." — solid indigo italic on "*Sarah*." Money returns from Marcus back to Sarah. Counter ticks down to $0. REFUNDED pill appears. Sarah's avatar reacts. Tagline anchor: "Every deal, *kept.*"
 
 **Story:** The system worked. Refund issued. Account flagged.
 

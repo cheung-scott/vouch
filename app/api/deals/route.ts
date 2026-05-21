@@ -70,7 +70,7 @@ export async function POST(req: NextRequest) {
       item: parsed.data.initialTerms?.item ?? "",
       quantity: 1,
       amountMinor: parsed.data.initialTerms?.amountMinor ?? 0,
-      currency: parsed.data.initialTerms?.currency ?? "GBP",
+      currency: parsed.data.initialTerms?.currency ?? "USD",
     },
   });
 

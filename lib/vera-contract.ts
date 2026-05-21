@@ -1,13 +1,13 @@
 import type { Deal, DealTerms } from "@/types/deal";
 
 const CURRENCY_SPOKEN: Record<DealTerms["currency"], string> = {
-  GBP: "pounds",
   USD: "dollars",
+  GBP: "pounds",
   EUR: "euros",
 };
 
 function spokenAmount(terms: DealTerms): string {
-  const major = (terms.amountMinor / 100).toLocaleString("en-GB", {
+  const major = (terms.amountMinor / 100).toLocaleString("en-US", {
     minimumFractionDigits: terms.amountMinor % 100 === 0 ? 0 : 2,
     maximumFractionDigits: 2,
   });
@@ -17,7 +17,7 @@ function spokenAmount(terms: DealTerms): string {
 function spokenDeadline(terms: DealTerms): string | null {
   if (!terms.deadline) return null;
   const d = new Date(terms.deadline);
-  return d.toLocaleDateString("en-GB", {
+  return d.toLocaleDateString("en-US", {
     weekday: "long",
     day: "numeric",
     month: "long",

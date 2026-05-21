@@ -220,7 +220,7 @@ export function RecordWidget({ className = '' }: RecordWidgetProps) {
             Amount
           </label>
           <div className="flex items-center pt-7 pb-3 px-4 bg-white/[0.06] border border-white/[0.12] rounded-lg">
-            <span className="text-white/48 mr-1">£</span>
+            <span className="text-white/48 mr-1">$</span>
             <input
               type="text"
               value={amount}

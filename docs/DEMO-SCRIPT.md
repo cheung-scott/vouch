@@ -33,7 +33,7 @@
 **Visual:**
 - Pure black frame. No logo yet.
 - Text appears centred, slow fade-in:
-  - Line 1: "Every year, **£8 billion** is lost"
+  - Line 1: "Every year, **$10 billion** is lost"
   - Line 2: "to peer-to-peer payment scams."
 - Subtle particle/grain texture across the black.
 - After 3.5s: text fades, replaced by Vouch logo mark (the pulsing purple dot) for 1.0s.
@@ -46,14 +46,14 @@
 - A single soft chime at 0:04 as Vouch logo appears.
 
 **Submagic caption:**
-- "£8 BILLION LOST TO P2P SCAMS EACH YEAR"
+- "$8 BILLION LOST TO P2P SCAMS EACH YEAR"
 
 **Claude Design prompt (for this scene):**
 ```
 Create a 5-second cinematic title card. Pure black background.
 Two lines of text appear centred, Fraunces serif 600 italic, weight 500,
 letter-spacing -0.025em, white with subtle gradient pull toward stripe purple #635bff.
-Line 1: "Every year, £8 billion is lost" — fades in 0.4s, holds 1.4s.
+Line 1: "Every year, $10 billion is lost" — fades in 0.4s, holds 1.4s.
 Line 2: "to peer-to-peer payment scams." — fades in 0.4s after Line 1 starts, holds 2.4s.
 At 3.5s, both lines fade out (0.5s). At 4.0s, a single 28px white circle with a
 3px stripe-purple dot at its centre appears, gently pulses (scale 0.85 → 1.05 over 0.8s).
@@ -77,7 +77,7 @@ At 5.0s, cut to next scene.
 
 > **Vera** *(0:06 – 0:10):* "Sarah, tell me what you're buying — model, condition, what's included."
 >
-> **Sarah** *(0:11 – 0:16):* "An iPhone 15, 256 gigs, white, unlocked. From Marcus. For £400. Shipped by Friday."
+> **Sarah** *(0:11 – 0:16):* "An iPhone 15, 256 gigs, white, unlocked. From Marcus. For $400. Shipped by Friday."
 >
 > **Vera** *(0:17 – 0:18):* "Got it. I'll check with Marcus."
 
@@ -87,7 +87,7 @@ At 5.0s, cut to next scene.
 
 **Submagic captions** (split across the scene):
 - 0:06: "Vera: Sarah, tell me what you're buying."
-- 0:11: "iPhone 15, 256 gigs, white, unlocked. £400 from Marcus."
+- 0:11: "iPhone 15, 256 gigs, white, unlocked. $400 from Marcus."
 - 0:17: "Vera: Got it. I'll check with Marcus."
 
 **Claude Design prompt:**
@@ -128,7 +128,7 @@ At end (0:18), Sarah's waveform fades out, Vera's continues briefly, then cut.
 
 **Voice (verbatim):**
 
-> **Vera** *(0:19 – 0:24):* "Marcus, Sarah wants to buy your iPhone 15 — 256 gigs, white, unlocked — for £400, shipped by Friday. Does that match?"
+> **Vera** *(0:19 – 0:24):* "Marcus, Sarah wants to buy your iPhone 15 — 256 gigs, white, unlocked — for $400, shipped by Friday. Does that match?"
 >
 > **Marcus** *(0:25 – 0:28):* "Yeah, that's what we agreed. Royal Mail tracked. By Friday end of day."
 
@@ -137,7 +137,7 @@ At end (0:18), Sarah's waveform fades out, Vera's continues briefly, then cut.
 - Same voice-listening bloom SFX at 0:25.
 
 **Submagic captions:**
-- 0:19: "Vera: Sarah wants to buy your iPhone for £400, shipped by Friday."
+- 0:19: "Vera: Sarah wants to buy your iPhone for $400, shipped by Friday."
 - 0:25: "Yeah, that's what we agreed. Royal Mail tracked."
 
 **Claude Design prompt:**
@@ -166,13 +166,13 @@ At end, both waveforms fade simultaneously.
 - Split-screen — Sarah's phone left, Marcus's phone right. Both showing Vera's "joint sign-off" screen.
 - Centred between them: a large gold/purple gradient text "I AGREE" — appears twice, once spoken by each.
 - Camera zooms out slightly to reveal both phones side-by-side.
-- At 0:33: a £400 figure appears centred over the screens, in Fraunces serif tabular, large.
-- At 0:34: the £400 visibly "locks" — animation: the digits compress slightly, a subtle ripple emanates outward, the colour shifts from white to indigo, a thin glow forms around the number.
+- At 0:33: a $400 figure appears centred over the screens, in Fraunces serif tabular, large.
+- At 0:34: the $400 visibly "locks" — animation: the digits compress slightly, a subtle ripple emanates outward, the colour shifts from white to indigo, a thin glow forms around the number.
 - A status pill appears below: "IN_ESCROW — held by Stripe Connect" — in JetBrains Mono, with the pulsing locked-dot.
 
 **Voice:**
 
-> **Vera** *(0:28 – 0:32):* "Confirming: Sarah pays £400 for the iPhone, shipped Friday via Royal Mail. Marcus, Sarah — say 'I agree' to lock the deal."
+> **Vera** *(0:28 – 0:32):* "Confirming: Sarah pays $400 for the iPhone, shipped Friday via Royal Mail. Marcus, Sarah — say 'I agree' to lock the deal."
 >
 > **Sarah** *(0:32 – 0:33):* "I agree."
 >
@@ -180,13 +180,13 @@ At end, both waveforms fade simultaneously.
 
 **Audio:**
 - Vera's voice, then both confirmations.
-- At 0:34, **LOCK-THUNK SFX** (soft, ~150ms, slightly metallic but warm) timed with the £400 locking animation.
+- At 0:34, **LOCK-THUNK SFX** (soft, ~150ms, slightly metallic but warm) timed with the $400 locking animation.
 - Ambient piano deepens slightly at this point.
 
 **Submagic captions:**
-- 0:28: "Vera: Sarah pays £400 for the iPhone, shipped Friday."
+- 0:28: "Vera: Sarah pays $400 for the iPhone, shipped Friday."
 - 0:32: "Both: I agree."
-- 0:34: "£400 LOCKED IN ESCROW"
+- 0:34: "$400 LOCKED IN ESCROW"
 
 **Claude Design prompt:**
 ```
@@ -203,7 +203,7 @@ At 0:32: text "I agree" appears in white Fraunces 600 italic centred between
 the phones, briefly (0.5s), then duplicates with a slight offset suggesting two voices.
 
 At 0:33: cut to a centred composition — both phones smaller, framing a large
-£400 figure in Fraunces 600 tabular, 124px, white. At 0:34, the £400:
+$400 figure in Fraunces 600 tabular, 124px, white. At 0:34, the $400:
 - compresses slightly (scale 1.0 → 0.96 over 200ms)
 - a soft ripple emanates outward (radial blur reveal)
 - colour shifts white → #7a6ce8 (the locked-purple) over 300ms
@@ -224,24 +224,24 @@ Background: black throughout, with subtle stripe-purple radial glow from below.
 **Visual:**
 - Cut to a different scene: cream background, no phone — a desktop browser-like frame showing the Vouch app dashboard.
 - The dashboard shows two avatars (Lena + a client) at the top, with a deal flow visible:
-  - "Project: Logo concepts × 3 — £200 — due Friday"
+  - "Project: Logo concepts × 3 — $200 — due Friday"
   - Status pill: AGREED → IN_ESCROW → DELIVERED → RELEASED
 - The pills animate left-to-right across 5 seconds, each lighting up sequentially with a small chime.
-- At the end, a £200 figure animates from "IN_ESCROW" → "RELEASED" — colour shifts indigo to success-green.
+- At the end, a $200 figure animates from "IN_ESCROW" → "RELEASED" — colour shifts indigo to success-green.
 
 **Voice (verbatim):**
 
-> **Vera** *(0:36 – 0:42):* "Same flow for freelancers. Lena agrees to deliver three logo concepts by Friday. £200 locks in escrow. She delivers. Voice-confirm. Released."
+> **Vera** *(0:36 – 0:42):* "Same flow for freelancers. Lena agrees to deliver three logo concepts by Friday. $200 locks in escrow. She delivers. Voice-confirm. Released."
 
 **Audio:**
 - Ambient piano continues.
 - Subtle "step" chimes (very soft, ~50ms) as each status pill lights up.
-- At 0:44: **RELEASE-BELL SFX** (warm, ~400ms) when £200 turns green.
+- At 0:44: **RELEASE-BELL SFX** (warm, ~400ms) when $200 turns green.
 
 **Submagic captions:**
 - 0:36: "Same flow for freelancers."
 - 0:40: "AGREED → ESCROW → DELIVERED → RELEASED"
-- 0:44: "£200 RELEASED TO LENA"
+- 0:44: "$200 RELEASED TO LENA"
 
 **Claude Design prompt:**
 ```
@@ -256,7 +256,7 @@ Centred: a browser-like frame (radius 12px, subtle drop shadow, top bar with
 
 Top section: two avatars side-by-side. Left "LP" (Lena Park, freelance designer)
 with subtitle "Designer · UK". Right "AC" (Acme Co, client) with subtitle "Client".
-Between them: 14px Inter 500 ink: "Logo concepts × 3 · £200 · due Friday"
+Between them: 14px Inter 500 ink: "Logo concepts × 3 · $200 · due Friday"
 
 Middle: a horizontal progress timeline with 4 status pills (JetBrains Mono 11px
 uppercase) and connecting lines:
@@ -266,11 +266,11 @@ Each pill starts grey/dim. Sequentially over 4 seconds (0:36-0:40), each one
 "lights up" — gets its semantic colour (warning, locked, warning, success),
 with the connecting line filling in indigo behind it. Small subtle chime on each.
 
-At 0:42: a £200 figure appears centred below the timeline, Fraunces 600 tabular,
+At 0:42: a $200 figure appears centred below the timeline, Fraunces 600 tabular,
 72px. Initially locked-indigo. At 0:44, with the bell SFX, it transitions to
 success-green #2f7d57 with a soft outward glow.
 
-Below: ink-muted caption: "Released to Lena's Stripe account · net £190"
+Below: ink-muted caption: "Released to Lena's Stripe account · net $190"
 
 Hold final composition for 1 second, then cut.
 ```
@@ -389,7 +389,7 @@ Right (English, appears word-by-word in sync, ~200ms offset):
   "Hi Marcus,"
   "Sarah wants to buy"
   "your iPhone"
-  "for £400."
+  "for $400."
   (same styling)
 
 Below the phone: a row of language chips fading in/out:
@@ -445,7 +445,7 @@ Inside the card:
 - Below avatar: name "Sarah Chen" in Fraunces 500, 28px. Subtitle "Beta user
   since Mar 2026" in 13px Inter ink-muted.
 - Stats row (3 columns):
-    47 deals | 100% release | £19,200 transacted
+    47 deals | 100% release | $19,200 transacted
     Each number Fraunces 500 32px tabular, label below in mono 11px uppercase.
 - A row of 5 stars in indigo (Lucide-style), filled.
 - Bottom: a row of badges (pills, glassy):
@@ -531,9 +531,9 @@ at 1:18.
 ```
 [Scene 1, ~4s]: Sarah, tell me what you're buying — model, condition, what's included.
 [Scene 1, ~2s]: Got it. I'll check with Marcus.
-[Scene 2, ~6s]: Marcus, Sarah wants to buy your iPhone 15 — 256 gigs, white, unlocked — for £400, shipped by Friday. Does that match?
-[Scene 3, ~4s]: Confirming: Sarah pays £400 for the iPhone, shipped Friday via Royal Mail. Marcus, Sarah — say "I agree" to lock the deal.
-[Scene 4, ~7s]: Same flow for freelancers. Lena agrees to deliver three logo concepts by Friday. £200 locks in escrow. She delivers. Voice-confirm. Released.
+[Scene 2, ~6s]: Marcus, Sarah wants to buy your iPhone 15 — 256 gigs, white, unlocked — for $400, shipped by Friday. Does that match?
+[Scene 3, ~4s]: Confirming: Sarah pays $400 for the iPhone, shipped Friday via Royal Mail. Marcus, Sarah — say "I agree" to lock the deal.
+[Scene 4, ~7s]: Same flow for freelancers. Lena agrees to deliver three logo concepts by Friday. $200 locks in escrow. She delivers. Voice-confirm. Released.
 [Scene 5, ~9s]: If something goes wrong, the recording is the evidence. Vera plays back what was promised, gathers both sides, and most disputes resolve in minutes — not weeks.
 [Scene 6, ~7s]: Cross-border deals — in any language. Vera speaks Polish to Marcus, English to Sarah. The deal still works.
 [Scene 7, ~6s]: Every deal builds your reputation. Real identity, real voice, real track record. Portable across the web.
@@ -549,7 +549,7 @@ at 1:18.
 **Lines:**
 
 ```
-[Scene 1, ~5s]: An iPhone 15, 256 gigs, white, unlocked. From Marcus. For £400. Shipped by Friday.
+[Scene 1, ~5s]: An iPhone 15, 256 gigs, white, unlocked. From Marcus. For $400. Shipped by Friday.
 [Scene 3, ~1s]: I agree.
 ```
 
@@ -625,7 +625,7 @@ Description (1-2 paragraphs):
   Connect (custodial escrow), Identity (KYC both sides), Subscriptions (premium tier),
   Customer Portal (self-serve), Tax (multi-jurisdiction).
   
-  £8.2bn is lost annually to P2P payment fraud. 20% is what Upwork takes from
+  $10.2bn is lost annually to P2P payment fraud. 20% is what Upwork takes from
   freelancers. Vouch is 5% per deal — to both sides protected.
 
 Tags: stripe, elevenlabs, escrow, voice, fintech, freelancers, p2p, agi

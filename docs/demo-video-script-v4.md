@@ -77,7 +77,7 @@ Verify exact timestamps with `useAudioData()` in Remotion before locking frame n
 |---|---|
 | **Music** | Intro stab + kick at 0:01 |
 | **Tagline** | *"Receive your money, on time."* — word-by-word reveal, italic gradient on **"on time"** |
-| **On-screen** | Real eBay listing (iPhone 15 256GB, £400, seller Marcus). Vouch Chrome extension injects **"Pay with Vouch"** button next to "Buy It Now." Glow + pulse. Sarah's cursor moves toward it. |
+| **On-screen** | Real eBay listing (iPhone 15 256GB, $400, seller Marcus). Vouch Chrome extension injects **"Pay with Vouch"** button next to "Buy It Now." Glow + pulse. Sarah's cursor moves toward it. |
 | **Audio** | Music only. Cursor click SFX on tap. |
 | **Animation** | Stagger word-by-word reveal synced to kick at 0:01. Extension button slides in from right (400ms easeOutQuart), settle, 200ms scale pulse glow. Cursor on quadratic Bézier path, click at 0:04. Cream surface wipe up from below (`clip-path: inset(100% 0 0 0) → inset(0)`, 400ms). |
 | **Transition out** | Cream surface wipes up to mask Beat 2 |
@@ -147,7 +147,7 @@ const words = ["Receive", "your", "money,", "on", "time."];
 |---|---|
 | **Music** | ⚠ Drum hit between 0:28-0:30. **Vault snap MUST land on it.** Single most critical sync point. |
 | **Tagline** | *"receive your money, on time."* small mono under the lock animation |
-| **On-screen** | Cream surface. Pile of £400 (stack-of-cards visual) slides into vault/lock. Status pill: AWAITING_SELLER → AGREED → IN_ESCROW. |
+| **On-screen** | Cream surface. Pile of $400 (stack-of-cards visual) slides into vault/lock. Status pill: AWAITING_SELLER → AGREED → IN_ESCROW. |
 | **Audio** | Music + 🔒 **Lock-thunk SFX (`lock-thunk-v3-take5.mp3`, ~150ms)** — most important SFX in the video. **No voice.** (v4 revert: the previously-A/B'd Vera "locked with Stripe" line is NOT wired in — visuals + SFX carry the lock per v3's silent-money-movement thesis.) |
 | **Animation** | **PEAK MOMENT.** Sequence:<br/>1. 0:28.0-0:28.4 — Money slides to centre (400ms, staggered)<br/>2. 0:28.4-0:28.55 — Vault appears (SVG), shutter open at 90°<br/>3. 0:28.55-0:28.7 — Money compresses (`scale: 1 → 0.6`)<br/>4. 0:28.7 — ⭐ DRUM HIT → vault snaps shut (80ms keyframe scale jolt)<br/>5. 0:28.7-0:28.78 — 2-3px SCREEN SHAKE on root composition<br/>6. 0:28.78-0:29.2 — Concentric pulse rings (3 rings, stagger 120ms)<br/>7. 0:28.9-0:29.5 — Status pill cascade<br/>8. 0:29-0:31 — Tagline mono types in underneath<br/>9. 0:31-0:33 — Hold + ambient breathing<br/>**Vera VO begins at ~0:30 (after the drum hit) so SFX has clean air.** |
 | **Transition out** | Cinematic whoosh — radial mask expanding from vault centre to fill frame with cream, 350ms easeInOut + whoosh SFX |
@@ -196,9 +196,9 @@ const shake = frame > shakeStart && frame < shakeStart + 2
 |---|---|
 | **Music** | ⚠ **BUILD into the drop at 0:47.** HERO TICK at 0:43-0:44, money slide at 0:45-0:46, tagline lockup at 0:46. HARD CUT to black at exactly frame 1410 (0:47.00 at 30fps). |
 | **Tagline** | *"Receive your money, on time."* full lockup, lands AS Marcus's money arrives |
-| **On-screen** | Big animated ✓ tick lands center-screen. £400 amount counter releases from escrow → Marcus's avatar. Marcus's notification chime visual. Tagline + Marcus's avatar share the frame. |
+| **On-screen** | Big animated ✓ tick lands center-screen. $400 amount counter releases from escrow → Marcus's avatar. Marcus's notification chime visual. Tagline + Marcus's avatar share the frame. |
 | **Audio** | Music build crescendos. 🔔 **Release-bell SFX (`release-bell-v2-take5.mp3`, ~400ms)** on tick land. **No voice.** (v4 revert: previously-A/B'd Vera "released to Marcus + thanks for using Vouch" line is NOT wired in — music build + SFX carry the release per v3 thesis.) |
-| **Animation** | Sequence:<br/>1. 0:42-0:43 — Checkmark completes (`pathLength: 0.4 → 1.0`, 500ms easeOutQuart) + single pulse ring on completion<br/>2. 0:43-0:44 — HERO TICK scale-in (`scale: [0, 1.15, 1]`, 350ms) + single ring pulse<br/>3. 0:44-0:45 — £400 counter ticks up from £0 → £400 (700ms easeOutQuart via Framer `animate()`)<br/>4. 0:44-0:46 — Money slides vault → Marcus's avatar via SVG path (`offsetPath` + `offsetDistance: 0% → 100%`, 1.2s easeInOut)<br/>5. 0:46-0:47 — Tagline word-by-word lockup, final word at frame 1409 (0:46.97)<br/>6. 0:47.0 — HARD CUT to black (1 frame) |
+| **Animation** | Sequence:<br/>1. 0:42-0:43 — Checkmark completes (`pathLength: 0.4 → 1.0`, 500ms easeOutQuart) + single pulse ring on completion<br/>2. 0:43-0:44 — HERO TICK scale-in (`scale: [0, 1.15, 1]`, 350ms) + single ring pulse<br/>3. 0:44-0:45 — $400 counter ticks up from $0 → $400 (700ms easeOutQuart via Framer `animate()`)<br/>4. 0:44-0:46 — Money slides vault → Marcus's avatar via SVG path (`offsetPath` + `offsetDistance: 0% → 100%`, 1.2s easeInOut)<br/>5. 0:46-0:47 — Tagline word-by-word lockup, final word at frame 1409 (0:46.97)<br/>6. 0:47.0 — HARD CUT to black (1 frame) |
 | **Transition out** | **HARD CUT to black** synced to Track 4's drop |
 | **Zelios archetype** | ⭐ Concentric pulse + MotionPath (Jobster 0:58 adapted) |
 
@@ -248,9 +248,9 @@ const shake = frame > shakeStart && frame < shakeStart + 2
 |---|---|
 | **Music** | Full energy return. Verdict card lands on a music accent. Coin sweep SFX bridges into money reversal. |
 | **Tagline** | *"Every deal, kept."* small under verdict card |
-| **On-screen** | Verdict card slides in: **"Ruling: refund to Sarah. Marcus's account flagged."** Beneath: £400 slides back from escrow → Sarah's avatar. Status pill: REFUNDED. |
+| **On-screen** | Verdict card slides in: **"Ruling: refund to Sarah. Marcus's account flagged."** Beneath: $400 slides back from escrow → Sarah's avatar. Status pill: REFUNDED. |
 | **Audio** | Music (full energy return). 🔔 **Dispute-chime SFX (`dispute-chime-take3.mp3`)** on verdict card land. Coin/cash sweep SFX on money return. **No voice.** (v4 revert: previously-A/B'd Vera "Ruling: refund to Sarah..." line is NOT wired in — verdict card typography + SFX + money reversal carry it per v3 thesis.) |
-| **Animation** | 0:57.0-0:57.6 — Verdict card slides up (`y: 100 → 0, scale: 0.96 → 1, opacity: 0 → 1`, 500ms easeOutQuart, glassmorphism backdrop blur 22px saturate 170%). 0:58.0-0:58.4 — "Ruling..." word-by-word (80ms stagger). 0:59.0-1:00.2 — £400 slides BACK (MotionPath reverse of Beat 8). Counter ticks £400 → £0 (800ms). 1:00.5 — REFUNDED status pill cross-fades in (success colour). 1:00-1:01.5 — Sarah's avatar micro-bounce (`scale: 1 → 1.06 → 1`, 250ms, no spring). 1:01.5-1:02.0 — Tagline holds. |
+| **Animation** | 0:57.0-0:57.6 — Verdict card slides up (`y: 100 → 0, scale: 0.96 → 1, opacity: 0 → 1`, 500ms easeOutQuart, glassmorphism backdrop blur 22px saturate 170%). 0:58.0-0:58.4 — "Ruling..." word-by-word (80ms stagger). 0:59.0-1:00.2 — $400 slides BACK (MotionPath reverse of Beat 8). Counter ticks $400 → $0 (800ms). 1:00.5 — REFUNDED status pill cross-fades in (success colour). 1:00-1:01.5 — Sarah's avatar micro-bounce (`scale: 1 → 1.06 → 1`, 250ms, no spring). 1:01.5-1:02.0 — Tagline holds. |
 | **Transition out** | Slight fade (200ms), hold resolution beat 500ms, cross-fade to Beat 12 |
 | **Zelios archetype** | ⭐ Pain→solution pivot completion + MotionPath reverse |
 

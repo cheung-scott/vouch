@@ -3,9 +3,9 @@ import { cn } from "@/lib/utils";
 interface MoneyAmountProps {
   /** Amount in minor units (pence/cents) per Stripe convention. */
   amountMinor: number;
-  /** ISO 4217 currency code. Defaults to GBP. */
+  /** ISO 4217 currency code. Defaults to USD. */
   currency?: string;
-  /** Locale for formatting. Defaults to en-GB. */
+  /** Locale for formatting. Defaults to en-US. */
   locale?: string;
   /** Show "—" instead of formatted zero. Default true. */
   dashOnZero?: boolean;
@@ -22,8 +22,8 @@ interface MoneyAmountProps {
  */
 export function MoneyAmount({
   amountMinor,
-  currency = "GBP",
-  locale = "en-GB",
+  currency = "USD",
+  locale = "en-US",
   dashOnZero = true,
   bold = false,
   className,

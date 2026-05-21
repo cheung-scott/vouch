@@ -92,7 +92,7 @@ Each beat below has:
 | | |
 |---|---|
 | **Music** | Drum hit / accent on Track 4 around 0:25-0:26 area (verify by listening) |
-| **On-screen** | Big visual: cream surface with **escrow lock animation**. Pile of £400 (or stack-of-cards visual) slides into a vault / lock. Status pill: AWAITING → IN_ESCROW. |
+| **On-screen** | Big visual: cream surface with **escrow lock animation**. Pile of $400 (or stack-of-cards visual) slides into a vault / lock. Status pill: AWAITING → IN_ESCROW. |
 | **VO** | (silence — let music + SFX carry) |
 | **Animation** | **PEAK MOMENT — designed for impact.** Lock-thunk visual: lock snaps shut, brief screen-shake (subtle, 2-3px). Reference clip needed: **"satisfying mechanical lock animation — vault / safe / lockbox click"** |
 | **SFX** | 🔒 Lock-thunk SFX (150ms, low frequency, the most important SFX in the video) |
@@ -137,7 +137,7 @@ Each beat below has:
 | | |
 |---|---|
 | **Music** | **BUILD into the drop** at 0:47 — Track 4's drop is the editorial pivot |
-| **On-screen** | Big animated ✓ tick lands center-screen. £400 amount counter releases from escrow to seller's account. Marcus's avatar gets a notification chime visual. |
+| **On-screen** | Big animated ✓ tick lands center-screen. $400 amount counter releases from escrow to seller's account. Marcus's avatar gets a notification chime visual. |
 | **VO** | (silence — let the visual + SFX punctuate) |
 | **Animation** | **HERO TICK** — bold scale-in, satisfying weight. Money slides out of vault toward Marcus avatar. Reference clip needed: **"satisfying checkmark / success tick animation"** + **"money transfer / coin slide animation"** |
 | **SFX** | 🔔 Release bell (gentle, ~400ms) on tick land |
@@ -184,7 +184,7 @@ Each beat below has:
 | | |
 |---|---|
 | **Music** | Full energy return |
-| **On-screen** | Verdict card slides in: **"Ruling: refund to Sarah. Marcus's account flagged."** Beneath: £400 amount slides back from escrow to Sarah's avatar. Status pill: REFUNDED. |
+| **On-screen** | Verdict card slides in: **"Ruling: refund to Sarah. Marcus's account flagged."** Beneath: $400 amount slides back from escrow to Sarah's avatar. Status pill: REFUNDED. |
 | **VO** | (NONE — possibly a single Vera word "*Done.*" if you want — optional) |
 | **Animation** | Money reversal — animated coin-stream back to Sarah. Verdict card lands authoritatively. Reference clip needed: **"refund / money returning to buyer animation"** + **"verdict / ruling card reveal"** |
 | **SFX** | Soft chime on verdict; coin/cash sweep on money return |

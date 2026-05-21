@@ -329,7 +329,7 @@ export default function SellerPage({
               value={counter}
               onChange={(e) => setCounter(e.target.value)}
               rows={4}
-              placeholder="The price was £380, not £400 — she said she'd take £20 off for the scuff."
+              placeholder="The price was $380, not $400 — she said she'd take $20 off for the scuff."
               className="mt-4 w-full resize-none rounded-md border border-[rgba(50,30,5,0.18)] bg-[#fbfaf6] px-4 py-3 text-[15px] outline-none focus:border-[#5266eb] focus:ring-2 focus:ring-[#5266eb]/30"
             />
             <div className="mt-4 flex gap-3">

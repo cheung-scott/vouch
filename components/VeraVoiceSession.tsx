@@ -21,7 +21,7 @@ type SessionType =
 export interface PrefilledTerms {
   item?: string;
   amount_minor?: number;
-  currency?: "GBP" | "USD" | "EUR";
+  currency?: "USD" | "GBP" | "EUR";
   seller_name?: string;
   source?: "ebay" | "direct";
 }

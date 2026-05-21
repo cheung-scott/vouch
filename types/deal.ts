@@ -1,10 +1,10 @@
 import { z } from "zod";
 
-export const CurrencySchema = z.enum(["GBP", "USD", "EUR"]);
+export const CurrencySchema = z.enum(["USD", "GBP", "EUR"]);
 export type Currency = z.infer<typeof CurrencySchema>;
 
-export function toStripeCurrency(c: Currency): "gbp" | "usd" | "eur" {
-  return c.toLowerCase() as "gbp" | "usd" | "eur";
+export function toStripeCurrency(c: Currency): "usd" | "gbp" | "eur" {
+  return c.toLowerCase() as "usd" | "gbp" | "eur";
 }
 
 export const DealStatusSchema = z.enum([

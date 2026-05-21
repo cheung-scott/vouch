@@ -74,7 +74,7 @@ export default function VerdictCardMockPage() {
           >
             Marcus&rsquo;s recording committed to{" "}
             <span style={{ color: "#2a2924", fontWeight: 500 }}>no scratches, original box</span>.
-            Sarah&rsquo;s evidence shows otherwise. £609.89 returns to the buyer.
+            Sarah&rsquo;s evidence shows otherwise. $609.89 returns to the buyer.
           </p>
           <div
             className="mt-6 flex items-center gap-3 rounded-md px-4 py-3"

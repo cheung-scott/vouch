@@ -8,7 +8,7 @@
 
 ## The pitch
 
-Selling a £400 phone to a stranger on Facebook Marketplace. Hiring a freelancer who might ghost on the invoice. Vouch holds the buyer's money safely while Vera captures the agreement in both parties' voices — then releases it on voice-confirmed receipt, so the seller actually gets paid on time.
+Selling a $400 phone to a stranger on Facebook Marketplace. Hiring a freelancer who might ghost on the invoice. Vouch holds the buyer's money safely while Vera captures the agreement in both parties' voices — then releases it on voice-confirmed receipt, so the seller actually gets paid on time.
 
 When a deal goes wrong, Vouch doesn't arbitrate from text trails. Vera replays the seller's actual recorded commitment — *"Marcus said: no scratches, original box"* — and the system resolves from voice evidence, not he-said / she-said.
 
@@ -20,7 +20,7 @@ When a deal goes wrong, Vouch doesn't arbitrate from text trails. Vera replays t
 flowchart LR
     A[Buyer speaks deal<br/>with Vera] --> B[Seller listens<br/>+ agrees / counters]
     B --> C[Joint sign-off:<br/>both voice-confirm]
-    C --> D[Stripe holds £<br/>safely]
+    C --> D[Stripe holds $<br/>safely]
     D --> E{Receipt<br/>OK?}
     E -->|Yes| F[Voice-confirm release<br/>→ Stripe transfers to seller]
     E -->|No| G[Vera mediates dispute:<br/>replays original agreement,<br/>gathers evidence,<br/>routes resolution]

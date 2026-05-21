@@ -56,7 +56,7 @@ function pick<T>(arr: T[], i: number): T {
 }
 
 function fakeAmountMinor(seed: number): number {
-  // Distribute amounts £40-£600 in a vaguely lognormal-feeling way
+  // Distribute amounts $40-$600 in a vaguely lognormal-feeling way
   const buckets = [4500, 5200, 7900, 9900, 12000, 14999, 18000, 22500, 27000, 34500, 39900, 45000, 52000, 59000];
   return buckets[seed % buckets.length];
 }
@@ -130,7 +130,7 @@ export async function POST(req: NextRequest) {
         item,
         quantity: 1,
         amountMinor,
-        currency: "GBP",
+        currency: "USD",
       },
     });
 

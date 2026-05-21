@@ -13,7 +13,7 @@ type Stage = "intro" | "starting" | "error";
 
 /**
  * The /demo entry point. Seeds a fully-prepped scenario deal (Sarah buying
- * an iPhone from Marcus, £400) and redirects into /new so the buyer flow
+ * an iPhone from Marcus, $400) and redirects into /new so the buyer flow
  * runs against real Vera tooling.
  *
  * The mock eBay listing UI here is a PLACEHOLDER — the final design needs
@@ -38,7 +38,7 @@ export default function DemoLandingPage() {
           },
           initialTerms: {
             item: "iPhone 15, 256GB, white, unlocked, no scratches, original box",
-            currency: "GBP",
+            currency: "USD",
             amountMinor: 40_000,
           },
         }),
@@ -70,7 +70,7 @@ export default function DemoLandingPage() {
         <Card padding="loose" shadow>
           <Eyebrow tone="indigo">3-minute walkthrough · no signup</Eyebrow>
           <h1 className="mt-3 font-display text-4xl font-semibold leading-tight">
-            You&rsquo;ll play <span className="italic text-[#5266eb]">both sides</span> of a £400 deal.
+            You&rsquo;ll play <span className="italic text-[#5266eb]">both sides</span> of a $400 deal.
           </h1>
           <p className="mt-4 text-sm leading-relaxed text-[#5a5548]">
             Sarah is buying an iPhone 15 from Marcus on a marketplace listing.
@@ -109,7 +109,7 @@ export default function DemoLandingPage() {
               Price
             </dt>
             <dd>
-              <MoneyAmount amountMinor={40_000} currency="GBP" bold />
+              <MoneyAmount amountMinor={40_000} currency="USD" bold />
             </dd>
 
             <dt className="font-mono text-[11px] uppercase tracking-[0.12em] text-[#5a5548]">

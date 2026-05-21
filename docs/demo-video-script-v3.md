@@ -43,7 +43,7 @@ Each beat:
 |---|---|
 | **Music** | Intro stab, kick lands on 0:01 |
 | **Tagline** | *"Receive your money, on time."* — word-by-word reveal, hero italic gradient on "**on time**" |
-| **On-screen** | Real eBay listing page (iPhone 15 256GB, £400, seller Marcus). Vouch Chrome extension injects a "**Pay with Vouch**" button next to the eBay "Buy It Now" button. Button has a subtle glow + pulse animation. Sarah's cursor moves toward it. |
+| **On-screen** | Real eBay listing page (iPhone 15 256GB, $400, seller Marcus). Vouch Chrome extension injects a "**Pay with Vouch**" button next to the eBay "Buy It Now" button. Button has a subtle glow + pulse animation. Sarah's cursor moves toward it. |
 | **Audio** | Music only. Cursor click SFX on tap. |
 | **Animation** | Page loads → extension button slides in from the right edge → glows → cursor click → cream-surface wipe enters from below. Reference clip needed: **"Chrome extension button injection on a familiar marketplace + glow + click"** |
 | **Transition out** | Cream surface wipes up from below to fill the frame |
@@ -95,7 +95,7 @@ Each beat:
 |---|---|
 | **Music** | Drum hit / accent — verify exact timestamp by listening |
 | **Tagline** | *"receive your money, on time."* lands small in mono under the lock animation |
-| **On-screen** | Big cream surface with **escrow lock animation**. Pile of £400 (or stack-of-cards visual) slides into a vault / lock. Status pill: AWAITING_SELLER → AGREED → IN_ESCROW. |
+| **On-screen** | Big cream surface with **escrow lock animation**. Pile of $400 (or stack-of-cards visual) slides into a vault / lock. Status pill: AWAITING_SELLER → AGREED → IN_ESCROW. |
 | **Audio** | Music + 🔒 **Lock-thunk SFX (150ms, low frequency)** — the most important SFX in the video. No voice. |
 | **Animation** | **PEAK MOMENT.** Vault snaps shut, brief 2–3px screen shake. Tagline appears AS the money locks. Reference clip needed: **"satisfying mechanical lock animation — vault / safe / lockbox click"** |
 | **Transition out** | Whoosh / cinematic time-skip |
@@ -134,7 +134,7 @@ Each beat:
 |---|---|
 | **Music** | **BUILD into the drop** at 0:47 |
 | **Tagline** | *"Receive your money, on time."* lands one last time, large, as the money slides to Marcus |
-| **On-screen** | Big animated ✓ tick lands center-screen. £400 amount counter releases from escrow to Marcus's avatar. Marcus gets a notification chime visual. The tagline + Marcus's avatar share the frame — the promise is kept. |
+| **On-screen** | Big animated ✓ tick lands center-screen. $400 amount counter releases from escrow to Marcus's avatar. Marcus gets a notification chime visual. The tagline + Marcus's avatar share the frame — the promise is kept. |
 | **Audio** | Music build crescendos. 🔔 Release bell SFX (~400ms) on tick land. No voice. |
 | **Animation** | **HERO TICK** — bold scale-in, satisfying weight. Money slides out of vault toward Marcus. Reference clip needed: **"satisfying checkmark tick animation"** + **"money transfer / coin slide"** |
 | **Transition out** | **HARD CUT to black** at exactly frame 1410 (= 0:47.00 at 30fps) synced to Track 4's drop |
@@ -179,7 +179,7 @@ Each beat:
 |---|---|
 | **Music** | Full energy return |
 | **Tagline** | *"Every deal, kept."* lands small under the verdict card |
-| **On-screen** | Verdict card slides in: **"Ruling: refund to Sarah. Marcus's account flagged."** Beneath: £400 amount slides back from escrow to Sarah's avatar. Status pill: REFUNDED. |
+| **On-screen** | Verdict card slides in: **"Ruling: refund to Sarah. Marcus's account flagged."** Beneath: $400 amount slides back from escrow to Sarah's avatar. Status pill: REFUNDED. |
 | **Audio** | Music. Soft chime on verdict; coin/cash sweep SFX on money return. No voice. |
 | **Animation** | Money reversal — animated coin-stream back to Sarah. Verdict card lands authoritatively. Reference clip needed: **"refund / money returning to buyer animation"** + **"verdict / ruling card reveal"** |
 | **Transition out** | Fade slightly, hold the resolution beat |

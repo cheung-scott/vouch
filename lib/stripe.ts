@@ -40,7 +40,7 @@ export function calculatePlatformFee(amountMinor: number): number {
   return Math.round((amountMinor * VOUCH_PLATFORM_FEE_BPS) / 10_000);
 }
 
-export type StripeCurrency = "gbp" | "usd" | "eur";
+export type StripeCurrency = "usd" | "gbp" | "eur";
 
 export async function createConnectExpressAccount(params: {
   email: string;

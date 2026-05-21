@@ -26,7 +26,7 @@ const CARDS = [
   {
     filename: "b3-captured-card-amount.png",
     label: "Amount + currency",
-    value: "£609.89",
+    value: "$609.89",
   },
   {
     filename: "b3-captured-card-delivery.png",
@@ -46,7 +46,7 @@ const STRIP_EMPTY = [
 const STRIP_FULL = [
   { label: "What you're buying", value: "Apple iPhone 15 Pro Max 512GB Blue Titanium" },
   { label: "The other party", value: "Marcus" },
-  { label: "Amount + currency", value: "£609.89" },
+  { label: "Amount + currency", value: "$609.89" },
   { label: "Expected by", value: "By Friday" },
   { label: "Anything else", value: "—" },
 ];

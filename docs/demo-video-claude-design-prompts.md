@@ -100,7 +100,7 @@ Drop these into every Claude Design prompt unless otherwise noted:
 - `b3-new-q4-vera-speaking.png` — /new page Q4 stage
 - `b3-captured-card-item.png` — "What you're buying · iPhone 15 Pro Max 512GB"
 - `b3-captured-card-seller.png` — "The other party · Marcus"
-- `b3-captured-card-amount.png` — "Amount + currency · £609.89"
+- `b3-captured-card-amount.png` — "Amount + currency · $609.89"
 - `b3-captured-card-delivery.png` — "Expected by · By Friday"
 
 **Claude Design prompt:**
@@ -183,7 +183,7 @@ Drop these into every Claude Design prompt unless otherwise noted:
 
 > Render a 5-second 1920×1080 scene at 30fps. Cream background. **Peak motion MUST land on the drum hit at 0:00.7 of this scene.**
 >
-> **0:00–0:00.4** — A pile of £400 (visualised as 4-5 layered indigo+cream banknote rectangles, slight tilt — abstract shapes, not detailed banknote art) slides into centre-frame from offstage left, 400ms.
+> **0:00–0:00.4** — A pile of $400 (visualised as 4-5 layered indigo+cream banknote rectangles, slight tilt — abstract shapes, not detailed banknote art) slides into centre-frame from offstage left, 400ms.
 >
 > **0:00.4–0:00.55** — Stylised SVG vault appears centre-frame behind the money (rounded square with concentric rings, brushed-steel grey outline on cream). Shutter at 90° open. 150ms appearance via opacity + slight scale-in.
 >
@@ -293,7 +293,7 @@ Drop these into every Claude Design prompt unless otherwise noted:
 >
 > **0:01.4** — Release-bell SFX lands in Remotion.
 >
-> **0:01.4–0:02.4** — `£0` counter appears below the tick. Ticks UP £0 → £609.89 over 700ms, per-digit increment animation. Fraunces semibold, 64px.
+> **0:01.4–0:02.4** — `$0` counter appears below the tick. Ticks UP $0 → $609.89 over 700ms, per-digit increment animation. Fraunces semibold, 64px.
 >
 > **0:01.4–0:03.4** — Simultaneously, money slides from vault position (off-screen left) to Marcus's avatar (off-screen right) via SVG motion path. `offsetPath` + `offsetDistance: 0% → 100%`, 1.2s easeInOut. Marcus's avatar enters from the right at 0:02 at the path's endpoint.
 >
@@ -396,11 +396,11 @@ Drop these into every Claude Design prompt unless otherwise noted:
 >
 > **0:01–0:01.4** — Card heading "Refund to Sarah." reveals word-by-word (80ms stagger). "Sarah" in italic indigo.
 >
-> **0:02–0:03.2** — Below the card, money reversal. £-symbol cluster slides BACK from Marcus's position (off-screen right) toward Sarah (off-screen left) via REVERSE of Beat 8's motion path. `offsetPath` + `offsetDistance: 0% → 100%` along reversed path, 1.2s easeInOut. Coin sweep SFX in Remotion.
+> **0:02–0:03.2** — Below the card, money reversal. $-symbol cluster slides BACK from Marcus's position (off-screen right) toward Sarah (off-screen left) via REVERSE of Beat 8's motion path. `offsetPath` + `offsetDistance: 0% → 100%` along reversed path, 1.2s easeInOut. Coin sweep SFX in Remotion.
 >
-> **0:02–0:02.8** — £-amount counter beneath verdict card ticks DOWN £609.89 → £0 over 800ms.
+> **0:02–0:02.8** — $-amount counter beneath verdict card ticks DOWN $609.89 → $0 over 800ms.
 >
-> **0:03.5** — `b11-pill-refunded.png` cross-fades in next to the counter (now £0), 300ms.
+> **0:03.5** — `b11-pill-refunded.png` cross-fades in next to the counter (now $0), 300ms.
 >
 > **0:04–0:04.3** — Sarah's avatar (`b11-sarah-avatar.png`) at money's destination does micro-bounce `scale: 1 → 1.06 → 1`, 250ms, no spring.
 >

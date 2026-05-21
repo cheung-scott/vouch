@@ -22,8 +22,8 @@ type Prefill = {
 };
 
 const CURRENCY_SYMBOL: Record<string, string> = {
-  GBP: "£",
   USD: "$",
+  GBP: "£",
   EUR: "€",
 };
 
@@ -62,7 +62,7 @@ const QUESTIONS: Question[] = [
     id: "amount",
     prompt: "Amount + currency",
     veraLine: "How much, in what currency?",
-    placeholder: "£400",
+    placeholder: "$400",
   },
   {
     id: "delivery",

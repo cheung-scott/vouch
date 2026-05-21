@@ -48,7 +48,7 @@ Manifest V3, zero runtime permissions (only host permissions for eBay listing UR
 1. Make sure the main Vouch app is running locally: `cd D:\Projects\vouch && pnpm dev` (boots on http://localhost:3000)
 2. Visit any eBay listing — for example: https://www.ebay.co.uk/itm/325912345678 (any iPhone, watch, etc.)
 3. You should see a **"Pay with Vouch"** button injected above the eBay "Buy It Now" button
-4. Click it → a new tab opens at `http://localhost:3000/new?source=ebay&item=...&price=...&currency=GBP&seller=...`
+4. Click it → a new tab opens at `http://localhost:3000/new?source=ebay&item=...&price=...&currency=USD&seller=...`
 5. The /new page should show the **"Continuing from eBay"** banner with the captured item, amount, and seller pre-filled
 
 The extension automatically picks between `localhost:3000` (if reachable, dev mode) and `https://vouch.fund` (production fallback) — no config needed.
