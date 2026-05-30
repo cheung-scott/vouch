@@ -24,7 +24,7 @@ All notable changes to Vouch are tracked here. Format follows [Keep a Changelog]
 - GitHub Actions CI workflow (lint + build on PR)
 
 ### Repo
-- Created at https://github.com/cheung-scott/vouch
+- Created at https://github.com/cheungscott/vouch
 - MIT licensed
 
 ### Tech stack locked

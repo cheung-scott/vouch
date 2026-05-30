@@ -47,7 +47,7 @@ What this extension does NOT do:
 - No data sent anywhere except when you actively click the button
 - No card numbers or financial data — that's handled entirely by Stripe on vouch.fund
 
-Built for ElevenHacks 2026 by an indie developer. Open source: github.com/cheung-scott/vouch
+Built for ElevenHacks 2026 by an indie developer. Open source: github.com/cheungscott/vouch
 
 For privacy details: https://vouch.fund/privacy
 For support: contact via vouch.fund or open an issue on GitHub

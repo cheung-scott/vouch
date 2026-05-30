@@ -4,7 +4,7 @@ Deploy checklist for **first-time deploy** (Day 5 PM or Day 6 AM).
 
 ## Prereqs
 
-- GitHub repo `cheung-scott/vouch` exists and is pushed
+- GitHub repo `cheungscott/vouch` exists and is pushed
 - All Tier-1 env vars set correctly (see audit pattern in `feedback_env_var_audit_pattern`)
 - ConvAI agent published from non-main branch to main BEFORE deploy day
 

@@ -11,7 +11,7 @@ export const stripe = new Stripe(apiKey ?? "sk_test_placeholder", {
   typescript: true,
   appInfo: {
     name: "Vouch",
-    url: "https://github.com/cheung-scott/vouch",
+    url: "https://github.com/cheungscott/vouch",
   },
 });
 
@@ -25,7 +25,7 @@ export const stripeVera = new Stripe(veraKey, {
   typescript: true,
   appInfo: {
     name: "Vouch (Vera)",
-    url: "https://github.com/cheung-scott/vouch",
+    url: "https://github.com/cheungscott/vouch",
   },
 });
 

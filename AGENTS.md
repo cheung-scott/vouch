@@ -110,5 +110,5 @@ Forbidden cliches (catches generic AI-generated UI):
 
 - [HN++](https://github.com/padmanabhan-r/Hacker-News-Redesign) — won v0 week; their Tailwind 4 + craft layer patterns are the bar
 - [lostintheweights](https://github.com/Func-Main/lostintheweights) — v0 1st place; their OKLCH crossfade + story-state context is the inspiration ceiling
-- [Hearsay](https://github.com/cheung-scott/hearsay) — Scott's prior ElevenHacks 3rd-place project (Kiro Week). Same Next 16 + React 19 stack, same ElevenLabs SDK.
+- [Hearsay](https://github.com/cheungscott/hearsay) — Scott's prior ElevenHacks 3rd-place project (Kiro Week). Same Next 16 + React 19 stack, same ElevenLabs SDK.
 - [awesome-claude-design](https://github.com/rohitg00/awesome-claude-design) — the DESIGN.md template library + Mercury × Linear remix recipe Vouch is built on

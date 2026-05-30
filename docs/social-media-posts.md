@@ -65,7 +65,7 @@ Hack #5 (Kiro): Hearsay → 3rd of 74 ($2,330 prize)
 Hack #9 (Stripe): Vouch → live now
 
 Try the demo: vouch.app/demo (no signup)
-Code: github.com/cheung-scott/vouch (MIT)
+Code: github.com/cheungscott/vouch (MIT)
 
 Cheers @isnit0 + the EL team for the platform.
 ```
@@ -107,7 +107,7 @@ on a moat that competitors can't replicate, ship the whole
 production loop, judge on demo + code together.
 
 Demo: vouch.app/demo (no signup)
-Code: github.com/cheung-scott/vouch (MIT)
+Code: github.com/cheungscott/vouch (MIT)
 
 Thanks to the @ElevenLabs and @Stripe teams for an actual platform
 to build on — not a stack of toy APIs.
@@ -148,7 +148,7 @@ Demo + code in bio.
 2. **The moat** — split frame, left "Text trails" with sad chat-icon, right "Voice recordings" with Vera waveform
 3. **How it works** — 4 numbered cards (Speak / Sign-off / Lock / Release)
 4. **Stripe + ElevenLabs stack** — two columns of primitives, 5 each
-5. **CTA** — "vouch.app/demo · github.com/cheung-scott/vouch"
+5. **CTA** — "vouch.app/demo · github.com/cheungscott/vouch"
 
 ---
 

@@ -134,7 +134,7 @@ export default function InstallPage() {
                 <>
                   All extension code is in the{" "}
                   <a
-                    href="https://github.com/cheung-scott/vouch/tree/main/extension"
+                    href="https://github.com/cheungscott/vouch/tree/main/extension"
                     target="_blank"
                     rel="noreferrer"
                     className="text-[#5266eb] underline underline-offset-2"
