@@ -1,0 +1,214 @@
+/* ────────────────────────────────────────────────────────────
+   VOUCH / EXPERIMENT — "Notary Ledger" direction
+   Side exploration, deliberately divergent from the production
+   Stripe×A24 landing. Scoped under .xp so nothing leaks.
+
+   Concept: the deal record as a PHYSICAL DOCUMENT. Manila paper,
+   solid ink rules, banker's green, a vermilion rubber stamp.
+   Trust here is notarial, not glassy: hard edges, full-opacity
+   borders, tabular mono for anything that is "on the record".
+
+   Same hard rules as production: no "escrow" wording, no
+   italic-gradient text, no em-dashes, one honest 2.9% tier.
+   ──────────────────────────────────────────────────────────── */
+
+.xp {
+  /* paper */
+  --xp-paper:       #f1ebdc;
+  --xp-paper-deep:  #e7dfc9;
+  --xp-paper-card:  #faf6ea;
+  /* ink */
+  --xp-ink:         #1c1b16;
+  --xp-ink-soft:    #4c4a3f;
+  /* banker's green */
+  --xp-green:       #1a5b3e;
+  --xp-green-deep:  #0f3627;
+  /* vermilion stamp — reserved for stamps + focus, never body text */
+  --xp-red:         #bc3b1e;
+
+  --xp-font-display: var(--font-xp-archivo), "Arial Black", sans-serif;
+  --xp-font-mono: var(--font-xp-plex-mono), "Courier New", monospace;
+
+  background: var(--xp-paper);
+  color: var(--xp-ink);
+  font-family: var(--xp-font-display);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ─── type voices ─── */
+
+.xp-display {
+  font-family: var(--xp-font-display);
+  font-weight: 800;
+  font-stretch: 112%;
+  letter-spacing: -0.03em;
+  line-height: 0.96;
+  text-wrap: balance;
+}
+
+.xp-h2 {
+  font-family: var(--xp-font-display);
+  font-weight: 800;
+  font-stretch: 108%;
+  letter-spacing: -0.02em;
+  line-height: 1.02;
+  text-wrap: balance;
+}
+
+.xp-mono {
+  font-family: var(--xp-font-mono);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+}
+
+.xp-label {
+  font-family: var(--xp-font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+/* ─── document furniture ─── */
+
+.xp-rule    { border-top: 2px solid var(--xp-ink); }
+.xp-rule-b  { border-bottom: 2px solid var(--xp-ink); }
+
+.xp-card {
+  background: var(--xp-paper-card);
+  border: 2px solid var(--xp-ink);
+  box-shadow: 6px 6px 0 var(--xp-ink);
+}
+
+/* rubber stamp: bordered, rotated, deliberately imperfect */
+.xp-stamp {
+  display: inline-block;
+  padding: 0.3em 0.7em;
+  border: 2.5px solid currentColor;
+  border-radius: 3px;
+  font-family: var(--xp-font-mono);
+  font-weight: 600;
+  font-size: 12px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  transform: rotate(-4deg);
+  box-shadow: inset 0 0 0 1.5px var(--xp-paper-card), inset 0 0 0 2.5px currentColor;
+}
+.xp-stamp--red   { color: var(--xp-red); }
+.xp-stamp--green { color: var(--xp-green); }
+
+/* ─── buttons: hard-edged, hand-set ─── */
+
+.xp-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6em;
+  min-height: 52px;
+  padding: 0 1.6em;
+  border: 2px solid var(--xp-ink);
+  font-family: var(--xp-font-mono);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: transform 180ms ease, box-shadow 180ms ease, background-color 180ms ease;
+}
+
+.xp-btn--primary {
+  background: var(--xp-green);
+  color: var(--xp-paper);
+  box-shadow: 4px 4px 0 var(--xp-ink);
+}
+.xp-btn--primary:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0 var(--xp-ink);
+}
+.xp-btn--primary:active {
+  transform: translate(0, 0);
+  box-shadow: 2px 2px 0 var(--xp-ink);
+}
+
+.xp-btn--sm {
+  min-height: 44px;
+  padding: 0 1.2em;
+  font-size: 12px;
+}
+
+.xp-btn--ghost {
+  background: transparent;
+  color: var(--xp-ink);
+}
+.xp-btn--ghost:hover { background: var(--xp-paper-deep); }
+
+/* on dark plates */
+.xp-btn--paper {
+  background: var(--xp-paper);
+  color: var(--xp-ink);
+  border-color: var(--xp-paper);
+  box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.55);
+}
+.xp-btn--paper:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.55);
+}
+
+.xp *:focus-visible {
+  outline: 3px solid var(--xp-red);
+  outline-offset: 3px;
+}
+
+/* ─── printed waveform: ink bars, no gradients ─── */
+
+.xp-wave {
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  height: 44px;
+}
+.xp-wave > span {
+  width: 4px;
+  background: var(--xp-ink);
+  animation: xp-wave-play 1.6s ease-in-out infinite;
+  transform-origin: bottom;
+}
+.xp-wave--green > span { background: var(--xp-green); }
+.xp-wave--paper > span { background: var(--xp-paper); }
+
+@keyframes xp-wave-play {
+  0%, 100% { transform: scaleY(0.55); }
+  50%      { transform: scaleY(1); }
+}
+
+/* stagger */
+.xp-wave > span:nth-child(3n)  { animation-delay: 0.12s; }
+.xp-wave > span:nth-child(3n+1){ animation-delay: 0.31s; }
+.xp-wave > span:nth-child(4n)  { animation-delay: 0.47s; }
+.xp-wave > span:nth-child(5n)  { animation-delay: 0.65s; }
+
+@media (prefers-reduced-motion: reduce) {
+  .xp-wave > span { animation: none; }
+  .xp-btn { transition: none; }
+  .xp-btn--primary:hover, .xp-btn--paper:hover { transform: none; }
+}
+
+/* ─── perforation between ticket halves ─── */
+.xp-perf { border-top: 2px dashed var(--xp-ink); }
+
+/* ─── comparison table ─── */
+.xp-table { border: 2px solid var(--xp-ink); border-collapse: collapse; width: 100%; }
+.xp-table th, .xp-table td {
+  border: 1px solid var(--xp-ink);
+  padding: 14px 16px;
+  text-align: left;
+  vertical-align: top;
+}
+.xp-table thead th {
+  font-family: var(--xp-font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  border-bottom: 2px solid var(--xp-ink);
+}
+.xp-table .xp-col-vouch { background: var(--xp-paper-card); font-weight: 600; }
