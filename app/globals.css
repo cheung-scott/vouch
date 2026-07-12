@@ -90,6 +90,9 @@ html, body {
   background: var(--cream);
   color: var(--ink);
   -webkit-font-smoothing: antialiased;
+  /* Belt-and-braces against horizontal scroll from decorative offscreen
+     elements. `clip` (not `hidden`) so position:sticky keeps working. */
+  overflow-x: clip;
 }
 body {
   font-family: var(--font-sans);
@@ -151,6 +154,22 @@ body {
   backdrop-filter: var(--blur);
   -webkit-backdrop-filter: var(--blur);
   border: 1px solid var(--border-dark-med);
+}
+
+/* ─── Pinned-scroll helpers (HowItWorks) ─────────────────
+   svh keeps the pin height stable while mobile URL bars
+   collapse/expand — plain 100vh makes the pinned card jump
+   mid-scroll on iOS/Android. vh first as fallback. */
+.pin-track    { height: 300vh; height: 300svh; }
+.pin-viewport { height: 100vh; height: 100svh; }
+
+/* Short narrow viewports (small phones): shrink the pinned
+   stage so caption + deal card fit inside one viewport. */
+@media (max-width: 640px) and (max-height: 760px) {
+  .hiw-stage {
+    transform: scale(0.85);
+    transform-origin: top center;
+  }
 }
 
 /* ─── Pulse / blink (live indicators) ─── */

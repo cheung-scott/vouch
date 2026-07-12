@@ -50,7 +50,7 @@ export function TrustBadge({
       />
       <span 
         className="text-[11px] uppercase tracking-[0.06em] text-white/72"
-        style={{ fontFamily: 'var(--font-jetbrains), monospace' }}
+        style={{ fontFamily: 'var(--font-jetbrains-mono), monospace' }}
       >
         {label}
       </span>
@@ -131,7 +131,7 @@ export function HeroBackground() {
       >
         <pre
           className="absolute top-[15%] left-[5%] text-[11px] leading-relaxed text-white/[0.045] whitespace-pre select-none"
-          style={{ fontFamily: 'var(--font-jetbrains), monospace' }}
+          style={{ fontFamily: 'var(--font-jetbrains-mono), monospace' }}
         >
 {`const stripe = require('stripe');
 
@@ -154,7 +154,7 @@ const session = await convai.createSession({
         </pre>
         <pre
           className="absolute top-[25%] right-[8%] text-[11px] leading-relaxed text-white/[0.045] whitespace-pre select-none"
-          style={{ fontFamily: 'var(--font-jetbrains), monospace' }}
+          style={{ fontFamily: 'var(--font-jetbrains-mono), monospace' }}
         >
 {`await convai.transcribe({
   audio: recordingBuffer,

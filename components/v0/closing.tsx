@@ -123,7 +123,7 @@ export function ClosingPlate() {
         <motion.p
           className="text-[11px] uppercase tracking-[0.14em]"
           style={{ 
-            fontFamily: 'var(--font-jetbrains), monospace',
+            fontFamily: 'var(--font-jetbrains-mono), monospace',
             color: 'var(--white-mute)',
           }}
           initial={shouldReduceMotion ? {} : { opacity: 0 }}
@@ -149,7 +149,7 @@ export function Footer() {
           <span 
             className="text-[11px] uppercase tracking-[0.14em]"
             style={{ 
-              fontFamily: 'var(--font-jetbrains), monospace',
+              fontFamily: 'var(--font-jetbrains-mono), monospace',
               color: 'var(--ink-muted)',
             }}
           >
@@ -162,7 +162,7 @@ export function Footer() {
             rel="noopener noreferrer"
             className="text-[11px] uppercase tracking-[0.14em] transition-colors hover:text-stripe-purple"
             style={{ 
-              fontFamily: 'var(--font-jetbrains), monospace',
+              fontFamily: 'var(--font-jetbrains-mono), monospace',
               color: 'var(--ink-muted)',
             }}
           >

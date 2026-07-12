@@ -5,9 +5,9 @@ import Link from "next/link";
 import {
   motion,
   useInView,
+  useMotionValue,
   useMotionValueEvent,
   useReducedMotion,
-  useScroll,
   useTransform,
   type MotionValue,
 } from "motion/react";
@@ -40,7 +40,6 @@ import { Waveform } from "@/components/Waveform";
 // ──────────────────────────────────────────────────────────────────────────
 
 const EASE = [0.22, 1, 0.36, 1] as const;
-const DURATION = { text: 0.5, reveal: 0.7, morph: 0.8, bgFlip: 0.3, microPop: 0.25 };
 
 export default function HomePage() {
   return (
@@ -112,7 +111,7 @@ function MergedHero() {
                   Until then this CTA scrolls to a placeholder. */}
               <Link
                 href="/install"
-                className="rounded-md border border-white/18 bg-transparent px-7 py-3.5 text-[14px] font-medium text-white transition-colors hover:bg-white/[0.06]"
+                className="rounded-full border border-white/18 bg-transparent px-7 py-3.5 text-[14px] font-medium text-white transition-colors hover:bg-white/[0.06]"
                 style={{ fontFamily: "var(--font-inter), sans-serif" }}
               >
                 Get the extension →
@@ -143,16 +142,40 @@ function MergedHero() {
 // PAIN PIVOT — chaos artifacts implode, MorphChain springs in
 // ══════════════════════════════════════════════════════════════════════════
 
-const ARTIFACTS = [
+type ScatterCard = { txt: string; x: number; y: number; rot: number; mic?: boolean };
+
+const ARTIFACTS: ScatterCard[] = [
   { txt: "you said $500 by Friday",  x: -180, y: -120, rot: -8 },
   { txt: "I owe you $200 - Mike",    x:  140, y: -100, rot:  6 },
-  { txt: "🎤 voice note · 0:18",     x: -220, y:   40, rot: -12 },
+  { txt: "voice note · 0:18",        x: -220, y:   40, rot: -12, mic: true },
   { txt: "FB Marketplace · sold",    x:  200, y:   60, rot: 10 },
   { txt: "u still good for it??",    x: -100, y:  140, rot: 5 },
   { txt: "Promise. - J",             x:  160, y:  150, rot: -7 },
-  { txt: "❌ no reply 3 days",       x: -160, y:  -40, rot: 9 },
-  { txt: "🎤 voice note · 0:42",     x:   80, y: -160, rot: -5 },
+  { txt: "no reply · 3 days",        x: -160, y:  -40, rot: 9 },
+  { txt: "voice note · 0:42",        x:   80, y: -160, rot: -5, mic: true },
 ];
+
+/* Tiny inline mic glyph for "voice note" scatter cards (replaces emoji). */
+function MicGlyph() {
+  return (
+    <svg
+      width="12"
+      height="12"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden
+      className="shrink-0"
+    >
+      <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z" />
+      <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
+      <line x1="12" x2="12" y1="19" y2="22" />
+    </svg>
+  );
+}
 
 function MergedPainPivot() {
   const ref = useRef<HTMLDivElement>(null);
@@ -185,11 +208,11 @@ function MergedPainPivot() {
       />
 
       <div className="absolute inset-0 flex items-center justify-center">
-        <div className="relative h-[400px] w-[600px]">
+        <div className="relative h-[400px] w-[600px] scale-[0.6] sm:scale-100">
           {ARTIFACTS.map((a, i) => (
             <motion.div
               key={i}
-              className="absolute left-1/2 top-1/2 whitespace-nowrap rounded-lg px-4 py-3 shadow-sm"
+              className="absolute left-1/2 top-1/2 flex items-center gap-1.5 whitespace-nowrap rounded-lg px-4 py-3 shadow-sm"
               style={{
                 background: "var(--cream-card-glass-hi)",
                 backdropFilter: "blur(8px)",
@@ -204,6 +227,7 @@ function MergedPainPivot() {
               animate={phase === "after" ? { x: 0, y: 0, rotate: 0, opacity: 0, scale: 0 } : {}}
               transition={{ duration: 0.5, ease: EASE, delay: i * 0.05 }}
             >
+              {a.mic && <MicGlyph />}
               {a.txt}
             </motion.div>
           ))}
@@ -281,7 +305,7 @@ function MoatBand() {
         <div className="flex flex-col items-center gap-2">
           <span
             className="tabular font-display font-semibold leading-none tracking-[-0.03em] text-[var(--ink)]"
-            style={{ fontSize: "clamp(64px, 12vw, 140px)" }}
+            style={{ fontSize: "clamp(48px, 12vw, 140px)" }}
           >
             $10 billion
           </span>
@@ -316,51 +340,98 @@ function MoatBand() {
 // 3. "IN_ESCROW" pill removed (escrow rule). Replaced with "LOCKED" status.
 // ══════════════════════════════════════════════════════════════════════════
 
+// Pinned-scroll phase timeline. Single source of truth for every breakpoint
+// below (was 8 scattered hardcoded literals that had to stay in sync by hand).
+const CUT_LOCK = 0.3;     // chaos cluster hands over to the deal card
+const CUT_RELEASE = 0.64; // LOCKED pill hands over to RELEASED
+const FADE = 0.06;        // width of each crossfade window
+// Caption flips sit mid-crossfade so text and visuals change together.
+const FLIP_SPEAK_LOCK = CUT_LOCK + FADE / 2;
+const FLIP_LOCK_RELEASE = CUT_RELEASE + FADE / 2;
+
+/**
+ * Pinned-section scroll progress: 0 when the section top hits the viewport
+ * top, 1 when its bottom meets the viewport bottom (same semantics as
+ * useScroll's ["start start", "end end"]).
+ *
+ * Hand-rolled replacement for motion's useScroll: useScroll caches the
+ * target's offsets and only re-measures on resize, so anything that shifts
+ * layout above this section after mount (fonts, images, viewport chrome)
+ * leaves the phase cuts firing at the wrong scroll positions. This measures
+ * getBoundingClientRect fresh on every rAF tick - always accurate, and
+ * cheap (one rect read per scrolled frame).
+ */
+function usePinProgress(ref: React.RefObject<HTMLElement | null>) {
+  const progress = useMotionValue(0);
+
+  useEffect(() => {
+    let raf = 0;
+    const update = () => {
+      raf = 0;
+      const el = ref.current;
+      if (!el) return;
+      const rect = el.getBoundingClientRect();
+      const total = rect.height - window.innerHeight;
+      progress.set(total > 0 ? Math.min(1, Math.max(0, -rect.top / total)) : 0);
+    };
+    const schedule = () => {
+      if (!raf) raf = requestAnimationFrame(update);
+    };
+    update();
+    window.addEventListener("scroll", schedule, { passive: true });
+    window.addEventListener("resize", schedule);
+    return () => {
+      window.removeEventListener("scroll", schedule);
+      window.removeEventListener("resize", schedule);
+      if (raf) cancelAnimationFrame(raf);
+    };
+  }, [ref, progress]);
+
+  return progress;
+}
+
 function MergedHowItWorks() {
   const sectionRef = useRef<HTMLElement>(null);
   const reduced = useReducedMotion();
 
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ["start start", "end end"],
-  });
+  const scrollYProgress = usePinProgress(sectionRef);
 
   // HARD PHASE CUTS — no overlap zones. Each transform has explicit endpoints
   // at [0, 1] so useTransform clamps cleanly (no extrapolation past range).
   //
-  // Scroll-space layout:
-  //   SPEAK     : 0.00 - 0.30   (30% dwell — chaos only)
-  //   TRANSITION: 0.30 - 0.34   (4% sharp cut — chaos out, card in)
-  //   LOCK      : 0.34 - 0.64   (30% dwell — card with LOCKED)
-  //   TRANSITION: 0.64 - 0.68   (4% sharp cut — LOCKED out, RELEASED in)
-  //   RELEASE   : 0.68 - 1.00   (32% dwell — card with RELEASED + handshake)
-  //
-  // Phase caption flips at 0.33 and 0.66 to match.
-  const chaosOpacity    = useTransform(scrollYProgress, [0, 0.30, 0.34, 1], [1, 1, 0, 0]);
-  const cardOpacity     = useTransform(scrollYProgress, [0, 0.30, 0.34, 1], [0, 0, 1, 1]);
-  const cardScale       = useTransform(scrollYProgress, [0, 0.30, 0.34, 1], [0.92, 0.92, 1, 1]);
-  // LOCKED pill rises at 0.34, holds, then falls at 0.64
-  const lockedOpacity   = useTransform(scrollYProgress, [0, 0.34, 0.36, 0.64, 0.68, 1], [0, 0, 1, 1, 0, 0]);
-  // RELEASED pill rises at 0.64 to fully visible at 0.68
-  const releasedOpacity = useTransform(scrollYProgress, [0, 0.64, 0.68, 1], [0, 0, 1, 1]);
+  // Scroll-space layout (fractions of pinned scroll):
+  //   SPEAK     : 0 → CUT_LOCK                (dwell — chaos only)
+  //   TRANSITION: CUT_LOCK → +FADE            (sharp cut — chaos out, card in)
+  //   LOCK      : → CUT_RELEASE               (dwell — card with LOCKED)
+  //   TRANSITION: CUT_RELEASE → +FADE         (sharp cut — LOCKED out, RELEASED in)
+  //   RELEASE   : → 1.00                      (dwell — card + RELEASED + handshake)
+  const chaosOpacity    = useTransform(scrollYProgress, [0, CUT_LOCK, CUT_LOCK + FADE, 1], [1, 1, 0, 0]);
+  const cardOpacity     = useTransform(scrollYProgress, [0, CUT_LOCK, CUT_LOCK + FADE, 1], [0, 0, 1, 1]);
+  const cardScale       = useTransform(scrollYProgress, [0, CUT_LOCK, CUT_LOCK + FADE, 1], [0.92, 0.92, 1, 1]);
+  // LOCKED pill rises just after the card lands, holds, falls at the release cut
+  const lockedOpacity   = useTransform(
+    scrollYProgress,
+    [0, CUT_LOCK + FADE, CUT_LOCK + FADE + 0.02, CUT_RELEASE, CUT_RELEASE + FADE, 1],
+    [0, 0, 1, 1, 0, 0],
+  );
+  // RELEASED pill rises across the release crossfade
+  const releasedOpacity = useTransform(scrollYProgress, [0, CUT_RELEASE, CUT_RELEASE + FADE, 1], [0, 0, 1, 1]);
   // Amount: full opacity throughout, just color shifts at the RELEASE cut
-  const amountColor     = useTransform(scrollYProgress, [0, 0.64, 0.68, 1],
+  const amountColor     = useTransform(scrollYProgress, [0, CUT_RELEASE, CUT_RELEASE + FADE, 1],
                             ["var(--ink)", "var(--ink)", "var(--success)", "var(--success)"]);
   // Handshake line draws across after RELEASE settles, then check appears
-  const releaseLine     = useTransform(scrollYProgress, [0, 0.72, 0.88, 1], [0, 0, 1, 1]);
-  const releaseCheck    = useTransform(scrollYProgress, [0, 0.86, 0.92, 1], [0, 0, 1, 1]);
+  const releaseLine     = useTransform(scrollYProgress, [0, CUT_RELEASE + 0.08, CUT_RELEASE + 0.24, 1], [0, 0, 1, 1]);
+  const releaseCheck    = useTransform(scrollYProgress, [0, CUT_RELEASE + 0.22, CUT_RELEASE + 0.28, 1], [0, 0, 1, 1]);
 
   return (
     <section
       ref={sectionRef}
-      className="relative border-t border-[var(--border-warm)] bg-[var(--cream-alt)] text-[var(--ink)]"
-      style={{ height: reduced ? "auto" : "300vh" }}
+      className={`relative overflow-x-clip border-t border-[var(--border-warm)] bg-[var(--cream-alt)] text-[var(--ink)] ${reduced ? "" : "pin-track"}`}
       id="how-it-works"
     >
       <div
-        className="sticky top-0 flex items-center"
+        className={`sticky top-0 flex items-center ${reduced ? "" : "pin-viewport"}`}
         style={{
-          height: reduced ? "auto" : "100vh",
           paddingTop: reduced ? "6rem" : 0,
           paddingBottom: reduced ? "6rem" : 0,
         }}
@@ -368,7 +439,7 @@ function MergedHowItWorks() {
         <div className="mx-auto w-full max-w-5xl px-6">
           <PhaseCaption scrollProgress={scrollYProgress} reduced={!!reduced} />
 
-          <div className="relative mx-auto mt-10" style={{ minHeight: 540 }}>
+          <div className="hiw-stage relative mx-auto mt-6 min-h-[400px] sm:min-h-[480px] md:mt-10 md:min-h-[540px]">
             {/* Phase A: chaos cluster - pointer-events-none so it can't block clicks even at 0 opacity */}
             <motion.div
               className="pointer-events-none absolute inset-0 flex items-center justify-center"
@@ -411,14 +482,10 @@ function PhaseCaption({
 }) {
   const [phase, setPhase] = useState(0);
 
-  useEffect(() => {
+  useMotionValueEvent(scrollProgress, "change", (p) => {
     if (reduced) return;
-    const unsub = scrollProgress.on("change", (p) => {
-      const next = p < 0.33 ? 0 : p < 0.66 ? 1 : 2;
-      setPhase(next);
-    });
-    return unsub;
-  }, [scrollProgress, reduced]);
+    setPhase(p < FLIP_SPEAK_LOCK ? 0 : p < FLIP_LOCK_RELEASE ? 1 : 2);
+  });
 
   const phases = [
     {
@@ -449,19 +516,18 @@ function PhaseCaption({
       <h2 className="font-display text-3xl font-medium leading-tight tracking-tight text-[var(--ink)] md:text-5xl">
         Voice it. Lock it. <span className="emph">Release it.</span>
       </h2>
-      <p
-        className="max-w-md text-sm text-[var(--ink-muted)] md:text-base"
-        style={{ minHeight: 56 }}
-      >
+      {/* min-height reserves the tallest caption so phase flips never shift
+          the pinned layout mid-scroll (3-4 lines on mobile, 2 on desktop) */}
+      <p className="min-h-[80px] max-w-md text-sm text-[var(--ink-muted)] md:min-h-[56px] md:text-base">
         {phases[phase].desc}
       </p>
     </header>
   );
 }
 
-const CHAOS_ITEMS = [
+const CHAOS_ITEMS: ScatterCard[] = [
   { txt: "FB Marketplace · iPhone",     x: -180, y: -80,  rot: -8 },
-  { txt: "🎤 voice note · 0:34",        x:  170, y: -110, rot:  6 },
+  { txt: "voice note · 0:34",           x:  170, y: -110, rot:  6, mic: true },
   { txt: "WhatsApp · $400 ok?",         x: -200, y:  40,  rot:  4 },
   { txt: "Tracking · awaiting label",   x:  190, y:  60,  rot: -6 },
   { txt: "DM · still up?",              x:  -10, y: -150, rot:  2 },
@@ -470,11 +536,11 @@ const CHAOS_ITEMS = [
 
 function ChaosCluster() {
   return (
-    <div className="relative h-full w-full">
+    <div className="relative h-full w-full scale-[0.6] sm:scale-100">
       {CHAOS_ITEMS.map((a, i) => (
         <div
           key={i}
-          className="absolute left-1/2 top-1/2 whitespace-nowrap rounded-lg px-3.5 py-2 text-sm shadow-sm"
+          className="absolute left-1/2 top-1/2 flex items-center gap-1.5 whitespace-nowrap rounded-lg px-3.5 py-2 text-sm shadow-sm"
           style={{
             transform: `translate(-50%, -50%) translate(${a.x}px, ${a.y}px) rotate(${a.rot}deg)`,
             background: "var(--cream-card-glass-hi)",
@@ -484,6 +550,7 @@ function ChaosCluster() {
             color: "var(--ink-muted)",
           }}
         >
+          {a.mic && <MicGlyph />}
           {a.txt}
         </div>
       ))}
@@ -508,7 +575,7 @@ function MergedDealRecordCard({
 }) {
   return (
     <div
-      className="w-full max-w-md rounded-2xl p-7"
+      className="w-full max-w-md rounded-2xl p-5 sm:p-7"
       style={{
         background: "var(--cream-card-glass-hi)",
         backdropFilter: "var(--blur)",
@@ -609,20 +676,22 @@ function MergedDealRecordCard({
               />
             </svg>
             <motion.div
-              className="absolute left-1/2 top-1/2 flex h-8 w-8 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full text-base font-bold text-white shadow-md"
+              className="absolute left-1/2 top-1/2 flex h-8 w-8 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full shadow-md"
               style={{
                 background: "var(--success)",
                 opacity: reduced ? 1 : releaseCheck,
               }}
             >
-              ✓
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                <polyline points="20 6 9 17 4 12" />
+              </svg>
             </motion.div>
           </div>
           <CompactAvatar initials="MA" label="Marcus" />
         </div>
         <p
           className="mt-3 text-center text-[12px] font-semibold uppercase tracking-[0.14em]"
-          style={{ fontFamily: "var(--font-jetbrains), monospace", color: "var(--success)" }}
+          style={{ fontFamily: "var(--font-jetbrains-mono), monospace", color: "var(--success)" }}
         >
           $400 routed to Marcus
         </p>
@@ -840,7 +909,10 @@ function ComparisonTable() {
           viewport={{ once: true, amount: 0.3 }}
           transition={{ duration: 0.7, ease: EASE, delay: 0.15 }}
         >
-          <table className="w-full text-left" style={{ borderCollapse: "collapse" }}>
+          {/* Table has a hard min-content width (5 columns) - scroll it inside
+              the card on narrow screens instead of overflowing the page */}
+          <div className="overflow-x-auto">
+          <table className="w-full min-w-[640px] text-left" style={{ borderCollapse: "collapse" }}>
             <thead>
               <tr style={{ background: "rgba(235,232,224,0.4)" }}>
                 <th
@@ -888,6 +960,7 @@ function ComparisonTable() {
               ))}
             </tbody>
           </table>
+          </div>
         </motion.div>
 
         <motion.p
@@ -1014,7 +1087,7 @@ function MergedPricing() {
 
           <Link
             href="/new"
-            className="mt-2 rounded-md bg-[#635bff] px-6 py-3.5 text-center text-sm font-medium text-white transition-colors hover:bg-[#5048e5]"
+            className="mt-2 rounded-full bg-[#635bff] px-6 py-3.5 text-center text-sm font-medium text-white transition-colors hover:bg-[#5048e5]"
           >
             Start a deal
           </Link>

@@ -66,14 +66,14 @@ export function RecordWidget({ className = '' }: RecordWidgetProps) {
         <span className="w-6 h-px bg-white/48" />
         <span 
           className="text-[11px] font-mono uppercase tracking-[0.1em] text-white/48"
-          style={{ fontFamily: 'var(--font-jetbrains), monospace' }}
+          style={{ fontFamily: 'var(--font-jetbrains-mono), monospace' }}
         >
           Try it
         </span>
         <span className="text-[11px] font-mono text-white/48 mx-1">·</span>
         <span 
           className="text-[11px] font-mono uppercase tracking-[0.1em] text-white/48"
-          style={{ fontFamily: 'var(--font-jetbrains), monospace' }}
+          style={{ fontFamily: 'var(--font-jetbrains-mono), monospace' }}
         >
           10 seconds
         </span>
@@ -171,7 +171,7 @@ export function RecordWidget({ className = '' }: RecordWidgetProps) {
                 exit={{ opacity: 0, y: -4 }}
                 transition={{ duration: DURATION.microPop, ease: EASE }}
                 className="text-[11px] uppercase tracking-[0.08em] text-white/48"
-                style={{ fontFamily: 'var(--font-jetbrains), monospace' }}
+                style={{ fontFamily: 'var(--font-jetbrains-mono), monospace' }}
               >
                 Tap mic · Speak the deal
               </motion.p>
@@ -215,7 +215,7 @@ export function RecordWidget({ className = '' }: RecordWidgetProps) {
         <div className="relative">
           <label 
             className="absolute left-4 top-3 text-[11px] uppercase tracking-[0.08em] text-white/48"
-            style={{ fontFamily: 'var(--font-jetbrains), monospace' }}
+            style={{ fontFamily: 'var(--font-jetbrains-mono), monospace' }}
           >
             Amount
           </label>
@@ -234,7 +234,7 @@ export function RecordWidget({ className = '' }: RecordWidgetProps) {
         <div className="relative">
           <label 
             className="absolute left-4 top-3 text-[11px] uppercase tracking-[0.08em] text-white/48"
-            style={{ fontFamily: 'var(--font-jetbrains), monospace' }}
+            style={{ fontFamily: 'var(--font-jetbrains-mono), monospace' }}
           >
             Counterparty
           </label>
@@ -250,7 +250,7 @@ export function RecordWidget({ className = '' }: RecordWidgetProps) {
         <div className="relative">
           <label 
             className="absolute left-4 top-3 text-[11px] uppercase tracking-[0.08em] text-white/48"
-            style={{ fontFamily: 'var(--font-jetbrains), monospace' }}
+            style={{ fontFamily: 'var(--font-jetbrains-mono), monospace' }}
           >
             Deadline
           </label>
