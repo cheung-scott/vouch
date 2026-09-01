@@ -31,14 +31,14 @@ export function SellerRepBadge({
   sellerFirstName?: string;
   variant?: "inline" | "card";
 }) {
-  const [stats, setStats] = useState<Stats | null>(null);
+  const [loadedStats, setLoadedStats] = useState<{
+    accountId: string;
+    data: Stats;
+  } | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!accountId) {
-      setStats(null);
-      return;
-    }
+    if (!accountId) return;
     let cancelled = false;
     (async () => {
       try {
@@ -52,7 +52,7 @@ export function SellerRepBadge({
           setError(json.error ?? "stats_failed");
           return;
         }
-        setStats(json);
+        setLoadedStats({ accountId, data: json });
       } catch (err) {
         if (!cancelled) {
           setError(err instanceof Error ? err.message : "unknown");
@@ -63,6 +63,12 @@ export function SellerRepBadge({
       cancelled = true;
     };
   }, [accountId]);
+
+  // Scope cached stats to the account they were fetched for, rather than
+  // clearing state synchronously inside the effect (which cascades renders).
+  // A pending switch to a new account renders the loading state, not stale data.
+  const stats =
+    loadedStats && loadedStats.accountId === accountId ? loadedStats.data : null;
 
   if (!accountId || error) return null;
 

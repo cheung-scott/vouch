@@ -30,7 +30,7 @@ export default function VerdictCardMockPage() {
           </h1>
           <p className="mt-2 text-sm leading-relaxed text-[#5a5548]">
             Screenshot the card below. The cream gradient backdrop replicates
-            the Beat 11 stage background so the card's glassmorphism reads
+            the Beat 11 stage background so the card&rsquo;s glassmorphism reads
             correctly.
           </p>
         </header>

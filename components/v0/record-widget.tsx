@@ -17,6 +17,13 @@ interface RecordWidgetProps {
   className?: string
 }
 
+// Per-bar animation speeds for the waveform. Fixed rather than random:
+// Math.random() during render re-rolled every bar on every re-render, and is
+// an impure render call. The bars only need to look unsynchronised.
+const BAR_DURATIONS = [
+  0.72, 0.94, 0.61, 0.86, 0.68, 0.99, 0.75, 0.63, 0.91, 0.70, 0.83, 0.66,
+]
+
 export function RecordWidget({ className = '' }: RecordWidgetProps) {
   const [isRecording, setIsRecording] = useState(false)
   const [isComplete, setIsComplete] = useState(false)
@@ -197,7 +204,7 @@ export function RecordWidget({ className = '' }: RecordWidgetProps) {
                     scaleY: [0.3, 1, 0.3],
                   }}
                   transition={{
-                    duration: 0.6 + Math.random() * 0.4,
+                    duration: BAR_DURATIONS[i],
                     repeat: Infinity,
                     delay: i * 0.05,
                     ease: 'easeInOut',

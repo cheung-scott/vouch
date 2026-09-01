@@ -1,0 +1,46 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      # --ignore-workspace: pnpm-workspace.yaml declares `packages: [.]`, which
+      # makes pnpm 10 throw "Cannot destructure property 'manifest'". Same flag
+      # is needed locally. Remove once that file is fixed.
+      - name: Install
+        run: pnpm install --frozen-lockfile --ignore-workspace
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Typecheck
+        run: pnpm exec tsc --noEmit
+
+      # PGlite runs a real Postgres in-process, so no service container is
+      # needed for the store and auth contract tests.
+      - name: Test
+        run: pnpm test
+
+      # Verified to compile with no environment variables set: every secret is
+      # read lazily or falls back, so CI needs no repository secrets.
+      - name: Build
+        run: pnpm build

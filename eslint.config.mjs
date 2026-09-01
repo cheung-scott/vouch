@@ -29,6 +29,10 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Demo scratch (gitignored). ESLint flat config does not read .gitignore,
+    // so without this `pnpm lint` reports thousands of problems in throwaway
+    // extracted files and can never go green.
+    "tmp/**",
   ]),
 ]);
 
