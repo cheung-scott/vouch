@@ -1,9 +1,10 @@
 name: CI
 
+# Runs on every branch, not just main. You merge straight to main rather than
+# opening PRs, so a main-only trigger would only ever report after the merge,
+# which is too late for the check to be worth anything.
 on:
   push:
-    branches: [main]
-  pull_request:
   workflow_dispatch:
 
 jobs:
