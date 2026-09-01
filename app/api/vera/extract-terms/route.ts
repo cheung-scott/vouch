@@ -4,6 +4,7 @@ import {
   type ExtractTermsOutput,
 } from "@/types/vera";
 import { dealStore } from "@/lib/deals";
+import { guardDeal } from "@/lib/auth";
 import { extractTermsFromUtterance } from "@/lib/vera-extract";
 
 export async function POST(req: NextRequest) {
@@ -19,7 +20,12 @@ export async function POST(req: NextRequest) {
   const extracted = extractTermsFromUtterance(parsed.data.user_input);
 
   if (parsed.data.deal_id) {
-    const deal = await dealStore.get(parsed.data.deal_id);
+    // NEW-1: authenticate before touching the deal. Accepts the party token
+  // from the deal link (browser) or the Vera service secret (ConvAI).
+  const auth = await guardDeal(req, parsed.data.deal_id);
+  if ("response" in auth) return auth.response;
+
+  const deal = await dealStore.get(parsed.data.deal_id);
     if (deal) {
       const nextTerms = { ...deal.terms };
       if (extracted.item && !nextTerms.item) nextTerms.item = extracted.item;

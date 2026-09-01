@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { dealStore } from "@/lib/deals";
+import { guardDeal } from "@/lib/auth";
 import {
   createIssuingCardholder,
   mintEscrowCard,
@@ -39,6 +40,10 @@ export async function POST(req: NextRequest) {
       { status: 400 },
     );
   }
+
+  // NEW-1: this route moves money. Authenticate before touching the deal.
+  const auth = await guardDeal(req, parsed.data.deal_id);
+  if ("response" in auth) return auth.response;
 
   const deal = await dealStore.get(parsed.data.deal_id);
   if (!deal) {

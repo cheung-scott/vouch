@@ -4,6 +4,7 @@ import {
   type ExtractCounterOutput,
 } from "@/types/vera";
 import { dealStore } from "@/lib/deals";
+import { guardDeal, requireRole } from "@/lib/auth";
 import { extractTermsFromUtterance } from "@/lib/vera-extract";
 
 export async function POST(req: NextRequest) {
@@ -19,7 +20,14 @@ export async function POST(req: NextRequest) {
   const extracted = extractTermsFromUtterance(parsed.data.changes);
 
   if (parsed.data.deal_id) {
-    const deal = await dealStore.get(parsed.data.deal_id);
+    // NEW-1: authenticate before touching the deal. Accepts the party token
+  // from the deal link (browser) or the Vera service secret (ConvAI).
+  const auth = await guardDeal(req, parsed.data.deal_id);
+  if ("response" in auth) return auth.response;
+  const wrongParty = requireRole(auth.principal, "SELLER");
+  if (wrongParty) return wrongParty;
+
+  const deal = await dealStore.get(parsed.data.deal_id);
     if (deal) {
       // Accept AWAITING_SELLER (true counter-offer) AND DRAFT (the SELLER_
       // ONBOARDING fulfilment-capture flow can call this multiple times in

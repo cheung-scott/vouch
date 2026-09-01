@@ -29,6 +29,7 @@ const repoRoot = path.resolve(here, "..");
 const API_KEY = process.env.ELEVENLABS_API_KEY;
 const AGENT_ID = process.env.ELEVENLABS_VERA_AGENT_ID;
 const BASE_URL = process.env.APP_URL ?? process.env.NEXT_PUBLIC_APP_URL;
+const TOOL_SECRET = process.env.VERA_TOOL_SECRET;
 
 if (!API_KEY || !AGENT_ID || !BASE_URL) {
   console.error("✗ Missing env. Need:");
@@ -40,6 +41,17 @@ if (!API_KEY || !AGENT_ID || !BASE_URL) {
 
 if (AGENT_ID === "REPLACE" || AGENT_ID.length < 20) {
   console.error(`✗ ELEVENLABS_VERA_AGENT_ID looks like a placeholder (got "${AGENT_ID}")`);
+  process.exit(1);
+}
+
+// Every vera/* tool route is authenticated (NEW-1). Importing tool definitions
+// without the shared secret would register tools that 401 on every call, which
+// looks like a broken agent rather than a config mistake. Refuse instead.
+if (!TOOL_SECRET) {
+  console.error("✗ VERA_TOOL_SECRET is not set.");
+  console.error("  The vera/* routes now require it. Importing without it would");
+  console.error("  register tools that fail with 401 on every call.");
+  console.error("  Generate one:  node -e \"console.log(require(String.fromCharCode(110,111,100,101,58,99,114,121,112,116,111)).randomBytes(32).toString(String.fromCharCode(104,101,120)))\"");
   process.exit(1);
 }
 
@@ -121,6 +133,10 @@ function buildToolBody(tool) {
     api_schema: {
       url: tool.url.replace("{BASE_URL}", BASE_URL),
       method: tool.method,
+      // ⚠ VERIFY THIS FIELD NAME against current ElevenLabs ConvAI docs before
+      // running. The auth design does not depend on it, but the exact key for
+      // per-tool request headers has moved between API versions.
+      request_headers: { "X-Vera-Tool-Secret": TOOL_SECRET },
       request_body_schema: { type: "object", properties, required },
     },
     response_timeout_secs: longTimeoutTools.has(tool.name) ? 30 : 20,

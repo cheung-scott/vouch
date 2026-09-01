@@ -2,6 +2,12 @@ import { NextRequest, NextResponse } from "next/server";
 import { randomUUID } from "node:crypto";
 import { z } from "zod";
 import { dealStore } from "@/lib/deals";
+import { constantTimeEquals } from "@/lib/auth";
+import {
+  BUYER_TOKEN_TTL_MS,
+  SELLER_TOKEN_TTL_MS,
+  tokenStore,
+} from "@/lib/tokens";
 import {
   CurrencySchema,
   type DealStatus,
@@ -74,13 +80,32 @@ export async function POST(req: NextRequest) {
     },
   });
 
+  // Each party gets its own capability token, embedded in the link they are
+  // sent. This replaces "knowing the deal reference" as the access mechanism
+  // (register D7) — the reference is only 24 bits of entropy (NEW-3), so it
+  // was never fit to act as a credential.
+  const [buyerToken, sellerToken] = await Promise.all([
+    tokenStore.issue({
+      partyId: deal.buyer.id,
+      dealId: deal.id,
+      role: "BUYER",
+      ttlMs: BUYER_TOKEN_TTL_MS,
+    }),
+    tokenStore.issue({
+      partyId: deal.seller.id,
+      dealId: deal.id,
+      role: "SELLER",
+      ttlMs: SELLER_TOKEN_TTL_MS,
+    }),
+  ]);
+
   return NextResponse.json({
     id: deal.id,
     reference: deal.reference,
     status: deal.status,
-    seller_invitation_url: `/deal/${deal.reference}/seller`,
-    signoff_url: `/deal/${deal.reference}/signoff`,
-    detail_url: `/deal/${deal.reference}`,
+    seller_invitation_url: `/deal/${deal.reference}/seller?t=${sellerToken.token}`,
+    signoff_url: `/deal/${deal.reference}/signoff?t=${buyerToken.token}`,
+    detail_url: `/deal/${deal.reference}?t=${buyerToken.token}`,
   });
 }
 
@@ -97,8 +122,10 @@ export async function GET(req: NextRequest) {
       { status: 403 },
     );
   }
+  // NEW-10: constant-time compare — a plain !== short-circuits on the first
+  // differing byte, which leaks the secret to a timing attack.
   const provided = req.headers.get("x-owner-token");
-  if (provided !== ownerToken) {
+  if (!provided || !constantTimeEquals(provided, ownerToken)) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
 

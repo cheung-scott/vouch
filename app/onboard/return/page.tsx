@@ -31,9 +31,12 @@ async function fetchStatus(
 export default async function OnboardReturnPage({
   searchParams,
 }: {
-  searchParams: Promise<{ account?: string; deal_id?: string }>;
+  searchParams: Promise<{ account?: string; deal_id?: string; t?: string }>;
 }) {
   const params = await searchParams;
+  // Carry the seller's capability token onward, or the sign-off page loads
+  // without a credential and every action on it fails.
+  const tokenParam = params.t ? `?t=${encodeURIComponent(params.t)}` : "";
   const accountId = params.account;
   const dealId = params.deal_id;
 
@@ -127,7 +130,7 @@ export default async function OnboardReturnPage({
         <div className="mt-8 flex flex-col gap-3">
           {dealReference && (
             <Link
-              href={`/deal/${dealReference}/signoff`}
+              href={`/deal/${dealReference}/signoff${tokenParam}`}
               className="rounded-md bg-[#635bff] px-5 py-3 text-center text-sm font-medium text-white transition-colors hover:bg-[#5048e5]"
             >
               Continue to joint sign-off →

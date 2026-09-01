@@ -1,6 +1,8 @@
 import { randomUUID } from "node:crypto";
 import type { Deal, DealStatus, DealTerms, Party } from "@/types/deal";
 import { dealReference } from "./utils";
+import { getDb } from "@/lib/db/client";
+import { PostgresDealStore } from "@/lib/deals-postgres";
 
 export interface DealStore {
   create(input: {
@@ -16,7 +18,7 @@ export interface DealStore {
   list(filter?: { status?: DealStatus }): Promise<Deal[]>;
 }
 
-class InMemoryDealStore implements DealStore {
+export class InMemoryDealStore implements DealStore {
   private deals = new Map<string, Deal>();
   private referenceIndex = new Map<string, string>();
 
@@ -218,6 +220,10 @@ declare global {
 // auto-detects). Otherwise stay in-memory — keeps local dev frictionless
 // and matches the A-001 pattern in OffPlanLog.
 function pickStore(): DealStore {
+  if (process.env.DEAL_STORE === "postgres") {
+    console.info("[deals] using PostgresDealStore (DEAL_STORE=postgres)");
+    return new PostgresDealStore(getDb());
+  }
   const hasKv =
     !!process.env.KV_REST_API_URL ||
     !!process.env.UPSTASH_REDIS_REST_URL ||

@@ -1,4 +1,5 @@
 "use client";
+import { dealFetch, dealHref } from "@/lib/deal-fetch";
 
 import { use, useEffect, useState } from "react";
 import Link from "next/link";
@@ -41,7 +42,7 @@ export default function DisputePage({
     let cancelled = false;
     (async () => {
       try {
-        const res = await fetch(`/api/deals/${ref}`, { cache: "no-store" });
+        const res = await dealFetch(`/api/deals/${ref}`, { cache: "no-store" });
         const json = await res.json();
         if (!res.ok) throw new Error(json.error ?? "deal_not_found");
         if (cancelled) return;
@@ -63,7 +64,7 @@ export default function DisputePage({
     setBusy(true);
     setError(null);
     try {
-      const res = await fetch("/api/vera/open-dispute", {
+      const res = await dealFetch("/api/vera/open-dispute", {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ deal_id: deal.id, reason: reason.trim() }),
@@ -72,7 +73,7 @@ export default function DisputePage({
       if (!res.ok) throw new Error(json.error ?? "open_failed");
       setDisputeId(json.dispute_id);
 
-      const replayRes = await fetch("/api/vera/replay-agreement", {
+      const replayRes = await dealFetch("/api/vera/replay-agreement", {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ deal_id: deal.id }),
@@ -92,7 +93,7 @@ export default function DisputePage({
     setBusy(true);
     setError(null);
     try {
-      const res = await fetch("/api/vera/gather-dispute-evidence", {
+      const res = await dealFetch("/api/vera/gather-dispute-evidence", {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({
@@ -211,7 +212,7 @@ export default function DisputePage({
               stays held safely.
             </p>
             <Link
-              href={`/deal/${deal.reference}`}
+              href={dealHref(`/deal/${deal.reference}`)}
               className="mt-6 inline-block rounded-md border border-[rgba(50,30,5,0.18)] bg-white px-4 py-2 text-sm font-medium transition-colors hover:bg-[#fbfaf6]"
             >
               Back to deal →

@@ -1,4 +1,5 @@
 "use client";
+import { dealFetch, dealHref } from "@/lib/deal-fetch";
 
 import { use, useEffect, useState } from "react";
 import Link from "next/link";
@@ -26,6 +27,10 @@ type DealDetail = {
   lockedAt?: string;
   releasedAt?: string;
   stripeIssuingCardStatus?: "frozen" | "active" | "canceled";
+  // Issued by GET /api/deals/[id] and carrying the SELLER's token. Never
+  // rebuild this link from the reference: dealHref would stamp the BUYER's
+  // token on it, handing the seller the buyer's credential.
+  sellerInvitationUrl?: string;
   veraSummary?: string;
   veraEvalResults?: Record<
     string,
@@ -54,11 +59,11 @@ export default function DealDetailPage({
     let cancelled = false;
     (async () => {
       try {
-        const res = await fetch(`/api/deals/${ref}`, { cache: "no-store" });
+        const res = await dealFetch(`/api/deals/${ref}`, { cache: "no-store" });
         const json = await res.json();
         if (!res.ok) throw new Error(json.error ?? "deal_not_found");
         if (cancelled) return;
-        setDeal(json.deal);
+        setDeal({ ...json.deal, sellerInvitationUrl: json.seller_invitation_url });
       } catch (err) {
         if (cancelled) return;
         setError(err instanceof Error ? err.message : "unknown");
@@ -292,11 +297,11 @@ function ActionPanel({ deal }: { deal: DealDetail }) {
           Share the seller invitation link.
         </h2>
         <a
-          href={`/deal/${reference}/seller`}
+          href={deal.sellerInvitationUrl ?? `/deal/${reference}/seller`}
           className="mt-4 block rounded-md border border-[rgba(50,30,5,0.18)] bg-[#fbfaf6] px-4 py-3 font-mono text-sm text-[#5266eb] hover:bg-white"
         >
-          {typeof window !== "undefined"
-            ? `${window.location.origin}/deal/${reference}/seller`
+          {typeof window !== "undefined" && deal.sellerInvitationUrl
+            ? `${window.location.origin}${deal.sellerInvitationUrl}`
             : `/deal/${reference}/seller`}
         </a>
       </Card>
@@ -311,7 +316,7 @@ function ActionPanel({ deal }: { deal: DealDetail }) {
           Both parties: do the final sign-off together.
         </h2>
         <Link
-          href={`/deal/${reference}/signoff`}
+          href={dealHref(`/deal/${reference}/signoff`)}
           className="mt-4 inline-block rounded-md bg-[#635bff] px-5 py-2 text-sm font-medium text-white transition-colors hover:bg-[#5048e5]"
         >
           Go to joint sign-off →
@@ -329,13 +334,13 @@ function ActionPanel({ deal }: { deal: DealDetail }) {
         </h2>
         <div className="mt-4 flex flex-wrap gap-3">
           <Link
-            href={`/deal/${reference}/signoff`}
+            href={dealHref(`/deal/${reference}/signoff`)}
             className="rounded-md bg-[#635bff] px-5 py-2 text-sm font-medium text-white transition-colors hover:bg-[#5048e5]"
           >
             Confirm receipt →
           </Link>
           <Link
-            href={`/deal/${reference}/dispute`}
+            href={dealHref(`/deal/${reference}/dispute`)}
             className="rounded-md border border-[#b54a3a]/40 bg-white px-4 py-2 text-sm font-medium text-[#b54a3a] transition-colors hover:bg-[rgba(181,74,58,0.06)]"
           >
             Open a dispute
@@ -410,7 +415,7 @@ function DemoVerdictButton({ dealId }: { dealId: string }) {
     setBusy(true);
     setResult({ kind: "idle" });
     try {
-      const res = await fetch("/api/vera/refund-deal", {
+      const res = await dealFetch("/api/vera/refund-deal", {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({
@@ -473,7 +478,7 @@ function CounterReconfirmPanel({ deal }: { deal: DealDetail }) {
     setBusy(true);
     setError(null);
     try {
-      const res = await fetch("/api/vera/read-contract-back", {
+      const res = await dealFetch("/api/vera/read-contract-back", {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ deal_id: deal.id }),
@@ -492,7 +497,7 @@ function CounterReconfirmPanel({ deal }: { deal: DealDetail }) {
     setBusy(true);
     setError(null);
     try {
-      const res = await fetch("/api/vera/commit-buyer-side", {
+      const res = await dealFetch("/api/vera/commit-buyer-side", {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ deal_id: deal.id }),

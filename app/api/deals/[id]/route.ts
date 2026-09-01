@@ -1,8 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
+import { authorizeDealAccess } from "@/lib/auth";
 import { dealStore } from "@/lib/deals";
+import { SELLER_TOKEN_TTL_MS, tokenStore } from "@/lib/tokens";
 
 export async function GET(
-  _req: NextRequest,
+  req: NextRequest,
   ctx: { params: Promise<{ id: string }> },
 ) {
   const { id } = await ctx.params;
@@ -12,6 +14,31 @@ export async function GET(
   if (!deal) {
     return NextResponse.json({ error: "deal_not_found" }, { status: 404 });
   }
+
+  // S-106 (enumeration / status leak). An unauthorized caller gets the SAME
+  // 404 as a deal that does not exist — a 401 here would confirm the deal is
+  // real, which is the whole leak. Deal references are only 24 bits (NEW-3),
+  // so "you would have to guess the reference" is not a defence.
+  // UX consequence: an expired link reads as "not found" rather than
+  // "session expired". That is the correct trade for an enumeration fix.
+  const auth = await authorizeDealAccess(req, deal.id);
+  if (!auth.ok) {
+    return NextResponse.json({ error: "deal_not_found" }, { status: 404 });
+  }
+
+  // The buyer has to be able to re-copy the seller's invitation link after
+  // leaving /new. It must carry the SELLER's token — handing the seller a
+  // link built from the buyer's token would let the seller act as the buyer.
+  // Reuse the seller's existing token rather than minting one per page load.
+  const existing = await tokenStore.activeFor(deal.seller.id);
+  const sellerToken =
+    existing ??
+    (await tokenStore.issue({
+      partyId: deal.seller.id,
+      dealId: deal.id,
+      role: "SELLER",
+      ttlMs: SELLER_TOKEN_TTL_MS,
+    }));
 
   // Strip PII (email, phone) and Stripe identifiers from the public response.
   // These fields are needed server-side only; the UI renders firstName + terms only.
@@ -52,5 +79,8 @@ export async function GET(
     // The UI just needs to know the badge state.
     stripeIssuingCardStatus: deal.stripeIssuingCardStatus,
   };
-  return NextResponse.json({ deal: publicDeal });
+  return NextResponse.json({
+    deal: publicDeal,
+    seller_invitation_url: `/deal/${deal.reference}/seller?t=${sellerToken.token}`,
+  });
 }

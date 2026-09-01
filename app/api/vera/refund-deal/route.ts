@@ -4,6 +4,8 @@ import {
   type RefundDealOutput,
 } from "@/types/vera";
 import { dealStore } from "@/lib/deals";
+import { guardDeal } from "@/lib/auth";
+import { revokeEscrowCard } from "@/lib/escrow-card";
 import { refundCharge, sanitizeStripeError } from "@/lib/stripe";
 import type Stripe from "stripe";
 
@@ -20,6 +22,11 @@ export async function POST(req: NextRequest) {
   if (!parsed.data.deal_id) {
     return NextResponse.json({ error: "missing_deal_id" }, { status: 400 });
   }
+
+  // NEW-1: authenticate before touching the deal. Accepts the party token
+  // from the deal link (browser) or the Vera service secret (ConvAI).
+  const auth = await guardDeal(req, parsed.data.deal_id);
+  if ("response" in auth) return auth.response;
 
   const deal = await dealStore.get(parsed.data.deal_id);
   if (!deal) {
@@ -38,6 +45,18 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(
       { error: "no_payment_intent" },
       { status: 409 },
+    );
+  }
+
+
+  // NEW-2: kill the escrow card BEFORE the money goes back to the buyer. The
+  // card is funded from Vouch's own Issuing balance (D1), so a live card plus
+  // a completed refund pays out twice. See lib/escrow-card.ts.
+  const revoked = await revokeEscrowCard(deal);
+  if (!revoked.ok) {
+    return NextResponse.json(
+      { error: "card_revoke_failed", code: revoked.code },
+      { status: 502 },
     );
   }
 

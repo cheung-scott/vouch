@@ -1,4 +1,5 @@
 "use client";
+import { dealFetch, dealHref } from "@/lib/deal-fetch";
 
 import { use, useCallback, useEffect, useState } from "react";
 import { Card, Eyebrow } from "@/components/ui";
@@ -49,7 +50,7 @@ export default function SellerPage({
   const loadDeal = useCallback(
     async (opts: { silent?: boolean } = {}) => {
       try {
-        const res = await fetch(`/api/deals/${ref}`, { cache: "no-store" });
+        const res = await dealFetch(`/api/deals/${ref}`, { cache: "no-store" });
         const json = await res.json();
         if (!res.ok) throw new Error(json.error ?? "deal_not_found");
         setDeal(json.deal);
@@ -118,7 +119,7 @@ export default function SellerPage({
     setBusy(true);
     setError(null);
     try {
-      const res = await fetch("/api/vera/read-buyer-terms", {
+      const res = await dealFetch("/api/vera/read-buyer-terms", {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ deal_id: deal.id }),
@@ -139,7 +140,7 @@ export default function SellerPage({
     setBusy(true);
     setError(null);
     try {
-      const res = await fetch("/api/vera/commit-seller-side", {
+      const res = await dealFetch("/api/vera/commit-seller-side", {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ deal_id: deal.id }),
@@ -159,7 +160,7 @@ export default function SellerPage({
     setBusy(true);
     setError(null);
     try {
-      const res = await fetch("/api/vera/extract-counter", {
+      const res = await dealFetch("/api/vera/extract-counter", {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ deal_id: deal.id, changes: counter.trim() }),
@@ -179,7 +180,7 @@ export default function SellerPage({
     setBusy(true);
     setError(null);
     try {
-      const res = await fetch("/api/vera/flag-for-review", {
+      const res = await dealFetch("/api/vera/flag-for-review", {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ deal_id: deal.id, reason: "seller declined" }),
@@ -369,7 +370,7 @@ export default function SellerPage({
               extension working on any eBay listing.
             </p>
             <a
-              href={`/onboard?deal_id=${deal.id}`}
+              href={dealHref(`/onboard?deal_id=${deal.id}`)}
               className="mt-6 inline-block rounded-md bg-[#635bff] px-5 py-2 text-sm font-medium text-white transition-colors hover:bg-[#5048e5]"
             >
               Connect bank with Stripe →
@@ -391,7 +392,7 @@ export default function SellerPage({
               />
             </div>
             <a
-              href={`/deal/${deal.reference}/signoff`}
+              href={dealHref(`/deal/${deal.reference}/signoff`)}
               className="mt-6 inline-block rounded-md bg-[#635bff] px-5 py-2 text-sm font-medium text-white transition-colors hover:bg-[#5048e5]"
             >
               Go to joint sign-off →

@@ -1,4 +1,5 @@
 "use client";
+import { dealFetch } from "@/lib/deal-fetch";
 
 import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import { Card, Eyebrow } from "@/components/ui";
@@ -87,6 +88,11 @@ export default function NewDealPage() {
   const [buyerEmail, setBuyerEmail] = useState("");
   const [dealId, setDealId] = useState<string | null>(null);
   const [reference, setReference] = useState<string | null>(null);
+  // Links returned by POST /api/deals — each already carries that party's
+  // capability token. Never rebuild these by hand from the reference: the
+  // reference is not a credential (NEW-3) and the token would be lost.
+  const [sellerUrl, setSellerUrl] = useState<string | null>(null);
+  const [detailUrl, setDetailUrl] = useState<string | null>(null);
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState<Record<QuestionId, string>>({
     item: "",
@@ -184,7 +190,7 @@ export default function NewDealPage() {
     setBusy(true);
     setError(null);
     try {
-      const res = await fetch("/api/deals", {
+      const res = await dealFetch("/api/deals", {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({
@@ -198,6 +204,8 @@ export default function NewDealPage() {
       if (!res.ok) throw new Error(json.message ?? json.error ?? "create_failed");
       setDealId(json.id);
       setReference(json.reference);
+      setSellerUrl(json.seller_invitation_url ?? null);
+      setDetailUrl(json.detail_url ?? null);
 
       // If we have extension pre-fills, send them through extract-terms so the
       // backend deal state matches, then jump straight to Q4 (delivery).
@@ -207,7 +215,7 @@ export default function NewDealPage() {
         if (prefill.counterparty) prefillStrings.push(prefill.counterparty);
         if (prefill.amount) prefillStrings.push(prefill.amount);
         for (const utterance of prefillStrings) {
-          await fetch("/api/vera/extract-terms", {
+          await dealFetch("/api/vera/extract-terms", {
             method: "POST",
             headers: { "content-type": "application/json" },
             body: JSON.stringify({ deal_id: json.id, user_input: utterance }),
@@ -230,7 +238,7 @@ export default function NewDealPage() {
     setBusy(true);
     setError(null);
     try {
-      const res = await fetch("/api/vera/extract-terms", {
+      const res = await dealFetch("/api/vera/extract-terms", {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ deal_id: dealId, user_input: draft.trim() }),
@@ -255,7 +263,7 @@ export default function NewDealPage() {
     if (!dealId) return;
     setBusy(true);
     try {
-      const res = await fetch("/api/vera/read-contract-back", {
+      const res = await dealFetch("/api/vera/read-contract-back", {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ deal_id: dealId }),
@@ -275,7 +283,7 @@ export default function NewDealPage() {
     if (!dealId) return;
     setBusy(true);
     try {
-      const res = await fetch("/api/vera/commit-buyer-side", {
+      const res = await dealFetch("/api/vera/commit-buyer-side", {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ deal_id: dealId }),
@@ -284,7 +292,7 @@ export default function NewDealPage() {
       if (!res.ok) throw new Error(json.message ?? json.error ?? "commit_failed");
       // Fire-and-forget seller-invitation notification. Failure here doesn't
       // block the buyer — they always get the link on-screen to share manually.
-      fetch("/api/notify/seller-invitation", {
+      dealFetch("/api/notify/seller-invitation", {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ deal_id: dealId }),
@@ -315,7 +323,7 @@ export default function NewDealPage() {
   const refreshFromServer = useCallback(async () => {
     if (!dealId) return;
     try {
-      const res = await fetch(`/api/deals/${dealId}`, { cache: "no-store" });
+      const res = await dealFetch(`/api/deals/${dealId}`, { cache: "no-store" });
       if (!res.ok) return;
       const { deal } = (await res.json()) as {
         deal: {
@@ -612,12 +620,12 @@ export default function NewDealPage() {
             </p>
             <div className="mt-6 flex flex-col gap-3">
               <a
-                href={`/deal/${reference}/seller`}
+                href={sellerUrl ?? `/deal/${reference}/seller`}
                 className="block rounded-md border border-[rgba(50,30,5,0.18)] bg-[#fbfaf6] px-4 py-3 font-mono text-sm text-[#5266eb] hover:bg-white"
               >
-                {typeof window !== "undefined"
-                  ? `${window.location.origin}/deal/${reference}/seller`
-                  : `/deal/${reference}/seller`}
+                {typeof window !== "undefined" && sellerUrl
+                  ? `${window.location.origin}${sellerUrl}`
+                  : (sellerUrl ?? `/deal/${reference}/seller`)}
               </a>
               <div className="rounded-md border border-[#5266eb]/40 bg-[#5266eb]/8 p-3">
                 <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-[#5266eb]">
@@ -630,7 +638,7 @@ export default function NewDealPage() {
                   won&rsquo;t be able to recover it from anywhere else in v1.
                 </p>
                 <a
-                  href={`/deal/${reference}`}
+                  href={detailUrl ?? `/deal/${reference}`}
                   className="mt-2 inline-block font-mono text-[10px] uppercase tracking-[0.14em] text-[#5266eb] underline"
                 >
                   Your deal page → /deal/{reference}

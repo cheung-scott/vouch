@@ -1,4 +1,5 @@
 "use client";
+import { dealFetch, dealHref } from "@/lib/deal-fetch";
 
 import { Suspense, useState } from "react";
 import { useSearchParams } from "next/navigation";
@@ -51,7 +52,7 @@ function OnboardInner() {
   async function startConnect() {
     setStatus({ kind: "loading", what: "connect" });
     try {
-      const res = await fetch("/api/connect/create-account", {
+      const res = await dealFetch("/api/connect/create-account", {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ email, country: "GB", deal_id: dealId }),
@@ -137,7 +138,7 @@ function OnboardInner() {
                     account: status.accountId,
                   });
                   if (dealId) params.set("deal_id", dealId);
-                  window.location.href = `/onboard/return?${params.toString()}`;
+                  window.location.href = dealHref(`/onboard/return?${params.toString()}`);
                 }}
               />
               {/* Manual escape hatch - Stripe's embedded onExit doesn't

@@ -1,4 +1,5 @@
 "use client";
+import { dealFetch } from "@/lib/deal-fetch";
 
 import { use, useCallback, useEffect, useState } from "react";
 import { Card, Eyebrow, MoneyAmount } from "@/components/ui";
@@ -45,7 +46,7 @@ export default function SignoffPage({
   const [speaker, setSpeaker] = useState<"buyer" | "seller">("buyer");
 
   const refreshDeal = useCallback(async () => {
-    const res = await fetch(`/api/deals/${ref}`, { cache: "no-store" });
+    const res = await dealFetch(`/api/deals/${ref}`, { cache: "no-store" });
     const json = await res.json();
     if (!res.ok) throw new Error(json.error ?? "deal_not_found");
     setDeal(json.deal);
@@ -77,7 +78,7 @@ export default function SignoffPage({
         // the recitation text and surface the tickbox + manual lock UI so
         // the parties can finish manually.
         try {
-          const res = await fetch("/api/vera/read-contract-back", {
+          const res = await dealFetch("/api/vera/read-contract-back", {
             method: "POST",
             headers: { "content-type": "application/json" },
             body: JSON.stringify({ deal_id: d.id }),
@@ -141,7 +142,7 @@ export default function SignoffPage({
     setBusy(true);
     setError(null);
     try {
-      const res = await fetch("/api/vera/read-contract-back", {
+      const res = await dealFetch("/api/vera/read-contract-back", {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ deal_id: deal.id }),
@@ -162,7 +163,7 @@ export default function SignoffPage({
     setBusy(true);
     setError(null);
     try {
-      const res = await fetch("/api/vera/lock-escrow", {
+      const res = await dealFetch("/api/vera/lock-escrow", {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ deal_id: deal.id }),
@@ -201,7 +202,7 @@ export default function SignoffPage({
     setBusy(true);
     setError(null);
     try {
-      const res = await fetch("/api/vera/release-escrow", {
+      const res = await dealFetch("/api/vera/release-escrow", {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ deal_id: deal.id }),

@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { cancelEscrow, sanitizeStripeError } from "@/lib/stripe";
 import { dealStore } from "@/lib/deals";
+import { guardDeal } from "@/lib/auth";
+import { revokeEscrowCard } from "@/lib/escrow-card";
 
 export const runtime = "nodejs";
 
@@ -20,6 +22,10 @@ export async function POST(req: NextRequest) {
     );
   }
 
+  // NEW-1: this route moves money. Authenticate before touching the deal.
+  const auth = await guardDeal(req, parsed.data.deal_id);
+  if ("response" in auth) return auth.response;
+
   const deal = await dealStore.get(parsed.data.deal_id);
   if (!deal) {
     return NextResponse.json({ error: "deal_not_found" }, { status: 404 });
@@ -34,6 +40,18 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(
       { error: "payment_intent_mismatch" },
       { status: 403 },
+    );
+  }
+
+
+  // NEW-2: kill the escrow card BEFORE the money goes back to the buyer. The
+  // card is funded from Vouch's own Issuing balance (D1), so a live card plus
+  // a completed refund pays out twice. See lib/escrow-card.ts.
+  const revoked = await revokeEscrowCard(deal);
+  if (!revoked.ok) {
+    return NextResponse.json(
+      { error: "card_revoke_failed", code: revoked.code },
+      { status: 502 },
     );
   }
 

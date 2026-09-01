@@ -6,6 +6,7 @@ import {
   sanitizeStripeError,
 } from "@/lib/stripe";
 import { dealStore } from "@/lib/deals";
+import { guardDeal, requireRole } from "@/lib/auth";
 
 export const runtime = "nodejs";
 
@@ -36,6 +37,15 @@ export async function POST(req: NextRequest) {
   // creating an account we'd then orphan.
   let deal = null;
   if (dealId) {
+    // S-101, the real fix. The status gate below narrowed the race but never
+    // bound the caller to a party — anyone with the deal_id could attach
+    // their own Connect account. Now only the SELLER (or Vera acting in the
+    // call) can, proven by the token from the seller invitation link.
+    const auth = await guardDeal(req, dealId);
+    if ("response" in auth) return auth.response;
+    const wrongParty = requireRole(auth.principal, "SELLER");
+    if (wrongParty) return wrongParty;
+
     deal = await dealStore.get(dealId);
     if (!deal) {
       return NextResponse.json({ error: "deal_not_found" }, { status: 404 });

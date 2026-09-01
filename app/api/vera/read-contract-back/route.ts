@@ -4,6 +4,7 @@ import {
   type ReadContractBackOutput,
 } from "@/types/vera";
 import { dealStore } from "@/lib/deals";
+import { guardDeal } from "@/lib/auth";
 import { composeContractRecitation } from "@/lib/vera-contract";
 
 export async function POST(req: NextRequest) {
@@ -22,6 +23,11 @@ export async function POST(req: NextRequest) {
       { status: 400 },
     );
   }
+
+  // NEW-1: authenticate before touching the deal. Accepts the party token
+  // from the deal link (browser) or the Vera service secret (ConvAI).
+  const auth = await guardDeal(req, parsed.data.deal_id);
+  if ("response" in auth) return auth.response;
 
   const deal = await dealStore.get(parsed.data.deal_id);
   if (!deal) {
