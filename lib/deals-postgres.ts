@@ -140,6 +140,20 @@ async function lockDeal(tx: Tx, id: string): Promise<DealRow | undefined> {
   return row;
 }
 
+// `deals.id` is a uuid column, so Postgres REJECTS a non-uuid literal instead of
+// simply not matching it. That is a behaviour difference from the KV store, where
+// an unknown key was just a miss, and it broke two things once Postgres went live:
+//
+//   1. GET /api/deals/<anything-not-a-uuid> threw at the database and returned 500
+//      rather than 404, which also lets a scanner tell "malformed" from "not found".
+//   2. Worse, and the reason this is a correctness fix and not a tidy-up: the route
+//      does `get(id) ?? byReference(id)`. A throwing get() means the reference
+//      lookup NEVER RUNS, so no deal was reachable by its human-facing reference.
+//
+// Guarding here rather than in the route keeps every caller correct.
+const UUID_RE =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
 export class PostgresDealStore implements DealStore {
   constructor(private readonly db: Database) {}
 
@@ -184,6 +198,8 @@ export class PostgresDealStore implements DealStore {
   }
 
   async get(id: string): Promise<Deal | null> {
+    // Not a uuid means it cannot be an id, so it is a miss — not an error.
+    if (!UUID_RE.test(id)) return null;
     return loadDeal(this.db, id);
   }
 
